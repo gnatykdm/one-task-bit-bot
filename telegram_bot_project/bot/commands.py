@@ -2,6 +2,7 @@ from typing import Any
 from aiogram.types import Message
 
 from messages import *
+from service.user import UserService
 
 # Start Command Handler
 async def start_command(message: Message)-> None:
@@ -10,8 +11,12 @@ async def start_command(message: Message)-> None:
     user_name: str = message.from_user.username
 
     print(f"--[INFO] - User {user_id} ({user_name}) - started the bot")
-
-    await message.answer(START_MSG)
+    user_find: int = await UserService.get_user_by_id(user_id)
+    if user_find:
+        await message.answer(START_MSG_AGAIN)
+    else:
+        await UserService.create_user(user_id, user_name)
+        await message.answer(START_MSG)
 
 # Help Command Handler
 async def help_command(message: Message) -> None:
