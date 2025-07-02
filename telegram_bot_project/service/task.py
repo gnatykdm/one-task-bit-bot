@@ -6,7 +6,7 @@ from datetime import datetime
 class TaskService:
     @staticmethod
     async def create_task(user_id: int, task_name: str, task_status: bool = False, start_time: Optional[datetime] = None) -> int:
-        async for session in get_session():
+        async with get_session() as session:
             result: Any = await session.execute(
                 text(
                     """
@@ -25,11 +25,10 @@ class TaskService:
             task_id: int = result.scalar_one()
             await session.commit()
             return task_id
-        return None
 
     @staticmethod
     async def get_task_by_id(task_id: int) -> Optional[dict]:
-        async for session in get_session():
+        async with get_session() as session:
             result: Any = await session.execute(
                 text(
                     """
@@ -40,7 +39,7 @@ class TaskService:
                 ),
                 {"task_id": task_id}
             )
-            task: int = result.fetchone()
+            task = result.fetchone()
             if task:
                 return {
                     "id": task.id,
@@ -51,11 +50,10 @@ class TaskService:
                     "creation_date": task.creation_date
                 }
             return None
-        return None
 
     @staticmethod
     async def get_user_tasks(user_id: int) -> List[dict]:
-        async for session in get_session():
+        async with get_session() as session:
             result: Any = await session.execute(
                 text(
                     """
@@ -67,6 +65,7 @@ class TaskService:
                 ),
                 {"user_id": user_id}
             )
+            tasks = result.fetchall()
             return [
                 {
                     "id": task.id,
@@ -76,15 +75,14 @@ class TaskService:
                     "start_time": task.start_time,
                     "creation_date": task.creation_date
                 }
-                for task in result.fetchall()
+                for task in tasks
             ]
-        return None
 
     @staticmethod
     async def update_task(task_id: int, task_name: Optional[str] = None,
-                        status: Optional[bool] = None,
-                        start_time: Optional[datetime] = None) -> bool:
-        async for session in get_session():
+                          status: Optional[bool] = None,
+                          start_time: Optional[datetime] = None) -> bool:
+        async with get_session() as session:
             exists: Any = await session.execute(
                 text("SELECT 1 FROM tasks WHERE id = :task_id"),
                 {"task_id": task_id}
@@ -92,7 +90,7 @@ class TaskService:
             if not exists.scalar():
                 return False
 
-            update_fields: Any = {}
+            update_fields: dict = {}
             if task_name is not None:
                 update_fields["task_name"] = task_name
             if status is not None:
@@ -101,7 +99,7 @@ class TaskService:
                 update_fields["start_time"] = start_time
 
             if update_fields:
-                query: Any = text(
+                query = text(
                     f"""
                     UPDATE tasks
                     SET {', '.join(f'{k} = :{k}' for k in update_fields.keys())}
@@ -112,11 +110,10 @@ class TaskService:
                 await session.execute(query, update_fields)
                 await session.commit()
             return True
-        return None
 
     @staticmethod
     async def delete_task(task_id: int) -> bool:
-        async for session in get_session():
+        async with get_session() as session:
             result: Any = await session.execute(
                 text(
                     """
@@ -127,14 +124,13 @@ class TaskService:
                 ),
                 {"task_id": task_id}
             )
-            deleted: Any = result.scalar_one_or_none()
+            deleted = result.scalar_one_or_none()
             await session.commit()
             return deleted is not None
-        return None
 
     @staticmethod
     async def toggle_task_status(task_id: int) -> bool:
-        async for session in get_session():
+        async with get_session() as session:
             result: Any = await session.execute(
                 text(
                     """
@@ -146,7 +142,6 @@ class TaskService:
                 ),
                 {"task_id": task_id}
             )
-            updated: Any = result.scalar_one_or_none()
+            updated = result.scalar_one_or_none()
             await session.commit()
             return updated is not None
-        return None
