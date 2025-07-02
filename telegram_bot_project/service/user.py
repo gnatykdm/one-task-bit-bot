@@ -43,3 +43,13 @@ class UserService:
             await session.commit()
             return result.rowcount == 1
         return None
+
+    @staticmethod
+    async def get_user_language(user_id: int) -> str:
+        async for session in get_session():
+            result = await session.execute(
+                text("SELECT language FROM users WHERE id = :id"),
+                {"id": user_id}
+            )
+            return result.scalar_one_or_none()
+        return None

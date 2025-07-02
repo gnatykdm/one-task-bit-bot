@@ -1,39 +1,52 @@
 from typing import Any
-from aiogram.types import Message
-
-from messages import *
+from aiogram import types
+from messages import MESSAGES
 from service.user import UserService
+from bot.buttons import get_language_keyboard, menu_reply_keyboard
 
 # Start Command Handler
-async def start_command(message: Message)-> None:
-
+async def start_command(message: types.Message):
     user_id: int = message.from_user.id
-    user_name: str = message.from_user.username
+    user_name: str = message.from_user.username or "unknown"
 
     print(f"--[INFO] - User {user_id} ({user_name}) - started the bot")
-    user_find: int = await UserService.get_user_by_id(user_id)
+    user_find = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
     if user_find:
-        await message.answer(START_MSG_AGAIN)
+        await message.answer(MESSAGES[language]["START_MSG"])
+        await message.answer(MESSAGES[language]["MENU_MSG"], reply_markup=menu_reply_keyboard())
     else:
         await UserService.create_user(user_id, user_name)
-        await message.answer(START_MSG)
+        await message.answer(MESSAGES['ENGLISH']['START_MSG'])
+        keyboard = get_language_keyboard()
+        await message.answer(MESSAGES['ENGLISH']['LANGUAGE_ASK'], reply_markup=keyboard)
 
 # Help Command Handler
-async def help_command(message: Message) -> None:
-
+async def help_command(message: types.Message):
     user_id: int = message.from_user.id
-    user_name: str = message.from_user.username
+    user_name: str = message.from_user.username or "unknown"
 
+    language: str = await UserService.get_user_language(user_id)
     print(f"--[INFO] - User {user_id} ({user_name}) - asked for help")
+    await message.answer(MESSAGES[language]["HELP_MSG"])
 
-    await message.answer(HELP_MSG)
+# Language Command Handler
+async def language_command(message: types.Message):
+    user_id: int = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+    if not user_find:
+        await message.answer(MESSAGES[language]['AUTHORIZATION_PROBLEM'])
+    else:
+        keyboard = get_language_keyboard()
+        await message.answer(MESSAGES[language]['LANGUAGE_ASK'], reply_markup=keyboard)
 
 # Menu Command Handler
-async def menu_command(message: Message) -> None:
-
+async def menu_command(message: types.Message):
     user_id: int = message.from_user.id
-    user_name: str = message.from_user.username
-
-    print(f"--[INFO] - User {user_id} ({user_name}) - asked for menu")
-
-    await message.answer(MENU_MSG)
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+    if not user_find:
+        await message.answer(MESSAGES[language]['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['MENU_MSG'], reply_markup=menu_reply_keyboard())
