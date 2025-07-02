@@ -50,3 +50,7 @@ async def menu_command(message: types.Message):
         await message.answer(MESSAGES[language]['AUTHORIZATION_PROBLEM'])
     else:
         await message.answer(MESSAGES[language]['MENU_MSG'], reply_markup=menu_reply_keyboard())
+
+# Idea Command Handler
+async def idea_command(message: types.Message):
+    pass
