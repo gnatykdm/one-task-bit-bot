@@ -12,6 +12,7 @@ MESSAGES: Any = {
         "SETTINGS_RESPONSE": "🔧 Відкриваю налаштування...",
         "MYDAY_RESPONSE": "📅 Ось ваш план на сьогодні...",
         "IDEA_RESPONSE": "💡 Поділіться своєю ідеєю, я все запишу!",
+        "IDEA_SAVED": "💡 Ідея успішно збережена.",
         "ADD_TASK_RESPONSE": "📝 Створюємо нову задачу...",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
@@ -37,6 +38,7 @@ MESSAGES: Any = {
         "SETTINGS_RESPONSE": "🔧 Opening your settings...",
         "MYDAY_RESPONSE": "📅 Here’s your plan for today...",
         "IDEA_RESPONSE": "💡 Tell me your idea, I’ll save it for you!",
+        "IDEA_SAVED": "💡 Idea saved successfully.",
         "ADD_TASK_RESPONSE": "📝 Creating a new task...",
         "LANGUAGE_ASK": (
             "🌐 **Choose your language:**\n"

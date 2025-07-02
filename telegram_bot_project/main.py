@@ -1,13 +1,17 @@
 import asyncio
-from aiogram import Dispatcher, Bot
+from aiogram import Dispatcher, Bot, F
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message, CallbackQuery
 from config import TOKEN
-from bot.commands import start_command, help_command, menu_command, language_command
+from bot.commands import start_command, help_command, menu_command, language_command, idea_command
+from bot.handlers import process_idea_save
 from bot.callbacks import start_callback_language
+from states import DialogStates
 
-dp = Dispatcher(storage=MemoryStorage())
+storage: MemoryStorage = MemoryStorage()
+dp = Dispatcher(storage=storage)
 
 # Command Handlers
 @dp.message(Command("start"))
@@ -26,9 +30,20 @@ async def menu(message: Message):
 async def language(message: Message):
     await language_command(message)
 
-@dp.callback_query(lambda c: c.data in ["lang_ua", "lang_en"])
+@dp.message(Command("idea"))
+async def idea(message: Message, state: FSMContext):
+    await idea_command(message, state)
+
+@dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
     await start_callback_language(callback_query)
+
+@dp.message()
+async def process_idea_fallback(message: Message, state: FSMContext):
+    current_state = await state.get_state()
+    print(f"[DEBUG] Current state: {current_state}")
+    if current_state == DialogStates.waiting_for_idea.state:
+        await process_idea_save(message, state)
 
 # Main Function
 async def main():
