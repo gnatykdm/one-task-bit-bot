@@ -1,20 +1,62 @@
-START_MSG: str = "👋 Hey there!\nI'm 🦝 Rocky — your personal focus assistant.\nReady to configure language?"
-START_MSG_AGAIN: str = "👋 Welcome back, legend.\nRocky missed you. Let’s keep crushing it 💥"
+from typing import Any
 
-HELP_MSG: str = "❓ Need help? Just type \n /add to create a task, \n /idea to save an idea, \n /done to complete your task."
+MESSAGES: Any = {
+    "UKRANIAN": {
+        "START_MSG": "🎉 Ласкаво просимо до бота!\nГотові почати новий продуктивний день?",
+        "START_MSG_AGAIN": "👋 З поверненням, чемпіоне!\nРадий вас бачити знову 😊",
+        "HELP_MSG": "ℹ️ Потрібна допомога?\nВикористовуйте /start, /language або /menu, щоб знайти потрібне 📋",
+        "MENU_MSG": "📋 **Ваше меню:**\nОбирайте дію нижче 👇",
+        "AUTHORIZATION_PROBLEM": "🚫 Упс, ви не авторизовані.\nБудь ласка, спробуйте /start, щоб почати.",
+        "TEXT_RESPONSE": "✉️ Ви написали: \"{response}\".\nДякую за повідомлення! 🙌",
+        "CONTINUE_MSG": "✨ Чим ще можу допомогти?\nСміливо користуйтесь /menu для всіх можливостей 🌟",
+        "SETTINGS_RESPONSE": "🔧 Відкриваю налаштування...",
+        "MYDAY_RESPONSE": "📅 Ось ваш план на сьогодні...",
+        "IDEA_RESPONSE": "💡 Поділіться своєю ідеєю, я все запишу!",
+        "ADD_TASK_RESPONSE": "📝 Створюємо нову задачу...",
+        "LANGUAGE_ASK": (
+            "🌐 **Оберіть мову інтерфейсу:**\n"
+            "Натисніть кнопку нижче, щоб продовжити:"
+        ),
+        "LANGUAGE_OK": (
+            "✅ **Мову оновлено!**\n"
+            "Продовжуємо працювати разом."
+        ),
+        "LANGUAGE_INVALID": (
+            "⚠️ Упс! Це недійсний варіант.\n"
+            "Будь ласка, оберіть мову зі списку."
+        )
+    },
+    "ENGLISH": {
+        "START_MSG": "🎉 Welcome to the bot!\nReady to kick off a productive day?",
+        "START_MSG_AGAIN": "👋 Welcome back, legend!\nHappy to see you again 😊",
+        "HELP_MSG": "ℹ️ Need some help?\nUse /start, /language, or /menu to get around 📋",
+        "MENU_MSG": "📋 **Your menu:**\nPick what you’d like to do 👇",
+        "AUTHORIZATION_PROBLEM": "🚫 Oops! You’re not authorized.\nPlease use /start to begin.",
+        "TEXT_RESPONSE": "✉️ You wrote: \"{response}\".\nThanks for sharing! 🙌",
+        "CONTINUE_MSG": "✨ What else can I help you with?\nUse /menu to explore all options 🌟",
+        "SETTINGS_RESPONSE": "🔧 Opening your settings...",
+        "MYDAY_RESPONSE": "📅 Here’s your plan for today...",
+        "IDEA_RESPONSE": "💡 Tell me your idea, I’ll save it for you!",
+        "ADD_TASK_RESPONSE": "📝 Creating a new task...",
+        "LANGUAGE_ASK": (
+            "🌐 **Choose your language:**\n"
+            "Tap a button below to continue:"
+        ),
+        "LANGUAGE_OK": (
+            "✅ **Language updated!**\n"
+            "Let’s keep moving forward."
+        ),
+        "LANGUAGE_INVALID": (
+            "⚠️ Oops! That’s not a valid option.\n"
+            "Please select a language from the list."
+        )
+    }
+}
 
-MAKE_TASK_MSG: str = "🧠 What's your next focus task?"
-TASK_CREATED_MSG: str = "✅ Got it! Your task has been created."
-TASK_COMPLETED_MSG: str = "🎯 Boom! Task completed. Great job!"
-TASK_DELETED_MSG: str = "🗑️ Task removed from your queue."
-TASK_UPDATED_MSG: str = "🔁 Task updated successfully."
-
-IDEAS_MSG: str = "💡 Here are all your brilliant ideas:"
-CREATE_IDEA_MSG: str = "💬 What's your idea? Type it below:"
-IDEA_CREATED_MSG: str = "✨ Idea saved! Never lose a thought again."
-DELETE_IDEA_MSG: str = "⚠️ Are you sure you want to delete this idea?"
-
-ERROR_MSG: str = "⚠️ Oops! Something went wrong. Try again or send /help."
-
-MENU_MSG = "📋 Your Main Menu:\n\n✅ /add – Create a new task\n💡 /idea – Save an idea\n🎯 /myday – View your day\n🔧 /settings – Settings & preferences\n✨ /help – Need guidance?\n\nRocky is here to help you stay focused! 🦝"
-
+BUTTON_ADD_TASK: str = "➕ Add Task"
+BUTTON_IDEA: str = "💡 Save Idea"
+BUTTON_MYDAY: str = "📅 My Day"
+BUTTON_SETTINGS: str = "⚙️ Settings"
+BUTTON_HELP: str = "❓ Help"
+BUTTON_UA_LANG: str = "🇺🇦 Ukrainian"
+BUTTON_EN_LANG: str = "🇬🇧 English"
