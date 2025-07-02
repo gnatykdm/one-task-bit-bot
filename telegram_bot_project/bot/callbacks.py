@@ -1,13 +1,9 @@
 from typing import Optional
 from aiogram import types
-from aiogram.fsm.state import State, StatesGroup
 
 from bot.buttons import menu_reply_keyboard
 from messages import MESSAGES
 from service.user import UserService
-
-class DialogStates(StatesGroup):
-    waiting_for_response = State()
 
 async def start_callback_language(callback_query: types.CallbackQuery) -> None:
     await callback_query.answer()
