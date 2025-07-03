@@ -17,6 +17,8 @@ MESSAGES: Any = {
         "IDEA_ACTION": "Що бажаєте зробити з цією ідеєю?",
         "IDEA_DELETE": "🗑️ Ідею було видалено.",
         "IDEA_PROBLEM": "⚠️ Виникла проблема із збереженням ідеї. Спробуйте ще раз.",
+        "IDEAS_SHOW": "💡 Усі ваші ідеї: ",
+        "NO_IDEAS": "📝 Ви ще не маєте ідей.",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче, щоб продовжити:"
@@ -46,6 +48,8 @@ MESSAGES: Any = {
         "IDEA_ACTION": "What would you like to do with your idea?",
         "IDEA_DELETE": "🗑️ Idea has been deleted.",
         "IDEA_PROBLEM": "⚠️ There was an issue saving your idea. Please try again.",
+        "IDEAS_SHOW": "💡 Here are your ideas: ",
+        "NO_IDEAS": "📝 You don't have any ideas yet. Be the first to save one!",
         "LANGUAGE_ASK": (
             "🌐 **Please choose your interface language:**\n"
             "Tap a button below to continue:"
