@@ -18,6 +18,7 @@ MESSAGES: Any = {
         "IDEA_DELETE": "🗑️ Ідею було видалено.",
         "IDEA_PROBLEM": "⚠️ Виникла проблема із збереженням ідеї. Спробуйте ще раз.",
         "IDEAS_SHOW": "💡 Усі ваші ідеї: ",
+        "IDEA_EXISTS": "⚠️ Ця ідея вже існує.",
         "NO_IDEAS": "📝 Ви ще не маєте ідей.",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
@@ -49,6 +50,7 @@ MESSAGES: Any = {
         "IDEA_DELETE": "🗑️ Idea has been deleted.",
         "IDEA_PROBLEM": "⚠️ There was an issue saving your idea. Please try again.",
         "IDEAS_SHOW": "💡 Here are your ideas: ",
+        "IDEA_EXISTS": "⚠️ This idea already exists",
         "NO_IDEAS": "📝 You don't have any ideas yet. Be the first to save one!",
         "LANGUAGE_ASK": (
             "🌐 **Please choose your interface language:**\n"
@@ -74,3 +76,5 @@ BUTTON_UA_LANG: str = "🇺🇦 Ukrainian"
 BUTTON_EN_LANG: str = "🇬🇧 English"
 DEL_BUTTON: str = "🗑️ Delete"
 SAVE_BUTTON: str = "💾 Save"
+MENU_BUTTON: str = "Menu"
+ALL_IDEAS: str = "All ideas"

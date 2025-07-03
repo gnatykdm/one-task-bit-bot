@@ -6,7 +6,7 @@ from bot.utills import format_date
 from messages import MESSAGES
 from service.idea import IdeaService
 from service.user import UserService
-from bot.buttons import get_language_keyboard, menu_reply_keyboard
+from bot.buttons import get_language_keyboard, menu_reply_keyboard, idea_reply_keyboard
 from states import DialogStates
 
 # Start Command Handler
@@ -88,8 +88,8 @@ async def ideas_command(message: types.Message):
             dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['IDEAS_SHOW']) * 1.65))
 
             formatted_ideas = MESSAGES[language]['IDEAS_SHOW'] + dividers + "\n" + "\n".join(
-                f"# {num}. {idea['idea_name']}\n[{format_date(idea['creation_date'])}]"
+                f"# {num}. {idea['idea_name']}\n\n  - 📅 - [{format_date(idea['creation_date'])}]\n"
                 for num, idea in enumerate(ideas, start=1)
             )
 
-            await message.answer(formatted_ideas, reply_markup=menu_reply_keyboard())
+            await message.answer(formatted_ideas, reply_markup=idea_reply_keyboard())
