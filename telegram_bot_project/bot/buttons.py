@@ -17,17 +17,17 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
 def menu_reply_keyboard() -> ReplyKeyboardMarkup:
-    reply_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
+    menu_reply_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
 
     button_settings = KeyboardButton(text=BUTTON_SETTINGS)
     button_idea = KeyboardButton(text=BUTTON_IDEA)
     button_day = KeyboardButton(text=BUTTON_MYDAY)
     button_task = KeyboardButton(text=BUTTON_ADD_TASK)
 
-    reply_keyboard.keyboard.append([button_settings, button_idea])
-    reply_keyboard.keyboard.append([button_day, button_task])
+    menu_reply_keyboard.keyboard.append([button_settings, button_idea])
+    menu_reply_keyboard.keyboard.append([button_day, button_task])
 
-    return reply_keyboard
+    return menu_reply_keyboard
 
 def get_idea_conf_keyboard() -> InlineKeyboardMarkup:
     inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
@@ -37,3 +37,16 @@ def get_idea_conf_keyboard() -> InlineKeyboardMarkup:
 
     inline_markup.inline_keyboard.append([delete_button, save_button])
     return inline_markup
+
+def idea_reply_keyboard() -> ReplyKeyboardMarkup:
+    idea_reply_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
+
+    button_menu = KeyboardButton(text=MENU_BUTTON)
+    button_delete = KeyboardButton(text=DEL_BUTTON)
+    button_add = KeyboardButton(text=BUTTON_IDEA)
+    button_all_ideas = KeyboardButton(text=ALL_IDEAS)
+
+    idea_reply_keyboard.keyboard.append([button_delete, button_add])
+    idea_reply_keyboard.keyboard.append([button_menu, button_all_ideas])
+
+    return idea_reply_keyboard

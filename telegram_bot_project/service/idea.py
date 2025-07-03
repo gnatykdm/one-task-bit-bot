@@ -1,4 +1,5 @@
 from sqlalchemy import text
+from typing import Optional
 from config import get_session
 
 class IdeaService:
@@ -16,6 +17,22 @@ class IdeaService:
             })
             await session.commit()
             return result.scalar()
+
+    @staticmethod
+    async def get_by_idea_name(idea_name: str) -> Optional[int]:
+        async with get_session() as session:
+            query = text(
+                """
+                SELECT id
+                FROM ideas
+                WHERE idea_name = :idea_name
+                """
+            )
+
+            result = await session.execute(query, {"idea_name": idea_name})
+            row = result.first()
+
+            return row[0] if row else None
 
     @staticmethod
     async def update_user_idea(idea_id: int, new_name: str) -> None:

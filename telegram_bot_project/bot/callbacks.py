@@ -2,7 +2,7 @@ from typing import Optional, Any
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 
-from bot.buttons import menu_reply_keyboard
+from bot.buttons import menu_reply_keyboard, idea_reply_keyboard
 from messages import MESSAGES
 from service.idea import IdeaService
 from service.user import UserService
@@ -53,7 +53,7 @@ async def callback_idea_process(callback_query: types.CallbackQuery, state: FSMC
     match callback_query.data:
         case "delete_idea":
             print(f"--[INFO] - User {user_id} ({user_name}) deleted idea.")
-            await callback_query.message.answer(MESSAGES[language]["IDEA_DELETE"], reply_markup=menu_reply_keyboard())
+            await callback_query.message.answer(MESSAGES[language]["IDEA_DELETE"], reply_markup=idea_reply_keyboard())
             await state.clear()
         case "save_idea":
             try:
@@ -62,16 +62,16 @@ async def callback_idea_process(callback_query: types.CallbackQuery, state: FSMC
 
                 if not idea:
                     print(f"--[INFO] - User {user_id} ({user_name}) sent empty idea.")
-                    await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"], reply_markup=menu_reply_keyboard())
+                    await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"], reply_markup=idea_reply_keyboard())
                     return
                 else:
                     await IdeaService.create_user_idea(user_id, idea)
 
                     print(f"--[INFO] - User {user_id} ({user_name}) saved idea: {idea}")
-                    await callback_query.message.answer(MESSAGES[language]["IDEA_SAVED"], reply_markup=menu_reply_keyboard())
+                    await callback_query.message.answer(MESSAGES[language]["IDEA_SAVED"], reply_markup=idea_reply_keyboard())
                     await state.clear()
             except Exception as e:
                 await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"])
         case _:
             print(f"--[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
-            await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"], reply_markup=menu_reply_keyboard())
+            await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"], reply_markup=idea_reply_keyboard())
