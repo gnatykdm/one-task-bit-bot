@@ -5,9 +5,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message, CallbackQuery
 from config import TOKEN
-from bot.commands import start_command, help_command, menu_command, language_command, idea_command
+from bot.commands import *
 from bot.handlers import process_idea_save
 from bot.callbacks import start_callback_language, callback_idea_process
+from messages import BUTTON_IDEA
 from states import DialogStates
 
 storage: MemoryStorage = MemoryStorage()
@@ -33,6 +34,10 @@ async def language(message: Message):
 @dp.message(Command("idea"))
 async def idea(message: Message, state: FSMContext):
     await idea_command(message, state)
+
+@dp.message(Command("ideas"))
+async def ideas(message: Message):
+    await ideas_command(message)
 
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
