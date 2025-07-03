@@ -28,3 +28,12 @@ def menu_reply_keyboard() -> ReplyKeyboardMarkup:
     reply_keyboard.keyboard.append([button_day, button_task])
 
     return reply_keyboard
+
+def get_idea_conf_keyboard() -> InlineKeyboardMarkup:
+    inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
+
+    delete_button: InlineKeyboardButton = InlineKeyboardButton(text=DEL_BUTTON, callback_data="delete_idea")
+    save_button: InlineKeyboardButton = InlineKeyboardButton(text=SAVE_BUTTON, callback_data="save_idea")
+
+    inline_markup.inline_keyboard.append([delete_button, save_button])
+    return inline_markup

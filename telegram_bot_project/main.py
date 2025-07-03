@@ -7,7 +7,7 @@ from aiogram.types import Message, CallbackQuery
 from config import TOKEN
 from bot.commands import start_command, help_command, menu_command, language_command, idea_command
 from bot.handlers import process_idea_save
-from bot.callbacks import start_callback_language
+from bot.callbacks import start_callback_language, callback_idea_process
 from states import DialogStates
 
 storage: MemoryStorage = MemoryStorage()
@@ -37,6 +37,10 @@ async def idea(message: Message, state: FSMContext):
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
     await start_callback_language(callback_query)
+
+@dp.callback_query(F.data.in_({"delete_idea", "save_idea"}))
+async def callback_idea(callback_query: CallbackQuery, state: FSMContext):
+    await callback_idea_process(callback_query, state)
 
 @dp.message()
 async def process_idea_fallback(message: Message, state: FSMContext):
