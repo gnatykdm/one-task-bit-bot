@@ -46,6 +46,10 @@ async def ideas(message: Message):
 async def delete_idea(message: Message, state: FSMContext):
     await delete_idea_command(message, state)
 
+@dp.message(Command("task"))
+async def task(message: Message):
+    pass
+
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
     await start_callback_language(callback_query)
