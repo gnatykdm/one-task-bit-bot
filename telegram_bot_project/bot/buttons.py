@@ -41,11 +41,13 @@ def idea_reply_keyboard() -> ReplyKeyboardMarkup:
     idea_reply_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
 
     button_menu = KeyboardButton(text=MENU_BUTTON)
+    button_update = KeyboardButton(text=UPDATE_IDEA_BUTTON)
     button_delete = KeyboardButton(text=DEL_IDEA_BUTTON)
     button_add = KeyboardButton(text=BUTTON_IDEA)
     button_all_ideas = KeyboardButton(text=ALL_IDEAS)
 
     idea_reply_keyboard.keyboard.append([button_delete, button_add])
-    idea_reply_keyboard.keyboard.append([button_menu, button_all_ideas])
+    idea_reply_keyboard.keyboard.append([button_update, button_all_ideas])
+    idea_reply_keyboard.keyboard.append([button_menu])
 
     return idea_reply_keyboard

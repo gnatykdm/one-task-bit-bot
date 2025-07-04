@@ -19,11 +19,15 @@ MESSAGES: Any = {
         "IDEA_PROBLEM": "⚠️ Виникла проблема із збереженням ідеї. Спробуйте ще раз.",
         "IDEAS_SHOW": "💡 Усі ваші ідеї: ",
         "IDEA_EXISTS": "⚠️ Ця ідея вже існує.",
+        "ERROR_SAVING_IDEA": "⚠️ Проблема із збереженням ідеї. Спробуйте ще раз.",
         "NO_IDEAS": "📝 Ви ще не маєте ідей.",
         "DELETE_IDEA": "ℹ️ Вкажіть номер ідеї, яку хочете видалити",
+        "UPDATE_IDEA": "ℹ️ Вкажіть номер ідеї, яку хочете обновити",
         "NOT_VALID_IDEA_NUM": "❌ Будь ласка, введіть дійсний номер.",
         "INVALID_IDEA_NUM": "❌ Неправильний номер. Спробуйте ще раз.",
         "IDEA_DELETED": "🗑️ Ідею №{} '{}' було видалено.",
+        "ASK_NEW_IDEA_TEXT": "✏️ Введіть новий текст для ідеї №{} '{}'.",
+        "IDEA_UPDATED": "✅ Ідею №{} успішно оновлено.",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче, щоб продовжити:"
@@ -55,11 +59,15 @@ MESSAGES: Any = {
         "IDEA_PROBLEM": "⚠️ There was an issue saving your idea. Please try again.",
         "IDEAS_SHOW": "💡 Here are your ideas: ",
         "IDEA_EXISTS": "⚠️ This idea already exists",
+        "ERROR_SAVING_IDEA": "⚠️ Error saving the idea. Please try again later.",
         "DELETE_IDEA": "ℹ️ Enter the idea number you want to delete",
+        "UPDATE_IDEA": "ℹ️ Enter the idea number you want to update",
         "NOT_VALID_IDEA_NUM": "❌ Please enter a valid number.",
         "INVALID_IDEA_NUM": "❌ Invalid number. Please try again.",
         "NO_IDEAS": "📝 You don't have any ideas yet. Be the first to save one!",
         "IDEA_DELETED": "🗑️ Idea #{} '{}' has been deleted.",
+        "ASK_NEW_IDEA_TEXT": "✏️ Please enter the new text for idea #{} '{}'.",
+        "IDEA_UPDATED": "✅ Idea №{} updated successfully.",
         "LANGUAGE_ASK": (
             "🌐 **Please choose your interface language:**\n"
             "Tap a button below to continue:"
@@ -75,15 +83,16 @@ MESSAGES: Any = {
     }
 }
 
-BUTTON_ADD_TASK: str = "➕ New Task"
+BUTTON_ADD_TASK: str = "📝 Create Task"
 BUTTON_IDEA: str = "💡 Save Idea"
 BUTTON_MYDAY: str = "📅 My Day"
 BUTTON_SETTINGS: str = "⚙️ Settings"
 BUTTON_HELP: str = "❓ Help"
 BUTTON_UA_LANG: str = "🌻 Українська"
 BUTTON_EN_LANG: str = "🇬🇧 English"
-DEL_BUTTON: str = "🗑️ Delete Idea"
-DEL_IDEA_BUTTON: str = "🗑️ Delete"
-SAVE_BUTTON: str = "💾 Save"
-MENU_BUTTON: str = "📂 Menu"
-ALL_IDEAS: str = "📝 All Ideas"
+DEL_BUTTON: str = "🗑️ Remove Idea"
+DEL_IDEA_BUTTON: str = "🗑️ Delete Idea"
+SAVE_BUTTON: str = "✅ Save"
+MENU_BUTTON: str = "📂 Main Menu"
+UPDATE_IDEA_BUTTON: str = "✏️ Update Idea"
+ALL_IDEAS: str = "📋 View All Ideas"
