@@ -20,6 +20,10 @@ MESSAGES: Any = {
         "IDEAS_SHOW": "💡 Усі ваші ідеї: ",
         "IDEA_EXISTS": "⚠️ Ця ідея вже існує.",
         "NO_IDEAS": "📝 Ви ще не маєте ідей.",
+        "DELETE_IDEA": "ℹ️ Вкажіть номер ідеї, яку хочете видалити",
+        "NOT_VALID_IDEA_NUM": "❌ Будь ласка, введіть дійсний номер.",
+        "INVALID_IDEA_NUM": "❌ Неправильний номер. Спробуйте ще раз.",
+        "IDEA_DELETED": "🗑️ Ідею №{} '{}' було видалено.",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче, щоб продовжити:"
@@ -51,7 +55,11 @@ MESSAGES: Any = {
         "IDEA_PROBLEM": "⚠️ There was an issue saving your idea. Please try again.",
         "IDEAS_SHOW": "💡 Here are your ideas: ",
         "IDEA_EXISTS": "⚠️ This idea already exists",
+        "DELETE_IDEA": "ℹ️ Enter the idea number you want to delete",
+        "NOT_VALID_IDEA_NUM": "❌ Please enter a valid number.",
+        "INVALID_IDEA_NUM": "❌ Invalid number. Please try again.",
         "NO_IDEAS": "📝 You don't have any ideas yet. Be the first to save one!",
+        "IDEA_DELETED": "🗑️ Idea #{} '{}' has been deleted.",
         "LANGUAGE_ASK": (
             "🌐 **Please choose your interface language:**\n"
             "Tap a button below to continue:"
@@ -67,14 +75,15 @@ MESSAGES: Any = {
     }
 }
 
-BUTTON_ADD_TASK: str = "➕ Add Task"
+BUTTON_ADD_TASK: str = "➕ New Task"
 BUTTON_IDEA: str = "💡 Save Idea"
 BUTTON_MYDAY: str = "📅 My Day"
 BUTTON_SETTINGS: str = "⚙️ Settings"
 BUTTON_HELP: str = "❓ Help"
-BUTTON_UA_LANG: str = "🇺🇦 Ukrainian"
+BUTTON_UA_LANG: str = "🌻 Українська"
 BUTTON_EN_LANG: str = "🇬🇧 English"
-DEL_BUTTON: str = "🗑️ Delete"
+DEL_BUTTON: str = "🗑️ Delete Idea"
+DEL_IDEA_BUTTON: str = "🗑️ Delete"
 SAVE_BUTTON: str = "💾 Save"
-MENU_BUTTON: str = "Menu"
-ALL_IDEAS: str = "All ideas"
+MENU_BUTTON: str = "📂 Menu"
+ALL_IDEAS: str = "📝 All Ideas"

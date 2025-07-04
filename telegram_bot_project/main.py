@@ -6,9 +6,9 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message, CallbackQuery
 from config import TOKEN
 from bot.commands import *
-from bot.handlers import process_idea_save
+from bot.handlers import process_idea_save, process_idea_delete
 from bot.callbacks import start_callback_language, callback_idea_process
-from messages import BUTTON_IDEA
+from messages import *
 from states import DialogStates
 
 storage: MemoryStorage = MemoryStorage()
@@ -24,6 +24,7 @@ async def help(message: Message):
     await help_command(message)
 
 @dp.message(Command("menu"))
+@dp.message(lambda m: m.text == MENU_BUTTON)
 async def menu(message: Message):
     await menu_command(message)
 
@@ -32,12 +33,18 @@ async def language(message: Message):
     await language_command(message)
 
 @dp.message(Command("idea"))
+@dp.message(lambda m: m.text == BUTTON_IDEA)
 async def idea(message: Message, state: FSMContext):
     await idea_command(message, state)
 
 @dp.message(Command("ideas"))
+@dp.message(lambda m: m.text == ALL_IDEAS)
 async def ideas(message: Message):
     await ideas_command(message)
+
+@dp.message(lambda m: m.text == DEL_IDEA_BUTTON)
+async def delete_idea(message: Message, state: FSMContext):
+    await delete_idea_command(message, state)
 
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
@@ -53,7 +60,8 @@ async def process_idea_fallback(message: Message, state: FSMContext):
     print(f"[DEBUG] Current state: {current_state}")
     if current_state == DialogStates.waiting_for_idea.state:
         await process_idea_save(message, state)
-
+    elif current_state == DialogStates.delete_idea.state:
+        await process_idea_delete(message, state)
 # Main Function
 async def main():
     bot = Bot(token=TOKEN)
