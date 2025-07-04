@@ -93,3 +93,15 @@ async def ideas_command(message: types.Message):
             )
 
             await message.answer(formatted_ideas, reply_markup=idea_reply_keyboard())
+
+# Delete Idea Handler
+async def delete_idea_command(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['DELETE_IDEA'])
+        await state.set_state(DialogStates.delete_idea)

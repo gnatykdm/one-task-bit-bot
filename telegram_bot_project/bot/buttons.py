@@ -1,7 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from messages import *
 
-
 def get_language_keyboard() -> InlineKeyboardMarkup:
     inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
 
@@ -42,7 +41,7 @@ def idea_reply_keyboard() -> ReplyKeyboardMarkup:
     idea_reply_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
 
     button_menu = KeyboardButton(text=MENU_BUTTON)
-    button_delete = KeyboardButton(text=DEL_BUTTON)
+    button_delete = KeyboardButton(text=DEL_IDEA_BUTTON)
     button_add = KeyboardButton(text=BUTTON_IDEA)
     button_all_ideas = KeyboardButton(text=ALL_IDEAS)
 
