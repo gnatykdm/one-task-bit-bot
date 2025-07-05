@@ -1,9 +1,10 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from bot.buttons import get_idea_conf_keyboard, menu_reply_keyboard, idea_reply_keyboard
+from bot.buttons import get_idea_conf_keyboard, menu_reply_keyboard, idea_reply_keyboard, task_reply_keyboard
 from messages import MESSAGES
 from service.idea import IdeaService
+from service.task import TaskService
 from service.user import UserService
 from states import DialogStates
 
@@ -146,3 +147,46 @@ async def process_save_updated_idea_text(message: Message, state: FSMContext):
         )
 
     await state.clear()
+
+async def process_task_save(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+    else:
+        task = message.text.strip()
+        print(f"--[INFO] User with id: {user_id} provided task: {task}")
+
+        await message.answer(MESSAGES[language]['TASK_DEADLINE_ASK'], reply_markup=task_reply_keyboard())
+        await state.update_data(task=task)
+
+from datetime import datetime
+
+async def process_task_deadline(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    data = await state.get_data()
+    task = data.get("task")
+
+    deadline_str = message.text.strip()
+
+    try:
+        time_obj = datetime.strptime(deadline_str, "%H:%M").time()
+        deadline_dt = datetime.combine(datetime.now().date(), time_obj)
+
+        print(f"--[INFO] User with id: {user_id} provided deadline: {deadline_dt}")
+
+        await TaskService.create_task(user_id, task, False, deadline_dt)
+        await message.answer(MESSAGES[language]['TASK_SAVED'], reply_markup=menu_reply_keyboard())
+        await state.clear()
+
+    except ValueError:
+        await message.answer(MESSAGES[language]['TASK_DEADLINE_INVALID'])
