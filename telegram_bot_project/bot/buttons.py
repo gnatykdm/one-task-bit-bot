@@ -51,3 +51,12 @@ def idea_reply_keyboard() -> ReplyKeyboardMarkup:
     idea_reply_keyboard.keyboard.append([button_menu])
 
     return idea_reply_keyboard
+
+def task_reply_keyboard() -> InlineKeyboardMarkup:
+    inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
+
+    button_yes: InlineKeyboardButton = InlineKeyboardButton(text=BUTTON_YES, callback_data="yes_task")
+    button_no: InlineKeyboardButton = InlineKeyboardButton(text=BUTTON_NO, callback_data="no_task")
+
+    inline_markup.inline_keyboard.append([button_yes, button_no])
+    return inline_markup

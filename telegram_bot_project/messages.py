@@ -28,6 +28,12 @@ MESSAGES: Any = {
         "IDEA_DELETED": "🗑️ Ідею №{} '{}' було видалено.",
         "ASK_NEW_IDEA_TEXT": "✏️ Введіть новий текст для ідеї №{} '{}'.",
         "IDEA_UPDATED": "✅ Ідею №{} успішно оновлено.",
+        "TASK_ADD": "Вкажіть назву завдання та натисніть кнопку нижче, щоб продовжити",
+        "TASK_DEADLINE_ASK": "Це завдання має крайній термін?",
+        "TASK_DEADLINE_YES": "Будьласка введіть годину (дедлайн) для задачі.\nПриклад: 13:10",
+        "TASK_DEADLINE_NO": "Гаразд, без крайнього терміну. Ваше завдання збережено.",
+        "TASK_DEADLINE_INVALID": "Недійсний термін. Будь ласка, спробуйте ще раз.",
+        "TASK_SAVED": "Задачу збережено.",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче, щоб продовжити:"
@@ -68,6 +74,12 @@ MESSAGES: Any = {
         "IDEA_DELETED": "🗑️ Idea #{} '{}' has been deleted.",
         "ASK_NEW_IDEA_TEXT": "✏️ Please enter the new text for idea #{} '{}'.",
         "IDEA_UPDATED": "✅ Idea №{} updated successfully.",
+        "TASK_ADD": "Provide a task name and press the button below to continue",
+        "TASK_DEADLINE_ASK": "This task have a deadline?",
+        "TASK_DEADLINE_YES": "Please enter the time (deadline) for the task.\nExample: 13:10",
+        "TASK_DEADLINE_NO": "Ok, no deadline. Your task saved.",
+        "TASK_DEADLINE_INVALID": "Invalid deadline. Please try again.",
+        "TASK_SAVED": "Task saved successfully.",
         "LANGUAGE_ASK": (
             "🌐 **Please choose your interface language:**\n"
             "Tap a button below to continue:"
@@ -96,3 +108,5 @@ SAVE_BUTTON: str = "✅ Save"
 MENU_BUTTON: str = "📂 Main Menu"
 UPDATE_IDEA_BUTTON: str = "✏️ Update Idea"
 ALL_IDEAS: str = "📋 View All Ideas"
+BUTTON_YES: str = "Yes"
+BUTTON_NO: str = "No"

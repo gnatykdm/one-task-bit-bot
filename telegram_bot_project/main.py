@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery
 from config import TOKEN
 from bot.commands import *
 from bot.handlers import *
-from bot.callbacks import start_callback_language, callback_idea_process
+from bot.callbacks import start_callback_language, callback_idea_process, callback_task_deadline
 from messages import *
 from states import DialogStates
 
@@ -50,8 +50,8 @@ async def update_idea(message: Message, state: FSMContext):
     await update_idea_command(message, state)
 
 @dp.message(Command("task"))
-async def task(message: Message):
-    pass
+async def task(message: Message, state: FSMContext):
+    await task_command(message, state)
 
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
@@ -60,6 +60,10 @@ async def callback_language(callback_query: CallbackQuery):
 @dp.callback_query(F.data.in_({"delete_idea", "save_idea"}))
 async def callback_idea(callback_query: CallbackQuery, state: FSMContext):
     await callback_idea_process(callback_query, state)
+
+@dp.callback_query(F.data.in_({"yes_task", "no_task"}))
+async def callback_idea(callback_query: CallbackQuery, state: FSMContext):
+    await callback_task_deadline(callback_query, state)
 
 @dp.message()
 async def process_fallback(message: Message, state: FSMContext):
@@ -73,6 +77,10 @@ async def process_fallback(message: Message, state: FSMContext):
         await process_idea_update(message, state)
     elif current_state == DialogStates.waiting_for_update_text:
         await process_save_updated_idea_text(message, state)
+    elif current_state == DialogStates.confirm_task:
+        await process_task_save(message, state)
+    elif current_state == DialogStates.task_deadline:
+        await process_task_deadline(message, state)
 
 # Main Function
 async def main():

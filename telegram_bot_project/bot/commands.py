@@ -118,3 +118,16 @@ async def update_idea_command(message: types.Message, state: FSMContext):
         await message.answer(MESSAGES[language]['UPDATE_IDEA'])
         await state.set_state(DialogStates.update_idea)
 
+# Create Task Handler
+async def task_command(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        print(f"--[INFO] - User with id: {user_id} - opened /task.")
+
+        await message.answer(MESSAGES[language]['TASK_ADD'])
+        await state.set_state(DialogStates.confirm_task)
