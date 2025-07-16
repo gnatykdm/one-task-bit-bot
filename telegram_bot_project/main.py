@@ -2,12 +2,42 @@ import asyncio
 from aiogram import Dispatcher, Bot, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
+from aiogram.fsm.context import FSMContext
+from bot.callbacks import (
+    start_callback_language,
+    callback_idea_process,
+    callback_task_deadline
+)
+from bot.commands import (
+    start_command,
+    help_command,
+    menu_command,
+    language_command,
+    idea_command,
+    ideas_command,
+    delete_idea_command,
+    update_idea_command,
+    task_command,
+    task_menu_command
+)
+from bot.handlers import (
+    process_idea_save,
+    process_idea_delete,
+    process_idea_update,
+    process_save_updated_idea_text,
+    process_task_save,
+    process_task_deadline
+)
 from config import TOKEN
-from bot.commands import *
-from bot.handlers import *
-from bot.callbacks import start_callback_language, callback_idea_process, callback_task_deadline
-from messages import *
+from messages import (
+    MENU_BUTTON,
+    BUTTON_IDEA,
+    ALL_IDEAS,
+    DEL_IDEA_BUTTON,
+    UPDATE_IDEA_BUTTON,
+    BUTTON_ADD_TASK
+)
 from states import DialogStates
 
 storage: MemoryStorage = MemoryStorage()
@@ -56,6 +86,10 @@ async def task(message: Message, state: FSMContext):
 @dp.message(lambda m: m.text == BUTTON_ADD_TASK)
 async def add_task(message: Message, state: FSMContext):
     await task_command(message, state)
+
+@dp.message(Command("/taskmenu"))
+async def task_menu(message: Message):
+    await task_menu_command(message)
 
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
