@@ -53,6 +53,10 @@ async def update_idea(message: Message, state: FSMContext):
 async def task(message: Message, state: FSMContext):
     await task_command(message, state)
 
+@dp.message(lambda m: m.text == BUTTON_ADD_TASK)
+async def add_task(message: Message, state: FSMContext):
+    await task_command(message, state)
+
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
     await start_callback_language(callback_query)

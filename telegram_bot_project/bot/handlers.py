@@ -1,7 +1,7 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from bot.buttons import get_idea_conf_keyboard, menu_reply_keyboard, idea_reply_keyboard, task_reply_keyboard
+from bot.buttons import get_idea_conf_keyboard, menu_reply_keyboard, idea_reply_keyboard, task_reply_keyboard, task_menu_keyboard
 from messages import MESSAGES
 from service.idea import IdeaService
 from service.task import TaskService
@@ -185,7 +185,7 @@ async def process_task_deadline(message: Message, state: FSMContext):
         print(f"--[INFO] User with id: {user_id} provided deadline: {deadline_dt}")
 
         await TaskService.create_task(user_id, task, False, deadline_dt)
-        await message.answer(MESSAGES[language]['TASK_SAVED'], reply_markup=menu_reply_keyboard())
+        await message.answer(MESSAGES[language]['TASK_SAVED'], reply_markup=task_menu_keyboard())
         await state.clear()
 
     except ValueError:

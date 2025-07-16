@@ -2,7 +2,7 @@ from typing import Optional, Any
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 
-from bot.buttons import menu_reply_keyboard, idea_reply_keyboard
+from bot.buttons import menu_reply_keyboard, idea_reply_keyboard, task_menu_keyboard
 from messages import MESSAGES
 from service.idea import IdeaService
 from service.task import TaskService
@@ -102,7 +102,7 @@ async def callback_task_deadline(callback_query: types.CallbackQuery, state: FSM
             print(f"--[INFO] - User {user_id} ({user_name}) saved task: {saved_task}")
 
             await TaskService.create_task(user_id, saved_task, False)
-            await callback_query.message.answer(MESSAGES[language]["TASK_DEADLINE_NO"], reply_markup=menu_reply_keyboard())
+            await callback_query.message.answer(MESSAGES[language]["TASK_DEADLINE_NO"], reply_markup=task_menu_keyboard())
             await state.clear()
         case _:
             print(f"--[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
