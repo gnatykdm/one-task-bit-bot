@@ -34,6 +34,7 @@ MESSAGES: Any = {
         "TASK_DEADLINE_NO": "Гаразд, без крайнього терміну. Ваше завдання збережено.",
         "TASK_DEADLINE_INVALID": "Недійсний термін. Будь ласка, спробуйте ще раз.",
         "TASK_SAVED": "Задачу збережено.",
+        "TASK_MENU": "Меню задач",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче, щоб продовжити:"
@@ -80,6 +81,7 @@ MESSAGES: Any = {
         "TASK_DEADLINE_NO": "Ok, no deadline. Your task saved.",
         "TASK_DEADLINE_INVALID": "Invalid deadline. Please try again.",
         "TASK_SAVED": "Task saved successfully.",
+        "TASK_MENU": "Task menu",
         "LANGUAGE_ASK": (
             "🌐 **Please choose your interface language:**\n"
             "Tap a button below to continue:"

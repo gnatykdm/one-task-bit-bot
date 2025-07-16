@@ -6,7 +6,7 @@ from bot.utills import format_date
 from messages import MESSAGES
 from service.idea import IdeaService
 from service.user import UserService
-from bot.buttons import get_language_keyboard, menu_reply_keyboard, idea_reply_keyboard
+from bot.buttons import get_language_keyboard, menu_reply_keyboard, idea_reply_keyboard, task_menu_keyboard
 from states import DialogStates
 
 # Start Command Handler
@@ -131,3 +131,14 @@ async def task_command(message: types.Message, state: FSMContext):
 
         await message.answer(MESSAGES[language]['TASK_ADD'])
         await state.set_state(DialogStates.confirm_task)
+
+# Open task menu handler
+async def task_menu_command(message: types.Message):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['TASK_MENU'], reply_markup=task_menu_keyboard())
