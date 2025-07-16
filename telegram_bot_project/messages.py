@@ -110,3 +110,9 @@ UPDATE_IDEA_BUTTON: str = "✏️ Update Idea"
 ALL_IDEAS: str = "📋 View All Ideas"
 BUTTON_YES: str = "Yes"
 BUTTON_NO: str = "No"
+BUTTON_DELETE_TASK = "Delete Task"
+BUTTON_EDIT_TASK = "Edit Task"
+BUTTON_TOGGLE_STATUS = "Complete"
+BUTTON_ALL_TASKS = "All tasks"
+
+

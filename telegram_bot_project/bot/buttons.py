@@ -60,3 +60,18 @@ def task_reply_keyboard() -> InlineKeyboardMarkup:
 
     inline_markup.inline_keyboard.append([button_yes, button_no])
     return inline_markup
+
+def task_menu_keyboard() -> ReplyKeyboardMarkup:
+    task_menu_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
+
+    button_menu = KeyboardButton(text=MENU_BUTTON)
+    button_add = KeyboardButton(text=BUTTON_ADD_TASK)
+    button_status = KeyboardButton(text=BUTTON_TOGGLE_STATUS)
+    button_delete = KeyboardButton(text=BUTTON_DELETE_TASK)
+    button_update = KeyboardButton(text=BUTTON_EDIT_TASK)
+
+    task_menu_keyboard.keyboard.append([button_add, button_status])
+    task_menu_keyboard.keyboard.append([button_delete, button_update])
+    task_menu_keyboard.keyboard.append([button_menu])
+
+    return task_menu_keyboard
