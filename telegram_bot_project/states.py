@@ -9,3 +9,4 @@ class DialogStates(StatesGroup):
     confirm_task = State()
     task_deadline = State()
     delete_task = State()
+    complete_task = State()

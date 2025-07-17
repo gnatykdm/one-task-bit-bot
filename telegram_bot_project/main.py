@@ -70,6 +70,14 @@ async def task_menu(message: Message):
 async def show_tasks(message: Message):
     await tasks_show_command(message)
 
+@dp.message(Command("complete"))
+async def complete_task(message: Message, state: FSMContext):
+    await complete_task_command(message, state)
+
+@dp.message(lambda m: m.text == BUTTON_TOGGLE_STATUS)
+async def toggle_task_status(message: Message, state: FSMContext):
+    await complete_task_command(message, state)
+
 @dp.message(lambda m: m.text == BUTTON_ALL_TASKS)
 async def show_all_tasks(message: Message):
     await tasks_show_command(message)
@@ -112,6 +120,8 @@ async def process_fallback(message: Message, state: FSMContext):
         await process_task_deadline(message, state)
     elif current_state == DialogStates.delete_task:
         await process_task_delete(message, state)
+    elif current_state == DialogStates.complete_task:
+        await process_task_complete(message, state)
 
 # Main Function
 async def main():
