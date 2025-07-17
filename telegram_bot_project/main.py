@@ -19,7 +19,8 @@ from bot.commands import (
     delete_idea_command,
     update_idea_command,
     task_command,
-    task_menu_command
+    task_menu_command,
+    tasks_show_command
 )
 from bot.handlers import (
     process_idea_save,
@@ -30,14 +31,7 @@ from bot.handlers import (
     process_task_deadline
 )
 from config import TOKEN
-from messages import (
-    MENU_BUTTON,
-    BUTTON_IDEA,
-    ALL_IDEAS,
-    DEL_IDEA_BUTTON,
-    UPDATE_IDEA_BUTTON,
-    BUTTON_ADD_TASK
-)
+from messages import *
 from states import DialogStates
 
 storage: MemoryStorage = MemoryStorage()
@@ -87,9 +81,17 @@ async def task(message: Message, state: FSMContext):
 async def add_task(message: Message, state: FSMContext):
     await task_command(message, state)
 
-@dp.message(Command("/taskmenu"))
+@dp.message(Command("taskmenu"))
 async def task_menu(message: Message):
     await task_menu_command(message)
+
+@dp.message(Command("tasks"))
+async def show_tasks(message: Message):
+    await tasks_show_command(message)
+
+@dp.message(lambda m: m.text == BUTTON_ALL_TASKS)
+async def show_all_tasks(message: Message):
+    await tasks_show_command(message)
 
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):

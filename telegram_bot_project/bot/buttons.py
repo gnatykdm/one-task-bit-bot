@@ -69,9 +69,10 @@ def task_menu_keyboard() -> ReplyKeyboardMarkup:
     button_status = KeyboardButton(text=BUTTON_TOGGLE_STATUS)
     button_delete = KeyboardButton(text=BUTTON_DELETE_TASK)
     button_update = KeyboardButton(text=BUTTON_EDIT_TASK)
+    button_all_tasks = KeyboardButton(text=BUTTON_ALL_TASKS)
 
     task_menu_keyboard.keyboard.append([button_add, button_status])
     task_menu_keyboard.keyboard.append([button_delete, button_update])
-    task_menu_keyboard.keyboard.append([button_menu])
+    task_menu_keyboard.keyboard.append([button_menu, button_all_tasks])
 
     return task_menu_keyboard
