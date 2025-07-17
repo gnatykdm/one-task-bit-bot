@@ -9,27 +9,8 @@ from bot.callbacks import (
     callback_idea_process,
     callback_task_deadline
 )
-from bot.commands import (
-    start_command,
-    help_command,
-    menu_command,
-    language_command,
-    idea_command,
-    ideas_command,
-    delete_idea_command,
-    update_idea_command,
-    task_command,
-    task_menu_command,
-    tasks_show_command
-)
-from bot.handlers import (
-    process_idea_save,
-    process_idea_delete,
-    process_idea_update,
-    process_save_updated_idea_text,
-    process_task_save,
-    process_task_deadline
-)
+from bot.commands import *
+from bot.handlers import *
 from config import TOKEN
 from messages import *
 from states import DialogStates
@@ -89,9 +70,25 @@ async def task_menu(message: Message):
 async def show_tasks(message: Message):
     await tasks_show_command(message)
 
+@dp.message(Command("complete"))
+async def complete_task(message: Message, state: FSMContext):
+    await complete_task_command(message, state)
+
+@dp.message(lambda m: m.text == BUTTON_TOGGLE_STATUS)
+async def toggle_task_status(message: Message, state: FSMContext):
+    await complete_task_command(message, state)
+
 @dp.message(lambda m: m.text == BUTTON_ALL_TASKS)
 async def show_all_tasks(message: Message):
     await tasks_show_command(message)
+
+@dp.message(lambda m: m.text == BUTTON_DELETE_TASK)
+async def delete_task(message: Message, state: FSMContext):
+    await delete_task_command(message, state)
+
+@dp.message(Command("droptask"))
+async def drop_task(message: Message, state: FSMContext):
+    await delete_task_command(message, state)
 
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
@@ -121,6 +118,10 @@ async def process_fallback(message: Message, state: FSMContext):
         await process_task_save(message, state)
     elif current_state == DialogStates.task_deadline:
         await process_task_deadline(message, state)
+    elif current_state == DialogStates.delete_task:
+        await process_task_delete(message, state)
+    elif current_state == DialogStates.complete_task:
+        await process_task_complete(message, state)
 
 # Main Function
 async def main():
