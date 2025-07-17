@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from bot.utills import format_date
 from messages import MESSAGES
 from service.idea import IdeaService
+from service.task import TaskService
 from service.user import UserService
 from bot.buttons import get_language_keyboard, menu_reply_keyboard, idea_reply_keyboard, task_menu_keyboard
 from states import DialogStates
@@ -142,3 +143,31 @@ async def task_menu_command(message: types.Message):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         await message.answer(MESSAGES[language]['TASK_MENU'], reply_markup=task_menu_keyboard())
+
+#Show all tasks handler
+async def tasks_show_command(message: types.Message):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+
+    tasks = await TaskService.get_user_tasks(user_id)
+    if not tasks:
+        await message.answer(MESSAGES[language]['NO_TASKS'], reply_markup=task_menu_keyboard())
+        return
+
+    response_text = f"📋 *{MESSAGES[language]['YOUR_TASKS']}*:\n\n"
+    for i, task in enumerate(tasks, 1):
+        status_icon = "✅" if task['status'] else "❌"
+        start_time = task['start_time'].strftime("%Y-%m-%d %H:%M") if task['start_time'] else "—"
+        response_text += (
+            f"*{i}. {task['task_name']}* {status_icon}\n"
+            f"🕒 *Start:* {start_time}\n"
+            f"📅 *Created:* {task['creation_date'].strftime('%Y-%m-%d')}\n\n"
+        )
+
+    await message.answer(response_text, parse_mode="Markdown", reply_markup=task_menu_keyboard())
+
