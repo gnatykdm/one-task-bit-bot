@@ -206,3 +206,21 @@ async def complete_task_command(message: types.Message, state: FSMContext):
         await message.answer(MESSAGES[language]['COMPLETE_TASK_MSG'])
         await state.set_state(DialogStates.complete_task)
         await state.update_data(tasks=tasks)
+
+#Update Task Command
+async def update_task_command(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        tasks = await TaskService.get_user_tasks(user_id)
+        if not tasks:
+            await message.answer(MESSAGES[language]['NO_TASKS'], reply_markup=task_menu_keyboard())
+            return
+
+        await message.answer(MESSAGES[language]['UPDATE_TASK_MSG'])
+        await state.set_state(DialogStates.update_task_id)
+        await state.update_data(tasks=tasks)

@@ -4,6 +4,8 @@ from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
+from sqlalchemy import lambda_stmt
+
 from bot.callbacks import (
     start_callback_language,
     callback_idea_process,
@@ -90,6 +92,14 @@ async def delete_task(message: Message, state: FSMContext):
 async def drop_task(message: Message, state: FSMContext):
     await delete_task_command(message, state)
 
+@dp.message(Command("updatetask"))
+async def update_task(message: Message, state: FSMContext):
+    await update_task_command(message, state)
+
+@dp.message(lambda m: m.text == BUTTON_EDIT_TASK)
+async def edit_task(message: Message, state: FSMContext):
+    await update_task_command(message, state)
+
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
     await start_callback_language(callback_query)
@@ -122,6 +132,10 @@ async def process_fallback(message: Message, state: FSMContext):
         await process_task_delete(message, state)
     elif current_state == DialogStates.complete_task:
         await process_task_complete(message, state)
+    elif current_state == DialogStates.update_task_id:
+        await process_task_update(message, state)
+    elif current_state == DialogStates.update_task_name:
+        await process_save_updated_task_name(message, state)
 
 # Main Function
 async def main():

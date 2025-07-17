@@ -253,3 +253,48 @@ async def process_task_complete(message: Message, state: FSMContext):
     except ValueError:
         await message.answer(MESSAGES[language]['COMPLETE_TASK_PROBLEM'], reply_markup=task_menu_keyboard())
         await state.clear()
+
+async def process_task_update(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    data = await state.get_data()
+    tasks = data.get("tasks")
+    max_task_num = len(tasks)
+
+    try:
+        user_number = int(message.text.strip())
+        if user_number > max_task_num or user_number < 1:
+            await message.answer(MESSAGES[language]['INVALID_TASK_NUM'], reply_markup=task_menu_keyboard())
+        else:
+            task_to_update = tasks[user_number - 1]
+            real_id = task_to_update["id"]
+
+            await message.answer(MESSAGES[language]['UPDATE_TASK_NAME_MSG'])
+            await state.update_data(task_id=real_id, u_number=user_number)
+            await state.set_state(DialogStates.update_task_name)
+
+    except ValueError:
+        await message.answer(MESSAGES[language]['UPDATE_TASK_PROBLEM'], reply_markup=task_menu_keyboard())
+        await state.clear()
+
+async def process_save_updated_task_name(message: Message, state: FSMContext):
+    data = await state.get_data()
+    task_id = data.get("task_id")
+    user_number = data.get("u_number")
+
+    new_task_name = message.text.strip()
+
+    if not new_task_name:
+        await message.answer(MESSAGES["ENGLISH"]['UPDATE_TASK_NAME_INVALID'], reply_markup=task_menu_keyboard())
+        return
+    else:
+        print(f"--[INFO] User with id: {message.from_user.id} updated task name: {new_task_name}")
+        await TaskService.update_task(task_id=task_id, task_name=new_task_name)
+        await message.answer(MESSAGES["ENGLISH"]['UPDATE_TASK_SUCCESS'].format(user_number), reply_markup=task_menu_keyboard())
+        await state.clear()
