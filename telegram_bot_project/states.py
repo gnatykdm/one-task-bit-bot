@@ -10,3 +10,5 @@ class DialogStates(StatesGroup):
     task_deadline = State()
     delete_task = State()
     complete_task = State()
+    update_task_id = State()
+    update_task_name = State()
