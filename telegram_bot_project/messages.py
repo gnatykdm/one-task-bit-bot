@@ -37,6 +37,10 @@ MESSAGES: Any = {
         "TASK_MENU": "Меню задач",
         "NO_TASKS": "Наразі у вас немає задач. Для добалення - /task",
         "YOUR_TASKS": "Ваші задачі:",
+        "TASK_DELETE_MSG": "Будьласка введіть номер задачі яку зочете видалити",
+        "INVALID_TASK_NUM": "Поганий номер задачі",
+        "TASK_DELETED": "Завдання №{} '{}' було видалено.",
+        "TASK_DELETE_PROBLEM": "Проблема з видаленням завдання. Спробуйте пізніше.",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче, щоб продовжити:"
@@ -86,6 +90,10 @@ MESSAGES: Any = {
         "TASK_MENU": "Task menu",
         "NO_TASKS": "You are actually dont have any tasks yet. Be the first to add one! /task",
         "YOUR_TASKS": "Your tasks:",
+        "TASK_DELETE_MSG": "Please enter the task number you want to delete",
+        "INVALID_TASK_NUM": "Invalid task number",
+        "TASK_DELETED": "Task #{} '{}' has been deleted.",
+        "TASK_DELETE_PROBLEM": "Problem with deleting task. Please try again later.",
         "LANGUAGE_ASK": (
             "🌐 **Please choose your interface language:**\n"
             "Tap a button below to continue:"

@@ -190,3 +190,35 @@ async def process_task_deadline(message: Message, state: FSMContext):
 
     except ValueError:
         await message.answer(MESSAGES[language]['TASK_DEADLINE_INVALID'])
+
+async def process_task_delete(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    data = await state.get_data()
+    tasks = data.get("tasks")
+
+    try:
+        max_task_num = len(tasks)
+        user_number = int(message.text.strip())
+
+        if user_number > max_task_num or user_number < 1:
+            await message.answer(MESSAGES[language]['INVALID_TASK_NUM'], reply_markup=task_menu_keyboard())
+            return
+
+        task_to_delete = tasks[user_number - 1]
+        real_id = task_to_delete["id"]
+
+        print(f"--[INFO] User with id: {user_id} deleted task with id: {real_id}")
+        await TaskService.delete_task(real_id)
+        await message.answer(MESSAGES[language]['TASK_DELETED'].format(user_number, task_to_delete['task_name']), reply_markup=task_menu_keyboard())
+        await state.clear()
+
+    except ValueError:
+        await message.answer(MESSAGES[language]['TASK_DELETE_PROBLEM'], reply_markup=task_menu_keyboard())
+
