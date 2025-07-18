@@ -51,6 +51,7 @@ MESSAGES: Any = {
         "UPDATE_TASK_PROBLEM": "⚠️ Помилка під час оновлення. 😕",
         "UPDATE_TASK_NAME_MSG": "📝 Введіть нову назву завдання:",
         "UPDATE_TASK_NAME_INVALID": "❌ Неправильна назва! 🔄",
+        "SETTINGS_MENU": "⚙️ Ласкаво просимо в Налаштування",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче ⬇️"
@@ -113,6 +114,7 @@ MESSAGES: Any = {
         "UPDATE_TASK_PROBLEM": "⚠️ Problem updating task. 😕",
         "UPDATE_TASK_NAME_MSG": "📝 Enter the new task name:",
         "UPDATE_TASK_NAME_INVALID": "❌ Invalid task name! 🔄",
+        "SETTINGS_MENU": "⚙️ Welcome to Settings",
         "LANGUAGE_ASK": (
             "🌐 **Choose your language:**\n"
             "Tap a button below ⬇️"
@@ -146,3 +148,7 @@ BUTTON_DELETE_TASK = "🗑️ Delete Task"
 BUTTON_EDIT_TASK = "✏️ Edit Task"
 BUTTON_TOGGLE_STATUS = "✅ Complete"
 BUTTON_ALL_TASKS = "📂 All tasks"
+SETTINGS_BUTTON_LANGUAGE = "🌐 Language"
+SETTINGS_BUTTON_FEEDBACK = "💬 Feedback"
+SETTINGS_BUTTON_ROUTINE = "✅ Routine"
+SETTINGS_BUTTON_ROUTINE_TIME = "⏰ Routine Time"

@@ -76,3 +76,18 @@ def task_menu_keyboard() -> ReplyKeyboardMarkup:
     task_menu_keyboard.keyboard.append([button_menu, button_all_tasks])
 
     return task_menu_keyboard
+
+def settings_menu_keyboard() -> ReplyKeyboardMarkup:
+    settings_menu_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
+
+    main_menu_button = KeyboardButton(text=MENU_BUTTON)
+    feedback_button = KeyboardButton(text=SETTINGS_BUTTON_FEEDBACK)
+    language_button = KeyboardButton(text=SETTINGS_BUTTON_LANGUAGE)
+    routine_button = KeyboardButton(text=SETTINGS_BUTTON_ROUTINE)
+    routine_time = KeyboardButton(text=SETTINGS_BUTTON_ROUTINE_TIME)
+
+    settings_menu_keyboard.keyboard.append([routine_time, routine_button])
+    settings_menu_keyboard.keyboard.append([language_button, feedback_button])
+    settings_menu_keyboard.keyboard.append([main_menu_button])
+
+    return settings_menu_keyboard
