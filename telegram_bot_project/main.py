@@ -38,6 +38,10 @@ async def menu(message: Message):
 async def language(message: Message):
     await language_command(message)
 
+@dp.message(lambda m: m.text == SETTINGS_BUTTON_LANGUAGE)
+async def language(message: Message):
+    await language_command(message)
+
 @dp.message(Command("idea"))
 @dp.message(lambda m: m.text == BUTTON_IDEA)
 async def idea(message: Message, state: FSMContext):
@@ -99,6 +103,14 @@ async def update_task(message: Message, state: FSMContext):
 @dp.message(lambda m: m.text == BUTTON_EDIT_TASK)
 async def edit_task(message: Message, state: FSMContext):
     await update_task_command(message, state)
+
+@dp.message(lambda m: m.text == BUTTON_SETTINGS)
+async def settings(message: Message):
+    await setting_menu_command(message)
+
+@dp.message(Command("settings"))
+async def settings(message: Message):
+    await setting_menu_command(message)
 
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
