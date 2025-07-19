@@ -1,8 +1,9 @@
+from time import sleep
 from typing import Any, List
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 
-from bot.utills import format_date
+from bot.utills import format_date, calculate_awake_hours
 from messages import MESSAGES
 from service.idea import IdeaService
 from service.task import TaskService
@@ -235,3 +236,46 @@ async def setting_menu_command(message: types.Message):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         await message.answer(MESSAGES[language]['SETTINGS_MENU'], reply_markup=settings_menu_keyboard())
+
+#Routine Time Command Handler
+async def routine_time_command(message: types.Message):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        wake_time, sleep_time = await UserService.get_wake_and_sleep_times(user_id)
+        if not wake_time and not sleep_time:
+            await message.answer(MESSAGES[language]['ROUTINE_TIME_NOT'], reply_markup=routine_time_keyboard())
+            return
+        wake_time = None if not wake_time else wake_time.strftime("%H:%M")
+        sleep_time = None if not sleep_time else sleep_time.strftime("%H:%M")
+        awake_time = calculate_awake_hours(wake_time, sleep_time)
+        await message.answer(MESSAGES[language]['ROUTINE_TIME'].format(wake_time, sleep_time, awake_time), reply_markup=routine_time_keyboard())
+
+#Set Wake Time Command Handler
+async def set_wake_time_command(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['SET_WAKE_TIME_MSG'])
+        await state.set_state(DialogStates.set_wake_time)
+
+
+# Set Sleep Time Command Handler
+async def set_sleep_time_command(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['SET_SLEEP_TIME_MSG'])
+        await state.set_state(DialogStates.set_sleep_time)

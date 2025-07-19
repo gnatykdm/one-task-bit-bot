@@ -91,3 +91,16 @@ def settings_menu_keyboard() -> ReplyKeyboardMarkup:
     settings_menu_keyboard.keyboard.append([main_menu_button])
 
     return settings_menu_keyboard
+
+def routine_time_keyboard() -> ReplyKeyboardMarkup:
+    routine_time_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
+
+    wake_time_button = KeyboardButton(text=ROUTINE_SET_WAKE_BUTTON)
+    sleep_time_button = KeyboardButton(text=ROUTINE_SET_SLEEP_BUTTON)
+    my_routine_button = KeyboardButton(text=ROUTINE_MY_TIME)
+    settings_menu_button = KeyboardButton(text=BUTTON_SETTINGS)
+
+    routine_time_keyboard.keyboard.append([wake_time_button, sleep_time_button])
+    routine_time_keyboard.keyboard.append([my_routine_button, settings_menu_button])
+
+    return routine_time_keyboard

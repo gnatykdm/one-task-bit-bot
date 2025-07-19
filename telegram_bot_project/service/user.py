@@ -1,5 +1,7 @@
 from sqlalchemy import text
 from config import get_session
+from typing import Optional
+from datetime import datetime
 
 class UserService:
     @staticmethod
@@ -14,8 +16,7 @@ class UserService:
                 {"id": user_id, "user_name": user_name, "language": language}
             )
             await session.commit()
-            inserted_id = result.scalar_one()
-            return inserted_id
+            return result.scalar_one()
 
     @staticmethod
     async def get_user_by_id(user_id: int):
@@ -49,3 +50,48 @@ class UserService:
                 {"id": user_id}
             )
             return result.scalar_one_or_none()
+
+    @staticmethod
+    async def update_wake_time(user_id: int, wake_time: datetime) -> bool:
+        async with get_session() as session:
+            result = await session.execute(
+                text("""
+                    UPDATE users
+                    SET wake_time = :wake_time
+                    WHERE id = :id
+                """),
+                {"wake_time": wake_time, "id": user_id}
+            )
+            await session.commit()
+            return result.rowcount == 1
+
+    @staticmethod
+    async def get_wake_and_sleep_times(user_id: int) -> tuple[datetime, Optional[datetime]]:
+        async with get_session() as session:
+            result = await session.execute(
+                text("""
+                    SELECT wake_time, sleep_time
+                    FROM users
+                    WHERE id = :id
+                """),
+                {"id": user_id}
+            )
+
+            row = result.first()
+            if row:
+                return row.wake_time, row.sleep_time
+            return None, None
+
+    @staticmethod
+    async def update_sleep_time(user_id: int, sleep_time: datetime) -> bool:
+        async with get_session() as session:
+            result = await session.execute(
+                text("""
+                    UPDATE users
+                    SET sleep_time = :sleep_time
+                    WHERE id = :id
+                """),
+                {"sleep_time": sleep_time, "id": user_id}
+            )
+            await session.commit()
+            return result.rowcount == 1
