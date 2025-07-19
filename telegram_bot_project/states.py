@@ -12,3 +12,5 @@ class DialogStates(StatesGroup):
     complete_task = State()
     update_task_id = State()
     update_task_name = State()
+    set_wake_time = State()
+    set_sleep_time = State()

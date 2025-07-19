@@ -1,12 +1,13 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from bot.buttons import get_idea_conf_keyboard, menu_reply_keyboard, idea_reply_keyboard, task_reply_keyboard, task_menu_keyboard
+from bot.buttons import *
 from messages import MESSAGES
 from service.idea import IdeaService
 from service.task import TaskService
 from service.user import UserService
 from states import DialogStates
+from bot.utills import check_valid_time
 
 async def process_idea_save(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
@@ -298,3 +299,72 @@ async def process_save_updated_task_name(message: Message, state: FSMContext):
         await TaskService.update_task(task_id=task_id, task_name=new_task_name)
         await message.answer(MESSAGES["ENGLISH"]['UPDATE_TASK_SUCCESS'].format(user_number), reply_markup=task_menu_keyboard())
         await state.clear()
+
+async def process_set_wake_time(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    new_wake_time = message.text.strip()
+    if not new_wake_time or not check_valid_time(new_wake_time):
+        await message.answer(
+            MESSAGES["ENGLISH"]['WAKE_TIME_INVALID'],
+            reply_markup=routine_time_keyboard()
+        )
+        return
+
+    try:
+        time_obj = datetime.strptime(new_wake_time, "%H:%M").time()
+    except ValueError:
+        await message.answer(
+            MESSAGES["ENGLISH"]['WAKE_TIME_INVALID'],
+            reply_markup=routine_time_keyboard()
+        )
+        return
+
+    print(f"--User with id: {user_id} set wake time to: {new_wake_time}")
+    await UserService.update_wake_time(user_id, time_obj)
+    await message.answer(
+        MESSAGES[language]['WAKE_TIME_SET'].format(new_wake_time),
+        reply_markup=routine_time_keyboard()
+    )
+    await state.clear()
+
+
+async def process_set_sleep_time(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    new_sleep_time = message.text.strip()
+    if not new_sleep_time or not check_valid_time(new_sleep_time):
+        await message.answer(
+            MESSAGES["ENGLISH"]['SLEEP_TIME_INVALID'],
+            reply_markup=routine_time_keyboard()
+        )
+        return
+
+    try:
+        time_obj = datetime.strptime(new_sleep_time, "%H:%M").time()
+    except ValueError:
+        await message.answer(
+            MESSAGES["ENGLISH"]['SLEEP_TIME_INVALID'],
+            reply_markup=routine_time_keyboard()
+        )
+        return
+
+    print(f"--User with id: {user_id} set sleep time to: {new_sleep_time}")
+    await UserService.update_sleep_time(user_id, time_obj)
+    await message.answer(
+        MESSAGES[language]['SLEEP_TIME_SET'].format(new_sleep_time),
+        reply_markup=routine_time_keyboard()
+    )
+    await state.clear()

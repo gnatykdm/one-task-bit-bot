@@ -8,7 +8,9 @@ CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     user_name VARCHAR(255) NOT NULL UNIQUE,
     language lan NOT NULL DEFAULT 'ENGLISH',
-    register_date TIMESTAMP NOT NULL DEFAULT NOW()
+    register_date TIMESTAMP NOT NULL DEFAULT NOW(),
+    wake_time TIME DEFAULT NULL,
+    sleep_time TIME DEFAULT NULL
 );
 
 -- TABLE tasks

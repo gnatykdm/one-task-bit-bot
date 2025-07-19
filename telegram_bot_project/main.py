@@ -5,6 +5,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from sqlalchemy import lambda_stmt
+from sqlalchemy.util import await_fallback
 
 from bot.callbacks import (
     start_callback_language,
@@ -112,6 +113,38 @@ async def settings(message: Message):
 async def settings(message: Message):
     await setting_menu_command(message)
 
+@dp.message(Command("routinetime"))
+async def waketime(message: Message):
+    await routine_time_command(message)
+
+@dp.message(lambda m: m.text == SETTINGS_BUTTON_ROUTINE_TIME)
+async def waketime(message: Message):
+    await routine_time_command(message)
+
+@dp.message(lambda m: m.text == ROUTINE_MY_TIME)
+async def my_routine_time(message: Message):
+    await routine_time_command(message)
+
+@dp.message(Command("setwake"))
+async def set_waketime(message: Message, state: FSMContext):
+    await set_wake_time_command(message, state)
+
+@dp.message(Command("time"))
+async def my_routine_time(message: Message):
+    await routine_time_command(message)
+
+@dp.message(Command("setsleep"))
+async def set_sleep_time(message: Message, state: FSMContext):
+    await set_sleep_time_command(message, state)
+
+@dp.message(lambda m: m.text == ROUTINE_SET_SLEEP_BUTTON)
+async def set_sleep_time(message: Message, state: FSMContext):
+    await set_sleep_time_command(message, state)
+
+@dp.message(lambda m: m.text == ROUTINE_SET_WAKE_BUTTON)
+async def set_waketime(message: Message, state: FSMContext):
+    await set_wake_time_command(message, state)
+
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
     await start_callback_language(callback_query)
@@ -148,6 +181,10 @@ async def process_fallback(message: Message, state: FSMContext):
         await process_task_update(message, state)
     elif current_state == DialogStates.update_task_name:
         await process_save_updated_task_name(message, state)
+    elif current_state == DialogStates.set_wake_time:
+        await process_set_wake_time(message, state)
+    elif current_state == DialogStates.set_sleep_time:
+        await process_set_sleep_time(message, state)
 
 # Main Function
 async def main():
