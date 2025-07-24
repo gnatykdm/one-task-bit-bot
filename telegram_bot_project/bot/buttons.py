@@ -104,3 +104,13 @@ def routine_time_keyboard() -> ReplyKeyboardMarkup:
     routine_time_keyboard.keyboard.append([my_routine_button, settings_menu_button])
 
     return routine_time_keyboard
+
+def routine_menu_keyboard() -> InlineKeyboardMarkup:
+    routine_markup: InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
+
+    morning_routine_btn: InlineKeyboardButton = InlineKeyboardButton(text=ROUTINE_MORNING_VIEW, callback_data="morning_view")
+    evening_routine_btn: InlineKeyboardButton = InlineKeyboardButton(text=ROUTINE_EVENING_VIEW, callback_data="evening_view")
+
+    routine_markup.inline_keyboard.append([morning_routine_btn, evening_routine_btn])
+
+    return routine_markup

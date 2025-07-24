@@ -145,6 +145,14 @@ async def set_sleep_time(message: Message, state: FSMContext):
 async def set_waketime(message: Message, state: FSMContext):
     await set_wake_time_command(message, state)
 
+@dp.message(Command("routine"))
+async def routine(message: Message):
+    await routine_menu_command(message)
+
+@dp.message(lambda m: m.text == SETTINGS_BUTTON_ROUTINE)
+async def routine(message: Message):
+    await routine_menu_command(message)
+
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
     await start_callback_language(callback_query)

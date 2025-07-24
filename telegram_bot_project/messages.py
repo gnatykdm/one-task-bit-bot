@@ -52,11 +52,12 @@ MESSAGES: Any = {
         "UPDATE_TASK_NAME_MSG": "📝 Введіть нову назву завдання:",
         "UPDATE_TASK_NAME_INVALID": "❌ Неправильна назва! 🔄",
         "SETTINGS_MENU": "⚙️ Ласкаво просимо в Налаштування",
+        "ROUTINE_MENU_DAY": "Встановіть розпорядок за кнопками -> Morning / Evening",
         "ROUTINE_TIME": (
             "⏰ Ваш розпорядок:\n"
             "• Час підйому: {}\n"
             "• Час сну: {}\n"
-            "• Загальна кількість годин неспання: {}"
+            "• Загальна кількість годин: {}"
         ),
         "ROUTINE_TIME_NOT": "⚠️ Ви ще не встановили час підйому та сну. Налаштуйте їх, щоб тримати розпорядок під контролем!",
         "ROUTINE_MENU": "🛠 Ласкаво просимо до налаштувань розпорядку! Тут ви можете встановити час підйому та сну.",
@@ -127,6 +128,7 @@ MESSAGES: Any = {
         "UPDATE_TASK_NAME_MSG": "📝 Enter the new task name:",
         "UPDATE_TASK_NAME_INVALID": "❌ Invalid task name! 🔄",
         "SETTINGS_MENU": "⚙️ Welcome to Settings",
+        "ROUTINE_MENU_DAY": "Set the routine from buttons -> Morning/Evening",
         "ROUTINE_TIME": (
             "⏰ Your routine:\n"
             "• Wake-up time: {}\n"
@@ -179,4 +181,5 @@ SETTINGS_BUTTON_ROUTINE_TIME = "⏰ Routine Time"
 ROUTINE_SET_WAKE_BUTTON = "🌅 Set Wake-Up Time"
 ROUTINE_SET_SLEEP_BUTTON = "🌙 Set Sleep Time"
 ROUTINE_MY_TIME = "🕒 My Routine"
-
+ROUTINE_MORNING_VIEW = "Morning Routine"
+ROUTINE_EVENING_VIEW = "Afternoon Routine"
