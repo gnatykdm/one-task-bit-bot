@@ -279,3 +279,15 @@ async def set_sleep_time_command(message: types.Message, state: FSMContext):
     else:
         await message.answer(MESSAGES[language]['SET_SLEEP_TIME_MSG'])
         await state.set_state(DialogStates.set_sleep_time)
+
+
+# Routine Menu Command Handler
+async def routine_menu_command(message: types.Message):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['ROUTINE_MENU_DAY'], reply_markup=routine_menu_keyboard())

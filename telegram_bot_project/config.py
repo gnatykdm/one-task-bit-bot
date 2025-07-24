@@ -1,4 +1,5 @@
 import os
+import logging
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
@@ -6,10 +7,12 @@ from contextlib import asynccontextmanager
 
 load_dotenv()
 
+logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
+
 TOKEN: str = os.getenv("BOT_TOKEN")
 DB_URL: str = os.getenv("DATABASE_URL")
 
-engine = create_async_engine(DB_URL, echo=True)
+engine = create_async_engine(DB_URL, echo=False)
 
 async_session = sessionmaker(
     engine,

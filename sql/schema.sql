@@ -2,6 +2,7 @@
 
 -- ENUM's --
 CREATE TYPE lan AS ENUM ('UKRANIAN', 'ENGLISH');
+CREATE TYPE routine_type AS ENUM ('morning', 'evening');
 
 -- TABLE users
 CREATE TABLE users (
@@ -11,6 +12,21 @@ CREATE TABLE users (
     register_date TIMESTAMP NOT NULL DEFAULT NOW(),
     wake_time TIME DEFAULT NULL,
     sleep_time TIME DEFAULT NULL
+);
+
+CREATE TABLE routines (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    routine_type routine_type NOT NULL,
+    routine_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE routine_steps (
+    id SERIAL PRIMARY KEY,
+    routine_id INT NOT NULL REFERENCES routines(id) ON DELETE CASCADE,
+    step_order INT NOT NULL,
+    step_description TEXT NOT NULL,
+    UNIQUE(routine_id, step_order)
 );
 
 -- TABLE tasks
