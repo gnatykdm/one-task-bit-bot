@@ -79,6 +79,9 @@ MESSAGES: Any = {
         "ROUTINE_DELETED": "Розпорядок видалено",
         "NEW_ROUTINE_NAME": "Будь ласка, введи нову назву розпорядку:",
         "ROUTINE_NAME_SET": "Нову назву розпорядку успішно змінено на «{}».",
+        "SMTP_MESSAGE_TEXT": "Будь ласка, залиш свій відгук нижче:",
+        "SMTP_MESSAGE_SENT": "Дякуємо за твій відгук, наша команда перевірить це повідомлення",
+        "INVALID_MESSAGE": "Будь ласка, введи коректний текст.",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче ⬇️"
@@ -157,6 +160,9 @@ MESSAGES: Any = {
         "ROUTINE_DELETED": "Routine deleted",
         "NEW_ROUTINE_NAME": "Please enter the new routine name:",
         "ROUTINE_NAME_SET": "New routine name successfully set to {}.",
+        "INVALID_MESSAGE": "Please enter valid text.",
+        "SMTP_MESSAGE_TEXT": "Please provide your feedback below:",
+        "SMTP_MESSAGE_SENT": "Thank for your feedback our team will check this message",
         "ROUTINE_TIME": (
             "⏰ Your routine:\n"
             "• Wake-up time: {}\n"
@@ -222,4 +228,20 @@ EVENING_ROUTINE_DELETE_BTN = "🗑️ Delete Evening"
 EVENING_ROUTINE_EDIT_BTN = "✏️ Edit Evening"
 MY_EVENING_ROUTINE_BTN = "🌙 My Evening Routine"
 
+USER_FEEDBACK_MAIL_TEXT = """
+📬 New User Feedback Received!
+
+Here’s what the user had to say:
+
+------------------------
+{feedback}
+------------------------
+
+🧑‍💻 User Info:
+- Username: {username}
+- User ID: {user_id}
+- Date: {date}
+
+Please review it and take action if needed.
+"""
 

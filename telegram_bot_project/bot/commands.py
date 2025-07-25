@@ -403,3 +403,15 @@ async def show_evening_routines(message: types.Message):
     )
 
     await message.answer(formatted_morning_routine, reply_markup=evening_routine_keyboard())
+
+# Send feedback message command
+async def send_feedback_command(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['SMTP_MESSAGE_TEXT'])
+        await state.set_state(DialogStates.feedback_message)

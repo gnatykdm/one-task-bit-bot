@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 
 load_dotenv()
 
@@ -27,3 +28,18 @@ def get_token() -> str:
 async def get_session() -> AsyncSession:
     async with async_session() as session:
         yield session
+
+@dataclass
+class SmtpData:
+    smtp_user: str = os.getenv("SMTP_USER")
+    smtp_password: str = os.getenv("SMTP_PASSWORD")
+    smtp_host: str = os.getenv("SMTP_HOST")
+    smtp_port: int = int(os.getenv("SMTP_PORT"))
+    smtp_ssl: bool = os.getenv("SMTP_SSL") == "True"
+    smtp_tsl: bool = os.getenv("SMTP_TLS") == "True"
+    smtp_from: str = os.getenv("SMTP_USER")
+    smtp_receiver: str = os.getenv("SMTP_MESSAGE_RECEIVER")
+    smtp_subject: str = os.getenv("SMTP_MESSAGE_SUBJECT")
+
+def get_smtp_data() -> SmtpData:
+    return SmtpData()
