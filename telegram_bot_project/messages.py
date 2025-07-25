@@ -50,6 +50,7 @@ MESSAGES: Any = {
         "UPDATE_TASK_SUCCESS": "✅ Завдання №{} оновлено! 🏆",
         "UPDATE_TASK_PROBLEM": "⚠️ Помилка під час оновлення. 😕",
         "UPDATE_TASK_NAME_MSG": "📝 Введіть нову назву завдання:",
+        "EVENING_ROUTINE_SHOW": "Список твоїх вечірніх розпорядків",
         "UPDATE_TASK_NAME_INVALID": "❌ Неправильна назва! 🔄",
         "SETTINGS_MENU": "⚙️ Ласкаво просимо в Налаштування",
         "ROUTINE_MENU_DAY": "Встановіть розпорядок за кнопками -> Morning / Evening",
@@ -150,7 +151,8 @@ MESSAGES: Any = {
         "ROUTINE_EXISTS": "Routine with this title already exists.",
         "ROUTINE_SAVED": "Routine - {} successfully  saved!",
         "MORNING_ROUTINE_SHOW": "Your Morning Routine List",
-        "NO_MORNING_ROUTINE": "You already doesn't have a morning routine set yet. Set it to keep your routine on track!",
+        "EVENING_ROUTINE_SHOW": "Your Evening Routine List",
+        "NO_MORNING_ROUTINE": "You already doesn't have a routine set yet. Set it to keep your routine on track!",
         "PROVIDE_ROUTINE_ID": "Please provide the Number of the routine:",
         "ROUTINE_DELETED": "Routine deleted",
         "NEW_ROUTINE_NAME": "Please enter the new routine name:",
@@ -208,15 +210,16 @@ ROUTINE_SET_WAKE_BUTTON = "🌅 Set Wake-Up Time"
 ROUTINE_SET_SLEEP_BUTTON = "🌙 Set Sleep Time"
 ROUTINE_MY_TIME = "🕒 My Routine"
 ROUTINE_MORNING_VIEW = "Morning Routine"
-ROUTINE_EVENING_VIEW = "Afternoon Routine"
+ROUTINE_EVENING_VIEW = "Evening Routine"
 
-MORNINGG_ROUTINE_ADD_BTN = "Add"
-MORNING_ROUTINE_DELETE_BTN = "Delete"
-MORNING_ROUTINE_EDIT_BTN = "Edit"
-MY_MORNING_ROUTINE_BTN = "My Morning Routine"
+MORNINGG_ROUTINE_ADD_BTN  = "➕ Add Morning"
+MORNING_ROUTINE_DELETE_BTN = "🗑️ Delete Morning"
+MORNING_ROUTINE_EDIT_BTN = "✏️ Edit Morning"
+MY_MORNING_ROUTINE_BTN = "🌅 My Morning Routine"
 
-EVENING_ROUTINE_ADD_BTN = "Add"
-EVENING_ROUTINE_DELETE_BTN = "Delete"
-EVENING_ROUTINE_EDIT_BTN = "Edit"
-MY_EVENING_ROUTINE_BTN = "My Evening Routine"
+EVENING_ROUTINE_ADD_BTN = "➕ Add Evening"
+EVENING_ROUTINE_DELETE_BTN = "🗑️ Delete Evening"
+EVENING_ROUTINE_EDIT_BTN = "✏️ Edit Evening"
+MY_EVENING_ROUTINE_BTN = "🌙 My Evening Routine"
+
 

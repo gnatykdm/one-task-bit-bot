@@ -151,10 +151,16 @@ async def routine(message: Message):
 
 @dp.message(lambda m: m.text == MORNINGG_ROUTINE_ADD_BTN)
 async def morning_add(message: Message, state: FSMContext):
+    await state.set_state(DialogStates.add_morning_routine)
+    await state.update_data(routine_type="morning")
     await set_morning_routine(message, state)
 
 @dp.message(Command("morning_routines"))
 async def morning_routines(message: Message):
+    await show_morning_routines(message)
+
+@dp.message(lambda m: m.text == ROUTINE_MORNING_VIEW)
+async def morning_routines_view(message: types.Message):
     await show_morning_routines(message)
 
 @dp.message(lambda m: m.text == MY_MORNING_ROUTINE_BTN)
@@ -163,11 +169,45 @@ async def morning_routines_show(message: types.Message):
 
 @dp.message(lambda m: m.text == MORNING_ROUTINE_DELETE_BTN)
 async def morning_routines_delete(message: types.Message, state: FSMContext):
-    await delete_morning_routine(message, state)
+    await state.set_state(DialogStates.delete_morning_routine)
+    await state.update_data(routine_type="morning")
+    await delete_morning_routine(message, state, type="morning")
 
 @dp.message(lambda m: m.text == MORNING_ROUTINE_EDIT_BTN)
 async def morning_routines_edit(message: types.Message, state: FSMContext):
-    await update_morning_routine(message, state)
+    await state.set_state(DialogStates.update_morning_routine)
+    await state.update_data(routine_type="morning")
+    await update_morning_routine(message, state, type="morning")
+
+@dp.message(lambda m: m.text == EVENING_ROUTINE_ADD_BTN)
+async def evening_routine_add(message: Message, state: FSMContext):
+    await state.set_state(DialogStates.add_morning_routine)
+    await state.update_data(routine_type="evening")
+    await set_morning_routine(message, state)
+
+@dp.message(lambda m: m.text == EVENING_ROUTINE_DELETE_BTN)
+async def evening_routines_delete(message: types.Message, state: FSMContext):
+    await state.set_state(DialogStates.delete_morning_routine)
+    await state.update_data(routine_type="evening")
+    await delete_morning_routine(message, state, type="evening")
+
+@dp.message(lambda m: m.text == EVENING_ROUTINE_EDIT_BTN)
+async def evening_routines_edit(message: types.Message, state: FSMContext):
+    await state.set_state(DialogStates.update_morning_routine)
+    await state.update_data(routine_type="evening")
+    await update_morning_routine(message, state, type="evening")
+
+@dp.message(lambda m: m.text == MY_EVENING_ROUTINE_BTN)
+async def evening_routines_show(message: types.Message):
+    await show_evening_routines(message)
+
+@dp.message(Command("evening_routines"))
+async def morning_routines(message: Message):
+    await show_evening_routines(message)
+
+@dp.message(lambda m: m.text == ROUTINE_EVENING_VIEW)
+async def evening_routines_view(message: types.Message):
+    await show_evening_routines(message)
 
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):
@@ -188,7 +228,7 @@ async def callback_idea(callback_query: CallbackQuery, state: FSMContext):
 @dp.message()
 async def process_fallback(message: Message, state: FSMContext):
     current_state = await state.get_state()
-    print(f"[DEBUG] Current state: {current_state}")
+    print(f"-- [DEBUG] - Current state: {current_state}")
     if current_state == DialogStates.waiting_for_idea.state:
         await process_idea_save(message, state)
     elif current_state == DialogStates.delete_idea.state:
@@ -214,13 +254,21 @@ async def process_fallback(message: Message, state: FSMContext):
     elif current_state == DialogStates.set_sleep_time:
         await process_set_sleep_time(message, state)
     elif current_state == DialogStates.add_morning_routine:
-        await process_set_routine_time(message, state)
+        data = await state.get_data()
+        routine_type = data.get("routine_type", "morning")
+        await process_set_routine(message, state, type=routine_type)
     elif current_state == DialogStates.delete_morning_routine:
-        await process_delete_morning_routine(message, state)
+        data = await state.get_data()
+        routine_type = data.get("routine_type", "morning")
+        await process_delete_morning_routine(message, state, type=routine_type)
     elif current_state == DialogStates.update_morning_routine:
-        await process_save_updated_morning_routine(message, state)
+        data = await state.get_data()
+        routine_type = data.get("routine_type", "morning")
+        await process_save_updated_morning_routine(message, state, type=routine_type)
     elif current_state == DialogStates.update_morning_routine_id:
-        await process_update_morning_routine(message, state)
+        data = await state.get_data()
+        routine_type = data.get("routine_type", "morning")
+        await process_update_morning_routine(message, state, type=routine_type)
 
 # Main Function
 async def main():
