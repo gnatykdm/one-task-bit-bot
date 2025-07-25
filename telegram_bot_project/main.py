@@ -165,6 +165,10 @@ async def morning_routines_show(message: types.Message):
 async def morning_routines_delete(message: types.Message, state: FSMContext):
     await delete_morning_routine(message, state)
 
+@dp.message(lambda m: m.text == MORNING_ROUTINE_EDIT_BTN)
+async def morning_routines_edit(message: types.Message, state: FSMContext):
+    await update_morning_routine(message, state)
+
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):
     await callback_routines(callback_query)
@@ -213,6 +217,10 @@ async def process_fallback(message: Message, state: FSMContext):
         await process_set_routine_time(message, state)
     elif current_state == DialogStates.delete_morning_routine:
         await process_delete_morning_routine(message, state)
+    elif current_state == DialogStates.update_morning_routine:
+        await process_save_updated_morning_routine(message, state)
+    elif current_state == DialogStates.update_morning_routine_id:
+        await process_update_morning_routine(message, state)
 
 # Main Function
 async def main():

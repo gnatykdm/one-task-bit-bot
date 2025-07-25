@@ -16,3 +16,5 @@ class DialogStates(StatesGroup):
     set_sleep_time = State()
     add_morning_routine = State()
     delete_morning_routine = State()
+    update_morning_routine = State()
+    update_morning_routine_id = State()

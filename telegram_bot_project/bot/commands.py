@@ -315,8 +315,6 @@ async def show_morning_routines(message: types.Message):
         return
 
     print(f"--[INFO] - User with id: {user_id} - opened /morning_routines.")
-    await message.answer(MESSAGES[language]['MORNING_ROUTINE_SHOW'])
-
     morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
     if not morning_routine:
         await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
@@ -356,3 +354,21 @@ async def delete_morning_routine(message: types.Message, state: FSMContext):
         await message.answer(MESSAGES[language]['PROVIDE_ROUTINE_ID'])
         await state.update_data(morning_routine=morning_routine)
         await state.set_state(DialogStates.delete_morning_routine)
+
+# Update Morning Routine Command Handler
+async def update_morning_routine(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
+        if not morning_routine:
+            await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
+            return
+        else:
+            await message.answer(MESSAGES[language]['NEW_ROUTINE_NAME'])
+            await state.update_data(morning_routine=morning_routine)
+            await state.set_state(DialogStates.update_morning_routine_id)

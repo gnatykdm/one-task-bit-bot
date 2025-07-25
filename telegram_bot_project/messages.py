@@ -76,6 +76,8 @@ MESSAGES: Any = {
         "SLEEP_TIME_SET": "✅ Час сну успішно встановлено на {}.",
         "PROVIDE_ROUTINE_ID": "Будь ласка, введіть номер розпорядку:",
         "ROUTINE_DELETED": "Розпорядок видалено",
+        "NEW_ROUTINE_NAME": "Будь ласка, введи нову назву розпорядку:",
+        "ROUTINE_NAME_SET": "Нову назву розпорядку успішно змінено на «{}».",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче ⬇️"
@@ -151,6 +153,8 @@ MESSAGES: Any = {
         "NO_MORNING_ROUTINE": "You already doesn't have a morning routine set yet. Set it to keep your routine on track!",
         "PROVIDE_ROUTINE_ID": "Please provide the Number of the routine:",
         "ROUTINE_DELETED": "Routine deleted",
+        "NEW_ROUTINE_NAME": "Please enter the new routine name:",
+        "ROUTINE_NAME_SET": "New routine name successfully set to {}.",
         "ROUTINE_TIME": (
             "⏰ Your routine:\n"
             "• Wake-up time: {}\n"
