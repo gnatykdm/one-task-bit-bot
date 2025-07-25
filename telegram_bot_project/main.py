@@ -153,6 +153,18 @@ async def routine(message: Message):
 async def morning_add(message: Message, state: FSMContext):
     await set_morning_routine(message, state)
 
+@dp.message(Command("morning_routines"))
+async def morning_routines(message: Message):
+    await show_morning_routines(message)
+
+@dp.message(lambda m: m.text == MY_MORNING_ROUTINE_BTN)
+async def morning_routines_show(message: types.Message):
+    await show_morning_routines(message)
+
+@dp.message(lambda m: m.text == MORNING_ROUTINE_DELETE_BTN)
+async def morning_routines_delete(message: types.Message, state: FSMContext):
+    await delete_morning_routine(message, state)
+
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):
     await callback_routines(callback_query)
@@ -199,6 +211,8 @@ async def process_fallback(message: Message, state: FSMContext):
         await process_set_sleep_time(message, state)
     elif current_state == DialogStates.add_morning_routine:
         await process_set_routine_time(message, state)
+    elif current_state == DialogStates.delete_morning_routine:
+        await process_delete_morning_routine(message, state)
 
 # Main Function
 async def main():

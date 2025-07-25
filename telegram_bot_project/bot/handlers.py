@@ -1,5 +1,5 @@
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, message
 
 from bot.buttons import *
 from messages import MESSAGES
@@ -392,3 +392,29 @@ async def process_set_routine_time(message: Message, state: FSMContext):
         await state.clear()
     except:
         await message.answer(MESSAGES[language]['ROUTINE_EXISTS'], reply_markup=morning_routine_keyboard())
+
+async def process_delete_morning_routine(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    routine_num: int = int(message.text.strip())
+    if (routine_num < 1):
+        await message.answer(MESSAGES[language]['COMPLETE_TASK_INVALID'], reply_markup=morning_routine_keyboard())
+        return
+    else:
+        data = await state.get_data()
+        routines = data.get("morning_routine")
+
+        routine_to_delete = routines[routine_num - 1]
+        real_id = routine_to_delete["id"]
+
+        await RoutineService.delete_routine(real_id)
+        print(f"User with id: {user_id} deleted routine with id: {real_id}")
+
+        await message.answer(MESSAGES[language]['ROUTINE_DELETED'].format(routine_num, routine_to_delete['routine_name']), reply_markup=morning_routine_keyboard())
+        await state.clear()

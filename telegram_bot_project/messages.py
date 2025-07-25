@@ -60,6 +60,8 @@ MESSAGES: Any = {
         "INVALID_MORNING_ROUTINE": "❌ Введіть дійсний заголовок. 🔄",
         "ROUTINE_EXISTS": "Розпорядок з такою назвою вже існує.",
         "ROUTINE_SAVED": "Розпорядок «{}» успішно збережено!",
+        "MORNING_ROUTINE_SHOW": "Список твоїх ранкових розпорядків",
+        "NO_MORNING_ROUTINE": "У тебе ще немає встановленого ранкового розпорядку. Встанови його, щоб тримати свій режим у порядку!",
         "ROUTINE_TIME": (
             "⏰ Ваш розпорядок:\n"
             "• Час підйому: {}\n"
@@ -72,6 +74,8 @@ MESSAGES: Any = {
         "WAKE_TIME_SET": "✅ Час підйому успішно встановлено на {}.",
         "SET_SLEEP_TIME_MSG": "🌙 Введіть час сну у 24-годинному форматі (ГГ:ХХ):",
         "SLEEP_TIME_SET": "✅ Час сну успішно встановлено на {}.",
+        "PROVIDE_ROUTINE_ID": "Будь ласка, введіть номер розпорядку:",
+        "ROUTINE_DELETED": "Розпорядок видалено",
         "LANGUAGE_ASK": (
             "🌐 **Оберіть мову інтерфейсу:**\n"
             "Натисніть кнопку нижче ⬇️"
@@ -143,6 +147,10 @@ MESSAGES: Any = {
         "INVALID_MORNING_ROUTINE": "❌ Please enter a valid title. 🔄",
         "ROUTINE_EXISTS": "Routine with this title already exists.",
         "ROUTINE_SAVED": "Routine - {} successfully  saved!",
+        "MORNING_ROUTINE_SHOW": "Your Morning Routine List",
+        "NO_MORNING_ROUTINE": "You already doesn't have a morning routine set yet. Set it to keep your routine on track!",
+        "PROVIDE_ROUTINE_ID": "Please provide the Number of the routine:",
+        "ROUTINE_DELETED": "Routine deleted",
         "ROUTINE_TIME": (
             "⏰ Your routine:\n"
             "• Wake-up time: {}\n"
