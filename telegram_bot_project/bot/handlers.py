@@ -7,7 +7,8 @@ from service.idea import IdeaService
 from service.task import TaskService
 from service.user import UserService
 from states import DialogStates
-from bot.utills import check_valid_time
+from service.routine import RoutineService
+from bot.utills import check_valid_time, validate_text
 
 async def process_idea_save(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
@@ -368,3 +369,26 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
         reply_markup=routine_time_keyboard()
     )
     await state.clear()
+
+async def process_set_routine_time(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    routine_title: str = message.text.strip()
+    if not validate_text(routine_title):
+        await message.answer(MESSAGES[language]['INVALID_MORNING_ROUTINE'], reply_markup=morning_routine_keyboard())
+        return
+
+    try:
+        await RoutineService.create_routine(user_id, routine_type="morning", routine_name=routine_title)
+
+        print(f"User with id: {user_id} set routine title: {routine_title}")
+        await message.answer(MESSAGES[language]['ROUTINE_SAVED'].format(routine_title), reply_markup=morning_routine_keyboard())
+        await state.clear()
+    except:
+        await message.answer(MESSAGES[language]['ROUTINE_EXISTS'], reply_markup=morning_routine_keyboard())

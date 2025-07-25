@@ -291,3 +291,16 @@ async def routine_menu_command(message: types.Message):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         await message.answer(MESSAGES[language]['ROUTINE_MENU_DAY'], reply_markup=routine_menu_keyboard())
+
+
+# Set Morning Routine Command Handler
+async def set_morning_routine(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['ADD_MORNING_ROUTINE'])
+        await state.set_state(DialogStates.add_morning_routine)

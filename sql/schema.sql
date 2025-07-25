@@ -21,14 +21,6 @@ CREATE TABLE routines (
     routine_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE routine_steps (
-    id SERIAL PRIMARY KEY,
-    routine_id INT NOT NULL REFERENCES routines(id) ON DELETE CASCADE,
-    step_order INT NOT NULL,
-    step_description TEXT NOT NULL,
-    UNIQUE(routine_id, step_order)
-);
-
 -- TABLE tasks
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,

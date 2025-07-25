@@ -31,3 +31,6 @@ def calculate_awake_hours(wake_time, sleep_time) -> str:
     total_minutes = (awake_duration.seconds % 3600) // 60
 
     return f"{total_hours}h {total_minutes}m"
+
+def validate_text(text: str) -> bool:
+    return text and len(text) <= 100

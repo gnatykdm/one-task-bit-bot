@@ -53,6 +53,13 @@ MESSAGES: Any = {
         "UPDATE_TASK_NAME_INVALID": "❌ Неправильна назва! 🔄",
         "SETTINGS_MENU": "⚙️ Ласкаво просимо в Налаштування",
         "ROUTINE_MENU_DAY": "Встановіть розпорядок за кнопками -> Morning / Evening",
+        "MORNING_ROUTINE": "Твій ранковий розпорядок",
+        "EVENING_ROUTINE": "Твій вечірній розпорядок",
+        "ROUTINES_INVALID": "Упс, проблема",
+        "ADD_MORNING_ROUTINE": "Введи назву для розпорядку",
+        "INVALID_MORNING_ROUTINE": "❌ Введіть дійсний заголовок. 🔄",
+        "ROUTINE_EXISTS": "Розпорядок з такою назвою вже існує.",
+        "ROUTINE_SAVED": "Розпорядок «{}» успішно збережено!",
         "ROUTINE_TIME": (
             "⏰ Ваш розпорядок:\n"
             "• Час підйому: {}\n"
@@ -129,6 +136,13 @@ MESSAGES: Any = {
         "UPDATE_TASK_NAME_INVALID": "❌ Invalid task name! 🔄",
         "SETTINGS_MENU": "⚙️ Welcome to Settings",
         "ROUTINE_MENU_DAY": "Set the routine from buttons -> Morning/Evening",
+        "MORNING_ROUTINE": "Your morning routine",
+        "EVENING_ROUTINE": "Your evening routine",
+        "ROUTINES_INVALID": "Oops, problem",
+        "ADD_MORNING_ROUTINE": "Provide the title for routine",
+        "INVALID_MORNING_ROUTINE": "❌ Please enter a valid title. 🔄",
+        "ROUTINE_EXISTS": "Routine with this title already exists.",
+        "ROUTINE_SAVED": "Routine - {} successfully  saved!",
         "ROUTINE_TIME": (
             "⏰ Your routine:\n"
             "• Wake-up time: {}\n"
@@ -183,3 +197,14 @@ ROUTINE_SET_SLEEP_BUTTON = "🌙 Set Sleep Time"
 ROUTINE_MY_TIME = "🕒 My Routine"
 ROUTINE_MORNING_VIEW = "Morning Routine"
 ROUTINE_EVENING_VIEW = "Afternoon Routine"
+
+MORNINGG_ROUTINE_ADD_BTN = "Add"
+MORNING_ROUTINE_DELETE_BTN = "Delete"
+MORNING_ROUTINE_EDIT_BTN = "Edit"
+MY_MORNING_ROUTINE_BTN = "My Morning Routine"
+
+EVENING_ROUTINE_ADD_BTN = "Add"
+EVENING_ROUTINE_DELETE_BTN = "Delete"
+EVENING_ROUTINE_EDIT_BTN = "Edit"
+MY_EVENING_ROUTINE_BTN = "My Evening Routine"
+

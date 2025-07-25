@@ -2,13 +2,12 @@ from typing import Optional, Any
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 
-from bot.buttons import menu_reply_keyboard, idea_reply_keyboard, task_menu_keyboard
+from bot.buttons import *
 from messages import MESSAGES
 from service.idea import IdeaService
 from service.task import TaskService
 from service.user import UserService
 from states import DialogStates
-
 
 async def start_callback_language(callback_query: types.CallbackQuery) -> None:
     await callback_query.answer()
@@ -107,3 +106,23 @@ async def callback_task_deadline(callback_query: types.CallbackQuery, state: FSM
         case _:
             print(f"--[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
             await callback_query.message.answer(MESSAGES[language]["TASK_DEADLINE_INVALID"])
+
+async def callback_routines(callback_query: types.CallbackQuery) -> None:
+    await callback_query.answer()
+
+    user_id: int = callback_query.from_user.id
+    user_find: Optional[dict] = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+    if not language:
+        language = 'ENGLISH'
+    if not user_find:
+        await callback_query.message.answer(MESSAGES['ENGLISH']["AUTHORIZATION_PROBLEM"])
+        return
+
+    match callback_query.data:
+        case "morning_view":
+            await callback_query.message.answer(MESSAGES[language]['MORNING_ROUTINE'], reply_markup=morning_routine_keyboard())
+        case "evening_view":
+            await callback_query.message.answer(MESSAGES[language]['EVENING_ROUTINE'], reply_markup=evening_routine_keyboard())
+        case _:
+            await callback_query.message.answer(MESSAGES[language]["ROUTINES_INVALID"])
