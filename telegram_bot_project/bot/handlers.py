@@ -1,6 +1,7 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, message
 
+from service.smtp import SmtpService
 from bot.buttons import *
 from messages import MESSAGES
 from service.idea import IdeaService
@@ -471,3 +472,25 @@ async def process_save_updated_morning_routine(message: Message, state: FSMConte
         await state.clear()
     except:
         await message.answer(MESSAGES[language]['ROUTINE_EXISTS'], reply_markup=routine_keyboard)
+
+
+async def process_feedback_message(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    user_name = message.from_user.username
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    feedback_message = message.text.strip()
+    if not feedback_message:
+        await message.answer(MESSAGES["ENGLISH"]['INVALID_MESSAGE'])
+        return
+
+    print("-- [INFO] - Feedback message from user with id: {user_id} is: {feedback_message}")
+    await SmtpService.send_feedback_message(feedback_message, user_id, user_name)
+    await message.answer(MESSAGES[language]['SMTP_MESSAGE_SENT'], reply_markup=settings_menu_keyboard())
+    await state.clear()
+

@@ -205,6 +205,14 @@ async def evening_routines_show(message: types.Message):
 async def morning_routines(message: Message):
     await show_evening_routines(message)
 
+@dp.message(Command("feedback"))
+async def feedback(message: Message, state: FSMContext):
+    await send_feedback_command(message, state)
+
+@dp.message(lambda m: m.text == SETTINGS_BUTTON_FEEDBACK)
+async def feedback(message: Message, state: FSMContext):
+    await send_feedback_command(message, state)
+
 @dp.message(lambda m: m.text == ROUTINE_EVENING_VIEW)
 async def evening_routines_view(message: types.Message):
     await show_evening_routines(message)
@@ -269,6 +277,8 @@ async def process_fallback(message: Message, state: FSMContext):
         data = await state.get_data()
         routine_type = data.get("routine_type", "morning")
         await process_update_morning_routine(message, state, type=routine_type)
+    elif current_state == DialogStates.feedback_message:
+        await process_feedback_message(message, state)
 
 # Main Function
 async def main():
