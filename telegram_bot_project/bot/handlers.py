@@ -370,7 +370,7 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
     )
     await state.clear()
 
-async def process_set_routine_time(message: Message, state: FSMContext):
+async def process_set_routine(message: Message, state: FSMContext, type: str):
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
     language = await UserService.get_user_language(user_id) or "ENGLISH"
@@ -380,23 +380,25 @@ async def process_set_routine_time(message: Message, state: FSMContext):
         return
 
     routine_title: str = message.text.strip()
+    routine_keyboard: ReplyKeyboardMarkup = morning_routine_keyboard() if type == "morning" else evening_routine_keyboard()
     if not validate_text(routine_title):
-        await message.answer(MESSAGES[language]['INVALID_MORNING_ROUTINE'], reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['INVALID_MORNING_ROUTINE'], reply_markup=routine_keyboard)
         return
 
     try:
-        await RoutineService.create_routine(user_id, routine_type="morning", routine_name=routine_title)
+        await RoutineService.create_routine(user_id, routine_type=type, routine_name=routine_title)
 
         print(f"User with id: {user_id} set routine title: {routine_title}")
-        await message.answer(MESSAGES[language]['ROUTINE_SAVED'].format(routine_title), reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['ROUTINE_SAVED'].format(routine_title), reply_markup=routine_keyboard)
         await state.clear()
     except:
-        await message.answer(MESSAGES[language]['ROUTINE_EXISTS'], reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['ROUTINE_EXISTS'], reply_markup=routine_keyboard)
 
-async def process_delete_morning_routine(message: Message, state: FSMContext):
+async def process_delete_morning_routine(message: Message, state: FSMContext, type: str):
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
     language = await UserService.get_user_language(user_id) or "ENGLISH"
+    routine_keyboard: ReplyKeyboardMarkup = morning_routine_keyboard() if type == "morning" else evening_routine_keyboard()
 
     if not user_find:
         await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
@@ -404,7 +406,7 @@ async def process_delete_morning_routine(message: Message, state: FSMContext):
 
     routine_num: int = int(message.text.strip())
     if (routine_num < 1):
-        await message.answer(MESSAGES[language]['COMPLETE_TASK_INVALID'], reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['COMPLETE_TASK_INVALID'], reply_markup=routine_keyboard)
         return
     else:
         data = await state.get_data()
@@ -416,13 +418,14 @@ async def process_delete_morning_routine(message: Message, state: FSMContext):
         await RoutineService.delete_routine(real_id)
         print(f"User with id: {user_id} deleted routine with id: {real_id}")
 
-        await message.answer(MESSAGES[language]['ROUTINE_DELETED'].format(routine_num, routine_to_delete['routine_name']), reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['ROUTINE_DELETED'].format(routine_num, routine_to_delete['routine_name']), reply_markup=routine_keyboard)
         await state.clear()
 
-async def process_update_morning_routine(message: Message, state: FSMContext):
+async def process_update_morning_routine(message: Message, state: FSMContext, type: str):
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
     language = await UserService.get_user_language(user_id) or "ENGLISH"
+    routine_keyboard: ReplyKeyboardMarkup = morning_routine_keyboard() if type == "morning" else evening_routine_keyboard()
 
     if not user_find:
         await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
@@ -430,7 +433,7 @@ async def process_update_morning_routine(message: Message, state: FSMContext):
 
     routine_num: int = int(message.text.strip())
     if (routine_num < 1):
-        await message.answer(MESSAGES[language]['COMPLETE_TASK_INVALID'], reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['COMPLETE_TASK_INVALID'], reply_markup=routine_keyboard)
         return
     else:
         data = await state.get_data()
@@ -439,14 +442,15 @@ async def process_update_morning_routine(message: Message, state: FSMContext):
         routine_to_update = routines[routine_num - 1]
         real_id = routine_to_update["id"]
 
-        await message.answer(MESSAGES[language]['NEW_ROUTINE_NAME'])
+        await message.answer(MESSAGES[language]['NEW_ROUTINE_NAME'], reply_markup=routine_keyboard)
         await state.update_data(routine_id=real_id)
         await state.set_state(DialogStates.update_morning_routine)
 
-async def process_save_updated_morning_routine(message: Message, state: FSMContext):
+async def process_save_updated_morning_routine(message: Message, state: FSMContext, type: str):
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
     language = await UserService.get_user_language(user_id) or "ENGLISH"
+    routine_keyboard: ReplyKeyboardMarkup = morning_routine_keyboard() if type == "morning" else evening_routine_keyboard()
 
     if not user_find:
         await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
@@ -454,7 +458,7 @@ async def process_save_updated_morning_routine(message: Message, state: FSMConte
 
     routine_title: str = message.text.strip()
     if not validate_text(routine_title):
-        await message.answer(MESSAGES[language]['INVALID_MORNING_ROUTINE'], reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['INVALID_MORNING_ROUTINE'], reply_markup=routine_keyboard)
         return
 
     data = await state.get_data()
@@ -463,7 +467,7 @@ async def process_save_updated_morning_routine(message: Message, state: FSMConte
     try:
         await RoutineService.update_routine(routine_id, routine_title)
         print(f"User with id: {user_id} updated routine title: {routine_title}")
-        await message.answer(MESSAGES[language]['ROUTINE_NAME_SET'].format(routine_title), reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['ROUTINE_NAME_SET'].format(routine_title), reply_markup=routine_keyboard)
         await state.clear()
     except:
-        await message.answer(MESSAGES[language]['ROUTINE_EXISTS'], reply_markup=morning_routine_keyboard())
+        await message.answer(MESSAGES[language]['ROUTINE_EXISTS'], reply_markup=routine_keyboard)

@@ -121,10 +121,12 @@ def morning_routine_keyboard() -> ReplyKeyboardMarkup:
     drop_btn = KeyboardButton(text=MORNING_ROUTINE_DELETE_BTN)
     all_btn = KeyboardButton(text=MY_MORNING_ROUTINE_BTN)
     settings_btn = KeyboardButton(text=BUTTON_SETTINGS)
+    evening_switch_btn = KeyboardButton(text=ROUTINE_EVENING_VIEW)
 
     keyboard = [
         [add_btn, edit_btn],
         [drop_btn, all_btn],
+        [evening_switch_btn],
         [settings_btn]
     ]
 
@@ -141,10 +143,12 @@ def evening_routine_keyboard() -> ReplyKeyboardMarkup:
     drop_btn = KeyboardButton(text=EVENING_ROUTINE_DELETE_BTN)
     all_btn = KeyboardButton(text=MY_EVENING_ROUTINE_BTN)
     settings_btn = KeyboardButton(text=BUTTON_SETTINGS)
+    morning_switch_btn = KeyboardButton(text=ROUTINE_MORNING_VIEW)
 
     keyboard = [
         [add_btn, edit_btn],
         [drop_btn, all_btn],
+        [morning_switch_btn],
         [settings_btn]
     ]
 
