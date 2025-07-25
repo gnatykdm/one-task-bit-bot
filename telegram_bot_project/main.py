@@ -7,11 +7,7 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy import lambda_stmt
 from sqlalchemy.util import await_fallback
 
-from bot.callbacks import (
-    start_callback_language,
-    callback_idea_process,
-    callback_task_deadline
-)
+from bot.callbacks import *
 from bot.commands import *
 from bot.handlers import *
 from config import TOKEN
@@ -153,6 +149,30 @@ async def routine(message: Message):
 async def routine(message: Message):
     await routine_menu_command(message)
 
+@dp.message(lambda m: m.text == MORNINGG_ROUTINE_ADD_BTN)
+async def morning_add(message: Message, state: FSMContext):
+    await set_morning_routine(message, state)
+
+@dp.message(Command("morning_routines"))
+async def morning_routines(message: Message):
+    await show_morning_routines(message)
+
+@dp.message(lambda m: m.text == MY_MORNING_ROUTINE_BTN)
+async def morning_routines_show(message: types.Message):
+    await show_morning_routines(message)
+
+@dp.message(lambda m: m.text == MORNING_ROUTINE_DELETE_BTN)
+async def morning_routines_delete(message: types.Message, state: FSMContext):
+    await delete_morning_routine(message, state)
+
+@dp.message(lambda m: m.text == MORNING_ROUTINE_EDIT_BTN)
+async def morning_routines_edit(message: types.Message, state: FSMContext):
+    await update_morning_routine(message, state)
+
+@dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
+async def callback_routine(callback_query: CallbackQuery):
+    await callback_routines(callback_query)
+
 @dp.callback_query(F.data.in_({"lang_ua", "lang_en"}))
 async def callback_language(callback_query: CallbackQuery):
     await start_callback_language(callback_query)
@@ -193,6 +213,14 @@ async def process_fallback(message: Message, state: FSMContext):
         await process_set_wake_time(message, state)
     elif current_state == DialogStates.set_sleep_time:
         await process_set_sleep_time(message, state)
+    elif current_state == DialogStates.add_morning_routine:
+        await process_set_routine_time(message, state)
+    elif current_state == DialogStates.delete_morning_routine:
+        await process_delete_morning_routine(message, state)
+    elif current_state == DialogStates.update_morning_routine:
+        await process_save_updated_morning_routine(message, state)
+    elif current_state == DialogStates.update_morning_routine_id:
+        await process_update_morning_routine(message, state)
 
 # Main Function
 async def main():

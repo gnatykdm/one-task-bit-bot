@@ -114,3 +114,42 @@ def routine_menu_keyboard() -> InlineKeyboardMarkup:
     routine_markup.inline_keyboard.append([morning_routine_btn, evening_routine_btn])
 
     return routine_markup
+
+def morning_routine_keyboard() -> ReplyKeyboardMarkup:
+    add_btn = KeyboardButton(text=MORNINGG_ROUTINE_ADD_BTN)
+    edit_btn = KeyboardButton(text=MORNING_ROUTINE_EDIT_BTN)
+    drop_btn = KeyboardButton(text=MORNING_ROUTINE_DELETE_BTN)
+    all_btn = KeyboardButton(text=MY_MORNING_ROUTINE_BTN)
+    settings_btn = KeyboardButton(text=BUTTON_SETTINGS)
+
+    keyboard = [
+        [add_btn, edit_btn],
+        [drop_btn, all_btn],
+        [settings_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True,
+        row_width=2
+    )
+
+
+def evening_routine_keyboard() -> ReplyKeyboardMarkup:
+    add_btn = KeyboardButton(text=EVENING_ROUTINE_ADD_BTN)
+    edit_btn = KeyboardButton(text=EVENING_ROUTINE_EDIT_BTN)
+    drop_btn = KeyboardButton(text=EVENING_ROUTINE_DELETE_BTN)
+    all_btn = KeyboardButton(text=MY_EVENING_ROUTINE_BTN)
+    settings_btn = KeyboardButton(text=BUTTON_SETTINGS)
+
+    keyboard = [
+        [add_btn, edit_btn],
+        [drop_btn, all_btn],
+        [settings_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True,
+        row_width=2
+    )

@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from bot.utills import format_date, calculate_awake_hours
 from messages import MESSAGES
 from service.idea import IdeaService
+from service.routine import RoutineService
 from service.task import TaskService
 from service.user import UserService
 from bot.buttons import *
@@ -291,3 +292,83 @@ async def routine_menu_command(message: types.Message):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         await message.answer(MESSAGES[language]['ROUTINE_MENU_DAY'], reply_markup=routine_menu_keyboard())
+
+# Set Morning Routine Command Handler
+async def set_morning_routine(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        await message.answer(MESSAGES[language]['ADD_MORNING_ROUTINE'])
+        await state.set_state(DialogStates.add_morning_routine)
+
+async def show_morning_routines(message: types.Message):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+
+    print(f"--[INFO] - User with id: {user_id} - opened /morning_routines.")
+    morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
+    if not morning_routine:
+        await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
+        return
+
+    dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['MORNING_ROUTINE_SHOW']) * 1.65))
+
+    formatted_routine_items = "\n".join(
+        f"# {idx}. {routine['routine_name']}"
+        for idx, routine in enumerate(morning_routine, start=1)
+    )
+
+    formatted_morning_routine = (
+        MESSAGES[language]['MORNING_ROUTINE_SHOW'] +
+        dividers +
+        "\n" +
+        formatted_routine_items
+    )
+
+    await message.answer(formatted_morning_routine, reply_markup=morning_routine_keyboard())
+
+# Delete Morning Routine Command Handler
+async def delete_morning_routine(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+
+        morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
+        if not morning_routine:
+            await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
+            return
+
+        await message.answer(MESSAGES[language]['PROVIDE_ROUTINE_ID'])
+        await state.update_data(morning_routine=morning_routine)
+        await state.set_state(DialogStates.delete_morning_routine)
+
+# Update Morning Routine Command Handler
+async def update_morning_routine(message: types.Message, state: FSMContext):
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
+        if not morning_routine:
+            await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
+            return
+        else:
+            await message.answer(MESSAGES[language]['NEW_ROUTINE_NAME'])
+            await state.update_data(morning_routine=morning_routine)
+            await state.set_state(DialogStates.update_morning_routine_id)
