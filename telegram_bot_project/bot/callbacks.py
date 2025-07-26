@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from bot.buttons import *
 from messages import MESSAGES
 from service.idea import IdeaService
+from service.myday import MyDayService
 from service.task import TaskService
 from service.user import UserService
 from states import DialogStates
@@ -68,6 +69,7 @@ async def callback_idea_process(callback_query: types.CallbackQuery, state: FSMC
                     return
                 else:
                     await IdeaService.create_user_idea(user_id, idea)
+                    await MyDayService.increment_idea_count(user_id)
 
                     print(f"--[INFO] - User {user_id} ({user_name}) saved idea: {idea}")
                     await callback_query.message.answer(MESSAGES[language]["IDEA_SAVED"], reply_markup=idea_reply_keyboard())
@@ -102,6 +104,7 @@ async def callback_task_deadline(callback_query: types.CallbackQuery, state: FSM
             print(f"--[INFO] - User {user_id} ({user_name}) saved task: {saved_task}")
 
             await TaskService.create_task(user_id, saved_task, False)
+            await MyDayService.increment_task_count(user_id)
             await callback_query.message.answer(MESSAGES[language]["TASK_DEADLINE_NO"], reply_markup=task_menu_keyboard())
             await state.clear()
         case _:

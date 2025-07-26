@@ -9,6 +9,7 @@ from service.task import TaskService
 from service.user import UserService
 from bot.buttons import *
 from states import DialogStates
+from service.myday import MyDayService
 
 # Start Command Handler
 async def start_command(message: types.Message):
@@ -413,3 +414,26 @@ async def send_feedback_command(message: types.Message, state: FSMContext):
     else:
         await message.answer(MESSAGES[language]['SMTP_MESSAGE_TEXT'])
         await state.set_state(DialogStates.feedback_message)
+
+# Show daily stats command
+async def show_daily_stats_command(message: types.Message):
+    user_id: int = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+
+    stats = await MyDayService.get_today_stats(user_id)
+    if not stats:
+        created_ideas = 0
+        completed_tasks = 0
+        created_tasks = 0
+    else:
+        created_ideas = stats.get("created_ideas", 0)
+        completed_tasks = stats.get("completed_tasks", 0)
+        created_tasks = stats.get("created_tasks", 0)
+
+    text = generate_daily_stats_message(language, created_ideas, completed_tasks, created_tasks)
+    await message.answer(text, parse_mode="Markdown", reply_markup=menu_reply_keyboard())
