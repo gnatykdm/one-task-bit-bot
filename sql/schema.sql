@@ -39,4 +39,16 @@ CREATE TABLE ideas (
     creation_date TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+-- Daily Stats Table --
+CREATE TABLE IF NOT EXISTS daily_stats (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_tasks INT NOT NULL DEFAULT 0,
+    created_ideas INT NOT NULL DEFAULT 0,
+    stats_day TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Unique index to ensure one stat per user per day
+CREATE UNIQUE INDEX IF NOT EXISTS unique_daily_stat_per_user
+ON daily_stats (user_id, DATE(stats_day));
 
