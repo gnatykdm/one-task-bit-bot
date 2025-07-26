@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 
 def format_date(dt: datetime) -> str:
     return dt.strftime("%d.%m.%Y %H:%M")

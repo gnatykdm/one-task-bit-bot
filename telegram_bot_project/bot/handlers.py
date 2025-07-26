@@ -1,5 +1,5 @@
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, message
+from aiogram.types import Message
 
 from service.smtp import SmtpService
 from bot.buttons import *

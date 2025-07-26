@@ -1,18 +1,15 @@
 import asyncio
-from aiogram import Dispatcher, Bot, F
+
+from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import CallbackQuery, Message
-from aiogram.fsm.context import FSMContext
-from sqlalchemy import lambda_stmt
-from sqlalchemy.util import await_fallback
+from aiogram.types import CallbackQuery
 
-from bot.callbacks import *
-from bot.commands import *
-from bot.handlers import *
 from config import TOKEN
-from messages import *
-from states import DialogStates
+
+from bot.commands import *
+from bot.callbacks import *
+from bot.fallbacks import *
 
 storage: MemoryStorage = MemoryStorage()
 dp = Dispatcher(storage=storage)
@@ -32,9 +29,6 @@ async def menu(message: Message):
     await menu_command(message)
 
 @dp.message(Command("language"))
-async def language(message: Message):
-    await language_command(message)
-
 @dp.message(lambda m: m.text == SETTINGS_BUTTON_LANGUAGE)
 async def language(message: Message):
     await language_command(message)
@@ -58,11 +52,8 @@ async def update_idea(message: Message, state: FSMContext):
     await update_idea_command(message, state)
 
 @dp.message(Command("task"))
-async def task(message: Message, state: FSMContext):
-    await task_command(message, state)
-
 @dp.message(lambda m: m.text == BUTTON_ADD_TASK)
-async def add_task(message: Message, state: FSMContext):
+async def task(message: Message, state: FSMContext):
     await task_command(message, state)
 
 @dp.message(Command("taskmenu"))
@@ -70,68 +61,35 @@ async def task_menu(message: Message):
     await task_menu_command(message)
 
 @dp.message(Command("tasks"))
+@dp.message(lambda m: m.text == BUTTON_ALL_TASKS)
 async def show_tasks(message: Message):
     await tasks_show_command(message)
 
 @dp.message(Command("complete"))
+@dp.message(lambda m: m.text == BUTTON_TOGGLE_STATUS)
 async def complete_task(message: Message, state: FSMContext):
     await complete_task_command(message, state)
 
-@dp.message(lambda m: m.text == BUTTON_TOGGLE_STATUS)
-async def toggle_task_status(message: Message, state: FSMContext):
-    await complete_task_command(message, state)
-
-@dp.message(lambda m: m.text == BUTTON_ALL_TASKS)
-async def show_all_tasks(message: Message):
-    await tasks_show_command(message)
-
-@dp.message(lambda m: m.text == BUTTON_DELETE_TASK)
-async def delete_task(message: Message, state: FSMContext):
-    await delete_task_command(message, state)
-
 @dp.message(Command("droptask"))
+@dp.message(lambda m: m.text == BUTTON_DELETE_TASK)
 async def drop_task(message: Message, state: FSMContext):
     await delete_task_command(message, state)
 
 @dp.message(Command("updatetask"))
+@dp.message(lambda m: m.text == BUTTON_EDIT_TASK)
 async def update_task(message: Message, state: FSMContext):
     await update_task_command(message, state)
 
-@dp.message(lambda m: m.text == BUTTON_EDIT_TASK)
-async def edit_task(message: Message, state: FSMContext):
-    await update_task_command(message, state)
-
+@dp.message(Command("settings"))
 @dp.message(lambda m: m.text == BUTTON_SETTINGS)
 async def settings(message: Message):
     await setting_menu_command(message)
 
-@dp.message(Command("settings"))
-async def settings(message: Message):
-    await setting_menu_command(message)
-
-@dp.message(Command("routinetime"))
-async def waketime(message: Message):
-    await routine_time_command(message)
-
-@dp.message(lambda m: m.text == SETTINGS_BUTTON_ROUTINE_TIME)
-async def waketime(message: Message):
-    await routine_time_command(message)
-
-@dp.message(lambda m: m.text == ROUTINE_MY_TIME)
-async def my_routine_time(message: Message):
-    await routine_time_command(message)
-
-@dp.message(Command("setwake"))
-async def set_waketime(message: Message, state: FSMContext):
-    await set_wake_time_command(message, state)
-
 @dp.message(Command("time"))
+@dp.message(lambda m: m.text == ROUTINE_MY_TIME)
+@dp.message(lambda m: m.text == SETTINGS_BUTTON_ROUTINE_TIME)
 async def my_routine_time(message: Message):
     await routine_time_command(message)
-
-@dp.message(Command("setsleep"))
-async def set_sleep_time(message: Message, state: FSMContext):
-    await set_sleep_time_command(message, state)
 
 @dp.message(lambda m: m.text == ROUTINE_SET_SLEEP_BUTTON)
 async def set_sleep_time(message: Message, state: FSMContext):
@@ -142,9 +100,6 @@ async def set_waketime(message: Message, state: FSMContext):
     await set_wake_time_command(message, state)
 
 @dp.message(Command("routine"))
-async def routine(message: Message):
-    await routine_menu_command(message)
-
 @dp.message(lambda m: m.text == SETTINGS_BUTTON_ROUTINE)
 async def routine(message: Message):
     await routine_menu_command(message)
@@ -156,15 +111,9 @@ async def morning_add(message: Message, state: FSMContext):
     await set_morning_routine(message, state)
 
 @dp.message(Command("morning_routines"))
-async def morning_routines(message: Message):
-    await show_morning_routines(message)
-
 @dp.message(lambda m: m.text == ROUTINE_MORNING_VIEW)
-async def morning_routines_view(message: types.Message):
-    await show_morning_routines(message)
-
 @dp.message(lambda m: m.text == MY_MORNING_ROUTINE_BTN)
-async def morning_routines_show(message: types.Message):
+async def morning_routines(message: Message):
     await show_morning_routines(message)
 
 @dp.message(lambda m: m.text == MORNING_ROUTINE_DELETE_BTN)
@@ -197,25 +146,21 @@ async def evening_routines_edit(message: types.Message, state: FSMContext):
     await state.update_data(routine_type="evening")
     await update_morning_routine(message, state, type="evening")
 
-@dp.message(lambda m: m.text == MY_EVENING_ROUTINE_BTN)
-async def evening_routines_show(message: types.Message):
-    await show_evening_routines(message)
-
 @dp.message(Command("evening_routines"))
+@dp.message(lambda m: m.text == ROUTINE_EVENING_VIEW)
+@dp.message(lambda m: m.text == MY_EVENING_ROUTINE_BTN)
 async def morning_routines(message: Message):
     await show_evening_routines(message)
 
 @dp.message(Command("feedback"))
-async def feedback(message: Message, state: FSMContext):
-    await send_feedback_command(message, state)
-
 @dp.message(lambda m: m.text == SETTINGS_BUTTON_FEEDBACK)
 async def feedback(message: Message, state: FSMContext):
     await send_feedback_command(message, state)
 
-@dp.message(lambda m: m.text == ROUTINE_EVENING_VIEW)
-async def evening_routines_view(message: types.Message):
-    await show_evening_routines(message)
+@dp.message(Command("myday"))
+@dp.message(lambda m: m.text == BUTTON_MYDAY)
+async def my_day():
+    pass
 
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):
@@ -235,50 +180,7 @@ async def callback_idea(callback_query: CallbackQuery, state: FSMContext):
 
 @dp.message()
 async def process_fallback(message: Message, state: FSMContext):
-    current_state = await state.get_state()
-    print(f"-- [DEBUG] - Current state: {current_state}")
-    if current_state == DialogStates.waiting_for_idea.state:
-        await process_idea_save(message, state)
-    elif current_state == DialogStates.delete_idea.state:
-        await process_idea_delete(message, state)
-    elif current_state == DialogStates.update_idea.state:
-        await process_idea_update(message, state)
-    elif current_state == DialogStates.waiting_for_update_text:
-        await process_save_updated_idea_text(message, state)
-    elif current_state == DialogStates.confirm_task:
-        await process_task_save(message, state)
-    elif current_state == DialogStates.task_deadline:
-        await process_task_deadline(message, state)
-    elif current_state == DialogStates.delete_task:
-        await process_task_delete(message, state)
-    elif current_state == DialogStates.complete_task:
-        await process_task_complete(message, state)
-    elif current_state == DialogStates.update_task_id:
-        await process_task_update(message, state)
-    elif current_state == DialogStates.update_task_name:
-        await process_save_updated_task_name(message, state)
-    elif current_state == DialogStates.set_wake_time:
-        await process_set_wake_time(message, state)
-    elif current_state == DialogStates.set_sleep_time:
-        await process_set_sleep_time(message, state)
-    elif current_state == DialogStates.add_morning_routine:
-        data = await state.get_data()
-        routine_type = data.get("routine_type", "morning")
-        await process_set_routine(message, state, type=routine_type)
-    elif current_state == DialogStates.delete_morning_routine:
-        data = await state.get_data()
-        routine_type = data.get("routine_type", "morning")
-        await process_delete_morning_routine(message, state, type=routine_type)
-    elif current_state == DialogStates.update_morning_routine:
-        data = await state.get_data()
-        routine_type = data.get("routine_type", "morning")
-        await process_save_updated_morning_routine(message, state, type=routine_type)
-    elif current_state == DialogStates.update_morning_routine_id:
-        data = await state.get_data()
-        routine_type = data.get("routine_type", "morning")
-        await process_update_morning_routine(message, state, type=routine_type)
-    elif current_state == DialogStates.feedback_message:
-        await process_feedback_message(message, state)
+    await fallback(message, state)
 
 # Main Function
 async def main():

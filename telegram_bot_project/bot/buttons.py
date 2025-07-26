@@ -11,10 +11,6 @@ def get_language_keyboard() -> InlineKeyboardMarkup:
 
     return inline_markup
 
-
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-
-
 def menu_reply_keyboard() -> ReplyKeyboardMarkup:
     menu_reply_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
 
