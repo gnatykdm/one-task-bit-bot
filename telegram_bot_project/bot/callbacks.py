@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 
@@ -73,6 +73,7 @@ async def callback_idea_process(callback_query: types.CallbackQuery, state: FSMC
                     await callback_query.message.answer(MESSAGES[language]["IDEA_SAVED"], reply_markup=idea_reply_keyboard())
                     await state.clear()
             except Exception as e:
+                print(f"--[ERROR] - User {user_id} ({user_name}) failed to save idea: {e}")
                 await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"])
         case _:
             print(f"--[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
