@@ -48,7 +48,9 @@ CREATE TABLE IF NOT EXISTS daily_stats (
     stats_day TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- Unique index to ensure one stat per user per day
+ALTER TABLE daily_stats
+ADD COLUMN stats_day_date DATE NOT NULL DEFAULT CURRENT_DATE;
+
 CREATE UNIQUE INDEX IF NOT EXISTS unique_daily_stat_per_user
-ON daily_stats (user_id, DATE(stats_day));
+ON daily_stats (user_id, stats_day_date);
 

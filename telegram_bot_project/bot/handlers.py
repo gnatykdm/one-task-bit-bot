@@ -1,5 +1,6 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from datetime import datetime
 
 from service.smtp import SmtpService
 from bot.buttons import *
@@ -10,6 +11,7 @@ from service.user import UserService
 from states import DialogStates
 from service.routine import RoutineService
 from bot.utills import check_valid_time, validate_text
+from service.myday import MyDayService
 
 async def process_idea_save(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
@@ -79,6 +81,7 @@ async def process_idea_delete(message: Message, state: FSMContext) -> None:
     print(f"--[DEBUG] Deleting idea with id {real_id} for user {user_id}")
 
     await IdeaService.delete_user_idea(real_id)
+    await MyDayService.dicrement_idea_count(user_id)
 
     await message.answer(MESSAGES[language]['IDEA_DELETED'].format(user_number, idea_to_delete['idea_name']), reply_markup=idea_reply_keyboard())
     await state.clear()
@@ -165,8 +168,6 @@ async def process_task_save(message: Message, state: FSMContext):
         await message.answer(MESSAGES[language]['TASK_DEADLINE_ASK'], reply_markup=task_reply_keyboard())
         await state.update_data(task=task)
 
-from datetime import datetime
-
 async def process_task_deadline(message: Message, state: FSMContext):
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
@@ -188,6 +189,7 @@ async def process_task_deadline(message: Message, state: FSMContext):
         print(f"--[INFO] User with id: {user_id} provided deadline: {deadline_dt}")
 
         await TaskService.create_task(user_id, task, False, deadline_dt)
+        await MyDayService.increment_task_count(user_id)
         await message.answer(MESSAGES[language]['TASK_SAVED'], reply_markup=task_menu_keyboard())
         await state.clear()
 
@@ -220,6 +222,7 @@ async def process_task_delete(message: Message, state: FSMContext):
 
         print(f"--[INFO] User with id: {user_id} deleted task with id: {real_id}")
         await TaskService.delete_task(real_id)
+        await MyDayService.dicrement_task_count(user_id)
         await message.answer(MESSAGES[language]['TASK_DELETED'].format(user_number, task_to_delete['task_name']), reply_markup=task_menu_keyboard())
         await state.clear()
 
@@ -251,6 +254,7 @@ async def process_task_complete(message: Message, state: FSMContext):
 
             print(f"--[INFO] User with id: {user_id} completed task with id: {real_id}")
             await TaskService.toggle_task_status(real_id)
+            await MyDayService.increment_completed_tasks(user_id)
             await message.answer(MESSAGES[language]['COMPLETE_TASK_SUCCESS'].format(user_number, task_to_complete['task_name']), reply_markup=task_menu_keyboard())
             await state.clear()
     except ValueError:
