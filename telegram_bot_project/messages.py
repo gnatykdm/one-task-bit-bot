@@ -101,6 +101,13 @@ MESSAGES: Any = {
         "IDEA_EXIST": "⚠️ Ідея з такою назвою вже є. Придумай нову, ти ж креативний! 😊",
         "SEND_MORNING_MSG": "Доброго ранку, {}",
         "SEND_EVENING_MSG": "Доброго вечора, {}",
+        "WELCOME_TO_FOCUS": "Вітаємо у фокус зоні",
+        "START_FOCUS_MSG": "Старт фокус сессії",
+        "STOP_FOCUS_MSG": "Стоп фокус сессії - тривалість, {}",
+        "SAVE_FOCUS_ZONE": "Хочете зберегти фокус сессію?",
+        "SAVED_FOCUS_MSG": "Фокус сессію збережено",
+        "TITLE_FOCUS_ZONE_MSG": "Хочете дати назву для цієї сессії?",
+        ""
         "LANGUAGE_ASK": (
             "🌐 Яку мову обереш, друже? \n"
             "Тисни кнопку нижче, і поїхали! 😄"
@@ -206,6 +213,13 @@ MESSAGES: Any = {
         "IDEA_EXIST": "⚠️ An idea with that name already exists. Got another creative one? 😊",
         "SEND_MORNING_MSG": "Good morning, {}!",
         "SEND_EVENING_MSG": "Good evening, {}!",
+        "WELCOME_TO_FOCUS": "Welcome to the focus zone",
+        "START_FOCUS_MSG": "Focus session started",
+        "STOP_FOCUS_MSG": "Focus session stopped - duration, {}",
+        "SAVE_FOCUS_ZONE": "Would you like to save the focus session?",
+        "SAVED_FOCUS_MSG": "Focus session saved",
+        "TITLE_FOCUS_ZONE_MSG": "Would you like to give a name to this session?",
+
         "LANGUAGE_ASK": (
             "🌐 What language would you like, friend? \n"
             "Pick one below, and let’s roll! 😄"
@@ -254,6 +268,11 @@ EVENING_ROUTINE_ADD_BTN = "➕ Add Evening Routine"
 EVENING_ROUTINE_DELETE_BTN = "🗑️ Delete Evening Routine"
 EVENING_ROUTINE_EDIT_BTN = "✏️ Edit Evening Routine"
 MY_EVENING_ROUTINE_BTN = "🌙 My Evening Routine"
+
+FOCUS_ZONE_START = "Start Focus Zone"
+FOCUS_ZONE_END = "End Focus Zone"
+FOCUS_INLINE_YES = "Yes"
+FOCUS_INLINE_NO = "No"
 
 USER_FEEDBACK_MAIL_TEXT = """
 📬 Hey, we’ve got new feedback!

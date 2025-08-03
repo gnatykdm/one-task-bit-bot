@@ -1,6 +1,7 @@
 # bot/buttons.py
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from messages import *
+from typing import Optional, List
 
 def get_language_keyboard() -> InlineKeyboardMarkup:
     inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
@@ -120,7 +121,7 @@ def morning_routine_keyboard() -> ReplyKeyboardMarkup:
     settings_btn = KeyboardButton(text=BUTTON_SETTINGS)
     evening_switch_btn = KeyboardButton(text=ROUTINE_EVENING_VIEW)
 
-    keyboard = [
+    keyboard: List[List[KeyboardButton]] = [
         [add_btn, edit_btn],
         [drop_btn, all_btn],
         [evening_switch_btn],
@@ -154,3 +155,30 @@ def evening_routine_keyboard() -> ReplyKeyboardMarkup:
         resize_keyboard=True,
         row_width=2
     )
+
+def focus_menu_keyboard(started: Optional[bool] = False) -> ReplyKeyboardMarkup:
+    menu_btn: KeyboardButton = KeyboardButton(text=MENU_BUTTON)
+    main_focus_action_btn = KeyboardButton(text=FOCUS_ZONE_START) if not started else KeyboardButton(text=FOCUS_ZONE_END)
+
+    keyboard: List[List[KeyboardButton]] = []
+
+    if not started:
+        keyboard.append([main_focus_action_btn])
+        keyboard.append([menu_btn])
+    keyboard.append([main_focus_action_btn])
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True,
+        row_width=2
+    )
+
+def focus_save_question_keyboard() -> InlineKeyboardMarkup:
+    inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
+
+    save_focus_btn: InlineKeyboardButton = InlineKeyboardButton(text=FOCUS_INLINE_YES, callback_data="save_focus")
+    not_save_focus_btn: InlineKeyboardButton = InlineKeyboardButton(text=FOCUS_INLINE_NO, callback_data="not_save_focus")
+
+    inline_markup.add(save_focus_btn)
+    inline_markup.add(not_save_focus_btn)
+    return inline_markup

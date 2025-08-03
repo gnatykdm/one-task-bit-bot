@@ -163,6 +163,10 @@ async def feedback(message: Message, state: FSMContext):
 async def my_day(message: Message):
     await show_daily_stats_command(message)
 
+@dp.message(Command("focus"))
+async def focus(message: Message):
+    await show_focus_menu(message)
+
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):
     await callback_routines(callback_query)
