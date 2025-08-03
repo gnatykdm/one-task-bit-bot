@@ -3,9 +3,10 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import CallbackQuery
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from config import TOKEN
-
+from bot.scheduler import initialize_scheduler
 from bot.commands import *
 from bot.callbacks import *
 from bot.fallbacks import *
@@ -16,6 +17,7 @@ dp = Dispatcher(storage=storage)
 # Command Handlers
 @dp.message(Command("start"))
 async def start(message: Message):
+    global USER_ID
     await start_command(message)
 
 @dp.message(Command("help"))
@@ -184,6 +186,15 @@ async def process_fallback(message: Message, state: FSMContext):
 # Main Function
 async def main():
     bot = Bot(token=TOKEN)
+
+    scheduler: AsyncIOScheduler = initialize_scheduler()
+    scheduler.add_job(
+        MyDayService.create_stats_for_all_users,
+'cron',
+        hour='0',
+        minute='0'
+    )
+
     await dp.start_polling(bot)
 
 # Start point
