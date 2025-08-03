@@ -1,5 +1,4 @@
 import asyncio
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -10,9 +9,7 @@ from config import TOKEN
 from bot.commands import *
 from bot.callbacks import *
 from bot.fallbacks import *
-from bot.scheduler import create_or_update_daily_stats_for_users
 
-scheduler: AsyncIOScheduler = AsyncIOScheduler()
 storage: MemoryStorage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
@@ -186,9 +183,6 @@ async def process_fallback(message: Message, state: FSMContext):
 
 # Main Function
 async def main():
-    scheduler.add_job(create_or_update_daily_stats_for_users, 'cron', hour=0, minute=0)
-    scheduler.start()
-    await create_or_update_daily_stats_for_users()
     bot = Bot(token=TOKEN)
     await dp.start_polling(bot)
 

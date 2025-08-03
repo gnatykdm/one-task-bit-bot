@@ -7,7 +7,6 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
 load_dotenv()
-
 logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
 
 TOKEN: str = os.getenv("BOT_TOKEN")
