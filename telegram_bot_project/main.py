@@ -103,13 +103,13 @@ async def set_waketime(message: Message, state: FSMContext):
 async def routine(message: Message):
     await routine_menu_command(message)
 
-@dp.message(lambda m: m.text == MORNINGG_ROUTINE_ADD_BTN)
+@dp.message(lambda m: m.text == MORNING_ROUTINE_ADD_BTN)
 async def morning_add(message: Message, state: FSMContext):
     await state.set_state(DialogStates.add_morning_routine)
     await state.update_data(routine_type="morning")
     await set_morning_routine(message, state)
 
-@dp.message(Command("morning_routines"))
+@dp.message(Command("morning_routine"))
 @dp.message(lambda m: m.text == ROUTINE_MORNING_VIEW)
 @dp.message(lambda m: m.text == MY_MORNING_ROUTINE_BTN)
 async def morning_routines(message: Message):
@@ -145,7 +145,7 @@ async def evening_routines_edit(message: types.Message, state: FSMContext):
     await state.update_data(routine_type="evening")
     await update_morning_routine(message, state, type="evening")
 
-@dp.message(Command("evening_routines"))
+@dp.message(Command("evening_routine"))
 @dp.message(lambda m: m.text == ROUTINE_EVENING_VIEW)
 @dp.message(lambda m: m.text == MY_EVENING_ROUTINE_BTN)
 async def morning_routines(message: Message):

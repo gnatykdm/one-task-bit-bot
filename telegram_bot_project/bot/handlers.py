@@ -318,7 +318,7 @@ async def process_set_wake_time(message: Message, state: FSMContext):
     new_wake_time = message.text.strip()
     if not new_wake_time or not check_valid_time(new_wake_time):
         await message.answer(
-            MESSAGES["ENGLISH"]['WAKE_TIME_INVALID'],
+            MESSAGES["ENGLISH"]['TIMER_INVALID'],
             reply_markup=routine_time_keyboard()
         )
         return
@@ -327,7 +327,7 @@ async def process_set_wake_time(message: Message, state: FSMContext):
         time_obj = datetime.strptime(new_wake_time, "%H:%M").time()
     except ValueError:
         await message.answer(
-            MESSAGES["ENGLISH"]['WAKE_TIME_INVALID'],
+            MESSAGES["ENGLISH"]['TIMER_INVALID'],
             reply_markup=routine_time_keyboard()
         )
         return
@@ -335,7 +335,7 @@ async def process_set_wake_time(message: Message, state: FSMContext):
     print(f"--User with id: {user_id} set wake time to: {new_wake_time}")
     await UserService.update_wake_time(user_id, time_obj)
     await message.answer(
-        MESSAGES[language]['WAKE_TIME_SET'].format(new_wake_time),
+        MESSAGES[language]['TIMER_SET'].format(new_wake_time),
         reply_markup=routine_time_keyboard()
     )
     await state.clear()
@@ -353,7 +353,7 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
     new_sleep_time = message.text.strip()
     if not new_sleep_time or not check_valid_time(new_sleep_time):
         await message.answer(
-            MESSAGES["ENGLISH"]['SLEEP_TIME_INVALID'],
+            MESSAGES["ENGLISH"]['TIMER_INVALID'],
             reply_markup=routine_time_keyboard()
         )
         return
@@ -362,7 +362,7 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
         time_obj = datetime.strptime(new_sleep_time, "%H:%M").time()
     except ValueError:
         await message.answer(
-            MESSAGES["ENGLISH"]['SLEEP_TIME_INVALID'],
+            MESSAGES["ENGLISH"]['TIMER_INVALID'],
             reply_markup=routine_time_keyboard()
         )
         return
@@ -370,7 +370,7 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
     print(f"--User with id: {user_id} set sleep time to: {new_sleep_time}")
     await UserService.update_sleep_time(user_id, time_obj)
     await message.answer(
-        MESSAGES[language]['SLEEP_TIME_SET'].format(new_sleep_time),
+        MESSAGES[language]['TIMER_SET'].format(new_sleep_time),
         reply_markup=routine_time_keyboard()
     )
     await state.clear()

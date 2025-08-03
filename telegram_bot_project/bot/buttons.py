@@ -112,7 +112,7 @@ def routine_menu_keyboard() -> InlineKeyboardMarkup:
     return routine_markup
 
 def morning_routine_keyboard() -> ReplyKeyboardMarkup:
-    add_btn = KeyboardButton(text=MORNINGG_ROUTINE_ADD_BTN)
+    add_btn = KeyboardButton(text=MORNING_ROUTINE_ADD_BTN)
     edit_btn = KeyboardButton(text=MORNING_ROUTINE_EDIT_BTN)
     drop_btn = KeyboardButton(text=MORNING_ROUTINE_DELETE_BTN)
     all_btn = KeyboardButton(text=MY_MORNING_ROUTINE_BTN)

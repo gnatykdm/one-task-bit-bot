@@ -264,7 +264,7 @@ async def set_wake_time_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
-        await message.answer(MESSAGES[language]['SET_WAKE_TIME_MSG'])
+        await message.answer(MESSAGES[language]['SET_TIME_MSG'])
         await state.set_state(DialogStates.set_wake_time)
 
 
@@ -277,7 +277,7 @@ async def set_sleep_time_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
-        await message.answer(MESSAGES[language]['SET_SLEEP_TIME_MSG'])
+        await message.answer(MESSAGES[language]['SET_TIME_MSG'])
         await state.set_state(DialogStates.set_sleep_time)
 
 
