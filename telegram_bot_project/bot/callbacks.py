@@ -108,7 +108,7 @@ async def callback_task_deadline(callback_query: types.CallbackQuery, state: FSM
             await callback_query.message.answer(MESSAGES[language]["TASK_DEADLINE_NO"], reply_markup=task_menu_keyboard())
             await state.clear()
         case _:
-            print(f"[ERROR] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
+            print(f"[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
             await callback_query.message.answer(MESSAGES[language]["TASK_DEADLINE_INVALID"])
 
 async def callback_routines(callback_query: types.CallbackQuery) -> None:

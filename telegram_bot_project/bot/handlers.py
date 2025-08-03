@@ -493,7 +493,7 @@ async def process_feedback_message(message: Message, state: FSMContext):
         await message.answer(MESSAGES["ENGLISH"]['INVALID_MESSAGE'])
         return
 
-    print("[INFO] - Feedback message from user with id: {user_id} is: {feedback_message}")
+    print(f"[INFO] - Feedback message from user with id: {user_id} is: {feedback_message}")
     await SmtpService.send_feedback_message(feedback_message, user_id, user_name)
     await message.answer(MESSAGES[language]['SMTP_MESSAGE_SENT'], reply_markup=settings_menu_keyboard())
     await state.clear()
