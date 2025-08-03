@@ -26,16 +26,16 @@ async def start_callback_language(callback_query: types.CallbackQuery) -> None:
 
     match callback_query.data:
         case "lang_ua":
-            print(f"--[INFO] - User {user_id} ({user_name}) set language to ua.")
+            print(f"[INFO] - User {user_id} ({user_name}) set language to ua.")
             await UserService.update_user_language(user_id, 'UKRANIAN')
             await callback_query.message.answer(MESSAGES['UKRANIAN']["LANGUAGE_OK"], reply_markup=menu_reply_keyboard())
         case "lang_en":
-            print(f"--[INFO] - User {user_id} ({user_name}) set language to en.")
+            print(f"[INFO] - User {user_id} ({user_name}) set language to en.")
             await UserService.update_user_language(user_id, 'ENGLISH')
             await callback_query.message.answer(MESSAGES['ENGLISH']["LANGUAGE_OK"], reply_markup=menu_reply_keyboard())
 
         case _:
-            print(f"--[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
+            print(f"[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
             await callback_query.message.answer(MESSAGES[language]["LANGUAGE_INVALID"])
 
 
@@ -55,7 +55,7 @@ async def callback_idea_process(callback_query: types.CallbackQuery, state: FSMC
 
     match callback_query.data:
         case "delete_idea":
-            print(f"--[INFO] - User {user_id} ({user_name}) deleted idea.")
+            print(f"[INFO] - User {user_id} ({user_name}) deleted idea.")
             await callback_query.message.answer(MESSAGES[language]["IDEA_DELETE"], reply_markup=idea_reply_keyboard())
             await state.clear()
         case "save_idea":
@@ -64,21 +64,21 @@ async def callback_idea_process(callback_query: types.CallbackQuery, state: FSMC
                 idea: str = data.get("idea")
 
                 if not idea:
-                    print(f"--[INFO] - User {user_id} ({user_name}) sent empty idea.")
+                    print(f"[INFO] - User {user_id} ({user_name}) sent empty idea.")
                     await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"], reply_markup=idea_reply_keyboard())
                     return
                 else:
                     await IdeaService.create_user_idea(user_id, idea)
                     await MyDayService.increment_idea_count(user_id)
 
-                    print(f"--[INFO] - User {user_id} ({user_name}) saved idea: {idea}")
+                    print(f"[INFO] - User {user_id} ({user_name}) saved idea: {idea}")
                     await callback_query.message.answer(MESSAGES[language]["IDEA_SAVED"], reply_markup=idea_reply_keyboard())
                     await state.clear()
             except Exception as e:
-                print(f"--[ERROR] - User {user_id} ({user_name}) failed to save idea: {e}")
+                print(f"[ERROR] - User {user_id} ({user_name}) failed to save idea: {e}")
                 await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"])
         case _:
-            print(f"--[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
+            print(f"[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
             await callback_query.message.answer(MESSAGES[language]["IDEA_PROBLEM"], reply_markup=idea_reply_keyboard())
 
 async def callback_task_deadline(callback_query: types.CallbackQuery, state: FSMContext) -> None:
@@ -101,14 +101,14 @@ async def callback_task_deadline(callback_query: types.CallbackQuery, state: FSM
         case "no_task":
             data = await state.get_data()
             saved_task = data.get("task")
-            print(f"--[INFO] - User {user_id} ({user_name}) saved task: {saved_task}")
+            print(f"[INFO] - User {user_id} ({user_name}) saved task: {saved_task}")
 
             await TaskService.create_task(user_id, saved_task, False)
             await MyDayService.increment_task_count(user_id)
             await callback_query.message.answer(MESSAGES[language]["TASK_DEADLINE_NO"], reply_markup=task_menu_keyboard())
             await state.clear()
         case _:
-            print(f"--[INFO] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
+            print(f"[ERROR] - User {user_id} ({user_name}) sent invalid callback: {callback_query.data}")
             await callback_query.message.answer(MESSAGES[language]["TASK_DEADLINE_INVALID"])
 
 async def callback_routines(callback_query: types.CallbackQuery) -> None:

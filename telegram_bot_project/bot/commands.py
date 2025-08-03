@@ -16,7 +16,7 @@ async def start_command(message: types.Message):
     user_id: int = message.from_user.id
     user_name: str = message.from_user.username or "unknown"
 
-    print(f"--[INFO] - User {user_id} ({user_name}) - started the bot")
+    print(f"[INFO] - User {user_id} ({user_name}) - started the bot")
     user_find = await UserService.get_user_by_id(user_id)
     language: str = await UserService.get_user_language(user_id)
     if user_find:
@@ -34,7 +34,7 @@ async def help_command(message: types.Message):
     user_name: str = message.from_user.username or "unknown"
 
     language: str = await UserService.get_user_language(user_id)
-    print(f"--[INFO] - User {user_id} ({user_name}) - asked for help")
+    print(f"[INFO] - User {user_id} ({user_name}) - asked for help")
     await message.answer(MESSAGES[language]["HELP_MSG"])
 
 # Language Command Handler
@@ -64,7 +64,7 @@ async def idea_command(message: types.Message, state: FSMContext):
     user_find: Any = await UserService.get_user_by_id(user_id)
     language: str = await UserService.get_user_language(user_id)
 
-    print(f"--[INFO] - User with id: {user_id} - opened /idea.")
+    print(f"[INFO] - User with id: {user_id} - opened /idea.")
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
@@ -82,10 +82,10 @@ async def ideas_command(message: types.Message):
     else:
         ideas: List[str] = await IdeaService.get_all_ideas_by_user_id(user_id)
         if not ideas:
-            print(f"--[INFO] - User with id: {user_id} - has no ideas.")
+            print(f"[INFO] - User with id: {user_id} - has no ideas.")
             await message.answer(MESSAGES[language]['NO_IDEAS'])
         else:
-            print(f"--[INFO] - User with id: {user_id} - has ideas: {ideas}")
+            print(f"[INFO] - User with id: {user_id} - has ideas: {ideas}")
 
             dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['IDEAS_SHOW']) * 1.65))
 
@@ -129,7 +129,7 @@ async def task_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
-        print(f"--[INFO] - User with id: {user_id} - opened /task.")
+        print(f"[INFO] - User with id: {user_id} - opened /task.")
 
         await message.answer(MESSAGES[language]['TASK_ADD'])
         await state.set_state(DialogStates.confirm_task)
@@ -313,7 +313,7 @@ async def show_morning_routines(message: types.Message):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
         return
 
-    print(f"--[INFO] - User with id: {user_id} - opened /morning_routines.")
+    print(f"[INFO] - User with id: {user_id} - opened /morning_routines.")
     morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
     if not morning_routine:
         await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
@@ -382,7 +382,7 @@ async def show_evening_routines(message: types.Message):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
         return
 
-    print(f"--[INFO] - User with id: {user_id} - opened /evening_routines.")
+    print(f"[INFO] - User with id: {user_id} - opened /evening_routines.")
     evening_routine = await RoutineService.get_user_routines(user_id, routine_type="evening")
     if not evening_routine:
         await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
