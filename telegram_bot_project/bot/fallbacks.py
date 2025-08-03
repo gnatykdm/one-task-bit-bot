@@ -5,7 +5,6 @@ from states import DialogStates
 # Fallback
 async def fallback(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
-    print(f"[DEBUG] - Current state: {current_state}")
     if current_state == DialogStates.waiting_for_idea.state:
         await process_idea_save(message, state)
     elif current_state == DialogStates.delete_idea.state:

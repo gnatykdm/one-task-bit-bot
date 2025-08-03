@@ -435,3 +435,15 @@ async def show_daily_stats_command(message: types.Message):
 
     text = generate_daily_stats_message(language, created_ideas, completed_tasks, created_tasks)
     await message.answer(text, parse_mode="Markdown", reply_markup=menu_reply_keyboard())
+
+# Focus Zone Menu Handler
+async def show_focus_menu(message: types.Message) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        print(f"[INFO] - User with id: {user_id} - opened /focus.")
+        await message.answer(MESSAGES[language]['WELCOME_TO_FOCUS'], reply_markup=focus_menu_keyboard())
