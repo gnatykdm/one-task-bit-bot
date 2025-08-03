@@ -19,6 +19,15 @@ class UserService:
             return result.scalar_one()
 
     @staticmethod
+    async def get_all_users() -> list[dict]:
+        async with get_session() as session:
+            result = await session.execute(
+                text("SELECT id, wake_time, sleep_time FROM users")
+            )
+            rows = result.fetchall()
+            return [dict(row._mapping) for row in rows]
+
+    @staticmethod
     async def get_user_by_id(user_id: int):
         async with get_session() as session:
             result = await session.execute(
