@@ -1,10 +1,11 @@
+# bot/handlers.py
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from datetime import datetime
 
 from service.smtp import SmtpService
 from bot.buttons import *
-from messages import MESSAGES
+from messages import *
 from service.idea import IdeaService
 from service.task import TaskService
 from service.user import UserService
@@ -12,6 +13,7 @@ from states import DialogStates
 from service.routine import RoutineService
 from bot.utills import check_valid_time, validate_text
 from service.myday import MyDayService
+from bot.scheduler import update_user_job
 
 async def process_idea_save(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
@@ -334,6 +336,7 @@ async def process_set_wake_time(message: Message, state: FSMContext):
 
     print(f"[INFO] - User with id: {user_id} set wake time to: {new_wake_time}")
     await UserService.update_wake_time(user_id, time_obj)
+    update_user_job(user_id, time_obj, message.bot, job_type="wake")
     await message.answer(
         MESSAGES[language]['TIMER_SET'].format(new_wake_time),
         reply_markup=routine_time_keyboard()
@@ -369,6 +372,7 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
 
     print(f"[INFO] - User with id: {user_id} set sleep time to: {new_sleep_time}")
     await UserService.update_sleep_time(user_id, time_obj)
+    update_user_job(user_id, time_obj, message.bot, job_type="sleep")
     await message.answer(
         MESSAGES[language]['TIMER_SET'].format(new_sleep_time),
         reply_markup=routine_time_keyboard()

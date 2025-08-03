@@ -31,6 +31,21 @@ class MyDayService:
             return stat_id
 
     @staticmethod
+    async def create_stats_for_all_users() -> None:
+        print("[INFO] - Creating daily stats for all users")
+        async with get_session() as session:
+            result = await session.execute(
+                text("SELECT id FROM users")
+            )
+            user_ids = [row.id for row in result.fetchall()]
+
+        for user_id in user_ids:
+            try:
+                await MyDayService.create_daily_stats(user_id)
+            except Exception as e:
+                print(f"[ERROR] - Failed to create stats for user {user_id}: {e}")
+
+    @staticmethod
     async def get_today_stats(user_id: int) -> Optional[dict]:
         async with get_session() as session:
             result: Any = await session.execute(

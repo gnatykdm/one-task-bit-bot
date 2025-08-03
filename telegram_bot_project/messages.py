@@ -1,4 +1,7 @@
 from typing import Any
+from aiogram import types, Bot
+from service.user import UserService
+from service.routine import RoutineService
 
 MESSAGES: Any = {
     "UKRANIAN": {
@@ -96,6 +99,8 @@ MESSAGES: Any = {
         "ROUTINE_TIME": "⏰ Прокидаєшся о {}, лягаєш спати о {}, загальний час дня: {}. Чудовий план! 😊",
         "TIMER_INVALID": "❌ Неправильний формат часу (потрібно 10:00). Спробуй ще раз! 😌",
         "IDEA_EXIST": "⚠️ Ідея з такою назвою вже є. Придумай нову, ти ж креативний! 😊",
+        "SEND_MORNING_MSG": "Доброго ранку, {}",
+        "SEND_EVENING_MSG": "Доброго вечора, {}",
         "LANGUAGE_ASK": (
             "🌐 Яку мову обереш, друже? \n"
             "Тисни кнопку нижче, і поїхали! 😄"
@@ -199,6 +204,8 @@ MESSAGES: Any = {
         "TIMER_INVALID": "❌ Wrong time format (use 10:00). Try again! 😌",
         "ROUTINE_TIME": "⏰ Wake up at {}, sleep at {}, total day time: {}. Great plan! 😊",
         "IDEA_EXIST": "⚠️ An idea with that name already exists. Got another creative one? 😊",
+        "SEND_MORNING_MSG": "Good morning, {}!",
+        "SEND_EVENING_MSG": "Good evening, {}!",
         "LANGUAGE_ASK": (
             "🌐 What language would you like, friend? \n"
             "Pick one below, and let’s roll! 😄"
@@ -209,10 +216,10 @@ MESSAGES: Any = {
 }
 
 # Buttons
+BUTTON_SETTINGS = "⚙️ Settings"
 BUTTON_ADD_TASK: str = "📝 Add a Task"
 BUTTON_IDEA: str = "💾 Save an Idea"
 BUTTON_MYDAY: str = "📅 My Day"
-BUTTON_SETTINGS: str = "⚙️ Settings"
 BUTTON_HELP: str = "❓ Help"
 BUTTON_UA_LANG: str = "🇺🇦 Українська"
 BUTTON_EN_LANG: str = "🇬🇧 English"
@@ -285,3 +292,37 @@ def generate_daily_stats_message(language: str, created_ideas: int, completed_ta
             "🔄 Updates every day at 00:00.\n\n"
             "You’re absolutely crushing it! Keep shining! 🌟"
         )
+
+async def send_morning_message(bot: Bot, user_id: int):
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+    morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
+
+    print(f"[INFO] - Sending morning routine to user with id, {user_id}")
+    if not morning_routine:
+        await bot.send_message(
+            user_id,
+            MESSAGES[language]['SEND_MORNING_MSG'].format("👤") + '\n' + MESSAGES[language]['NO_MORNING_ROUTINE']
+        )
+        return
+
+    dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['MORNING_ROUTINE_SHOW']) * 1.65))
+    formatted_routine_items = "\n".join(
+        f"# {idx}. {routine['routine_name']}"
+        for idx, routine in enumerate(morning_routine, start=1)
+    )
+    formatted_morning_routine = (
+        MESSAGES[language]['MORNING_ROUTINE_SHOW'] +
+        dividers +
+        "\n" +
+        formatted_routine_items
+    )
+
+    await bot.send_message(user_id, formatted_morning_routine)
+
+async def send_evening_message(bot: Bot, user_id: int):
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+    print(f"[INFO] - Sending evening routine to user with id, {user_id}")
+    await bot.send_message(
+        user_id,
+        MESSAGES[language]['SEND_EVENING_MSG'].format("👤")
+    )
