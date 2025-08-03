@@ -1,12 +1,10 @@
+# bot/commands.py
 from typing import List
-from aiogram import types
 from aiogram.fsm.context import FSMContext
 
 from bot.utills import format_date, calculate_awake_hours
 from service.idea import IdeaService
 from service.task import TaskService
-from service.user import UserService
-from messages import *
 from bot.buttons import *
 from states import DialogStates
 from service.myday import MyDayService

@@ -1,3 +1,4 @@
+# bot/buttons.py
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from messages import *
 

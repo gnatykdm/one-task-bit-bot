@@ -18,7 +18,6 @@ dp = Dispatcher(storage=storage)
 # Command Handlers
 @dp.message(Command("start"))
 async def start(message: Message):
-    global USER_ID
     await start_command(message)
 
 @dp.message(Command("help"))
@@ -191,7 +190,7 @@ async def main():
     scheduler: AsyncIOScheduler = initialize_scheduler()
     scheduler.add_job(
         MyDayService.create_stats_for_all_users,
-'cron',
+        trigger='cron',
         hour='0',
         minute='0'
     )

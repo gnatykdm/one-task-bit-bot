@@ -3,8 +3,6 @@ from datetime import time
 from aiogram import Bot
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from messages import *
-
 from messages import send_morning_message, send_evening_message
 from service.user import UserService
 

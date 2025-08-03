@@ -1,5 +1,5 @@
+# bot/callbacks.py
 from typing import Optional
-from aiogram import types
 from aiogram.fsm.context import FSMContext
 
 from bot.buttons import *
