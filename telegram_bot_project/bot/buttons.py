@@ -157,20 +157,17 @@ def evening_routine_keyboard() -> ReplyKeyboardMarkup:
     )
 
 def focus_menu_keyboard(started: Optional[bool] = False) -> ReplyKeyboardMarkup:
-    menu_btn: KeyboardButton = KeyboardButton(text=MENU_BUTTON)
-    main_focus_action_btn = KeyboardButton(text=FOCUS_ZONE_START) if not started else KeyboardButton(text=FOCUS_ZONE_END)
+    menu_btn = KeyboardButton(text=MENU_BUTTON)
+    focus_btn = KeyboardButton(text=FOCUS_ZONE_END if started else FOCUS_ZONE_START)
 
-    keyboard: List[List[KeyboardButton]] = []
-
-    if not started:
-        keyboard.append([main_focus_action_btn])
-        keyboard.append([menu_btn])
-    keyboard.append([main_focus_action_btn])
+    keyboard = [
+        [focus_btn],
+        [menu_btn]
+    ]
 
     return ReplyKeyboardMarkup(
         keyboard=keyboard,
-        resize_keyboard=True,
-        row_width=2
+        resize_keyboard=True
     )
 
 def focus_save_question_keyboard() -> InlineKeyboardMarkup:

@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -14,6 +15,9 @@ from messages import *
 
 storage: MemoryStorage = MemoryStorage()
 dp = Dispatcher(storage=storage)
+
+focus_times = {}
+FOCUS_ZONE_START_TIME: int = None
 
 # Command Handlers
 @dp.message(Command("start"))
@@ -86,7 +90,7 @@ async def update_task(message: Message, state: FSMContext):
 async def settings(message: Message):
     await setting_menu_command(message)
 
-@dp.message(Command("time"))
+@dp.message(Command("time_manage"))
 @dp.message(lambda m: m.text == ROUTINE_MY_TIME)
 @dp.message(lambda m: m.text == SETTINGS_BUTTON_ROUTINE_TIME)
 async def my_routine_time(message: Message):
@@ -166,6 +170,61 @@ async def my_day(message: Message):
 @dp.message(Command("focus"))
 async def focus(message: Message):
     await show_focus_menu(message)
+
+@dp.message(lambda m: m.text == FOCUS_ZONE_START)
+async def focus_start(message: Message):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+
+    global FOCUS_STATUS
+    FOCUS_STATUS = True
+    focus_times[user_id] = datetime.now()
+
+    await message.answer(
+        MESSAGES[language]['START_FOCUS_MSG'],
+        reply_markup=focus_menu_keyboard(FOCUS_STATUS)
+    )
+
+
+@dp.message(lambda m: m.text == FOCUS_ZONE_END)
+async def focus_end(message: Message):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id)
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+
+    global FOCUS_STATUS
+    FOCUS_STATUS = False
+
+    start_time = focus_times.get(user_id)
+
+    if not start_time:
+        await message.answer("❗ Не знайдено початку фокус-сесії.")
+        return
+
+    end_time = datetime.now()
+    delta = end_time - start_time
+
+    total_seconds = int(delta.total_seconds())
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+
+    focus_times.pop(user_id, None)
+
+    await message.answer(
+        MESSAGES[language]['STOP_FOCUS_MSG'].format(minutes, seconds),
+        reply_markup=focus_menu_keyboard(FOCUS_STATUS)
+    )
+
+
 
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):

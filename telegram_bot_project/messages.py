@@ -6,226 +6,223 @@ from service.routine import RoutineService
 MESSAGES: Any = {
     "UKRANIAN": {
         "START_MSG": (
-            "🎉 Вітаю, друже! \n"
-            "Готовий зарядитися енергією та зробити сьогоднішній день незабутнім? Я тут, щоб допомогти тобі сяяти! 💪"
+            "🎉 Вітаємо! \n"
+            "Готові розпочати роботу? Я допоможу організувати ваш день. 📋"
         ),
         "START_MSG_AGAIN": (
-            "👋 З поверненням, чемпіоне! \n"
-            "Рокки готовий підтримати тебе на шляху до нових звершень! Твій день — твоя перемога! 🌟"
+            "👋 Ви повернулися! \n"
+            "Готові продовжити? Обирайте дію через /menu. 📌"
         ),
         "HELP_MSG": (
-            "❓ Трішки заплутався? Не біда! \n"
-            "Спробуй /start, /language або /menu — я завжди поруч, щоб підказати! 😊"
+            "❓ Потрібна допомога? \n"
+            "Використовуйте /start, /language або /menu для навігації. 📚"
         ),
         "MENU_MSG": (
-            "📋 Твоє персональне меню готове! \n"
-            "Обери, що хочеш, і давай разом економити твій час та натхнення! 💡"
+            "📋 Ось ваше меню. \n"
+            "Виберіть потрібну опцію для продовження. ⚙️"
         ),
         "AUTHORIZATION_PROBLEM": (
-            "🚫 Ой, здається, потрібен маленький старт! \n"
-            "Напиши /start, і ми разом розберемося! 😄"
+            "🚫 Виникла проблема з авторизацією. \n"
+            "Спробуйте /start для початку. 🔄"
         ),
         "TEXT_RESPONSE": (
-            "✉️ Ти написав: \"{response}\". \n"
-            "Дякую, що поділився! Я ціную твої думки! 😊"
+            "✉️ Отримано: \"{response}\". \n"
+            "Дякуємо за ваш ввід! 📝"
         ),
         "CONTINUE_MSG": (
-            "✨ Що далі, друже? \n"
-            "Відкрий /menu, обери свій шлях, а я підтримаю тебе на кожному кроці! 💪"
+            "➡️ Що далі? \n"
+            "Відкрийте /menu, щоб обрати наступну дію. 📋"
         ),
-        "SETTINGS_RESPONSE": "⚙️ Заходимо в налаштування... Давай зробимо все по-твоєму! 😊",
-        "MYDAY_RESPONSE": "📅 Твій план на сьогодні готовий! Давай зробимо цей день крутим! 🔥",
-        "IDEA_RESPONSE": "💡 Є крута ідея? Швидко пиши її — я збережу для тебе! 😊",
-        "IDEA_SAVED": "✅ Твоя ідея в безпеці! Ти молодець, що записав! 🌟",
-        "ADD_TASK_RESPONSE": "📝 Додаємо нове завдання... Ти на правильному шляху! 😊",
-        "IDEA_ACTION": "📌 Що хочеш зробити з цією ідеєю, друже? 😄",
-        "IDEA_DELETE": "🗑️ Ідею видалено! Готові до нових? 💪",
-        "IDEA_PROBLEM": "⚠️ Ой, щось пішло не так із збереженням ідеї. Спробуй ще раз, я вірю в тебе! 😊",
-        "IDEAS_SHOW": "💡 Ось твої круті ідеї, готові до дії! 😄",
-        "IDEA_EXISTS": "⚠️ Така ідея вже є! Може, придумаємо щось новеньке? 😊",
-        "ERROR_SAVING_IDEA": "⚠️ Щось пішло не так зі збереженням. Спробуй ще раз трішки пізніше! 😌",
-        "NO_IDEAS": "📝 Поки ідей немає, але я знаю, що в тебе їх купа! Додай першу! 🚀",
-        "DELETE_IDEA": "ℹ️ Назви номер ідеї, яку хочеш видалити, і я все зроблю! 😊",
-        "UPDATE_IDEA": "ℹ️ Скажи номер ідеї, яку хочеш оновити, і давай її вдосконалимо! ✏️",
-        "NOT_VALID_IDEA_NUM": "❌ Хм, здається, номер не той. Спробуй ще раз! 😄",
-        "INVALID_IDEA_NUM": "❌ Ой, неправильний номер! Давай ще раз, ти впораєшся! 😊",
-        "IDEA_DELETED": "🗑️ Ідею №{} '{}' видалено! Готові до нових звершень? 💪",
-        "ASK_NEW_IDEA_TEXT": "✏️ Напиши новий текст для ідеї №{} '{}', і я оновлю! 😊",
-        "IDEA_UPDATED": "✅ Ідея №{} оновлена! Ти круто справляєшся! 🔥",
-        "TASK_ADD": "📝 Напиши назву завдання, натисни кнопку, і ми в грі! 😄",
-        "TASK_DEADLINE_ASK": "⏰ Хочеш додати дедлайн до завдання? Я поруч! 😊",
-        "TASK_DEADLINE_YES": "🕒 Напиши час дедлайну, наприклад, 13:10, і я зафіксую! 😄",
-        "TASK_DEADLINE_NO": "✅ Завдання збережено без дедлайну! Ти молодець! 🏆",
-        "TASK_DEADLINE_INVALID": "❌ Хм, час неправильний. Спробуй ще раз, я вірю в тебе! 😊",
-        "TASK_SAVED": "✅ Завдання в кишені! Ти на висоті! 🎉",
-        "TASK_MENU": "📂 Твоє меню завдань — усе під контролем! 😄",
-        "NO_TASKS": "❌ Поки завдань немає, але я знаю, що ти готовий їх додати! Спробуй /task! 🚀",
-        "YOUR_TASKS": "📋 Ось твої завдання — давай їх розгромимо! 💪",
-        "TASK_DELETE_MSG": "🗑️ Назви номер завдання, яке хочеш видалити, і я приберу! 😊",
-        "INVALID_TASK_NUM": "❌ Ой, номер не той! Спробуй ще раз! 😄",
-        "TASK_DELETED": "✅ Завдання №{} '{}' видалено! Ти крутий! 💥",
-        "TASK_DELETE_PROBLEM": "⚠️ Щось пішло не так із видаленням. Спробуй ще раз пізніше! 😌",
-        "COMPLETE_TASK_MSG": "✅ Назви номер завдання, яке ти виконав, — відсвяткуємо! 🎉",
-        "COMPLETE_TASK_INVALID": "❌ Хм, номер не той. Спробуй ще раз! 😊",
-        "COMPLETE_TASK_SUCCESS": "🏆 Завдання №{} '{}' виконано! Ти просто зірка! 🌟",
-        "COMPLETE_TASK_PROBLEM": "⚠️ Щось пішло не так із оновленням. Давай ще раз? 😌",
-        "UPDATE_TASK_MSG": "✏️ Назви номер завдання для оновлення, і ми його підправимо! 😊",
-        "UPDATE_TASK_INVALID": "❌ Неправильний номер. Спробуй ще раз, ти впораєшся! 😄",
-        "UPDATE_TASK_SUCCESS": "✅ Завдання №{} оновлено! Ти на висоті! 🔥",
-        "UPDATE_TASK_PROBLEM": "⚠️ Щось не так із оновленням. Спробуй ще раз! 😌",
-        "UPDATE_TASK_NAME_MSG": "📝 Напиши нову назву завдання, і я оновлю! 😊",
-        "UPDATE_TASK_NAME_INVALID": "❌ Назва не підходить. Давай ще раз, я вірю в тебе! 😄",
-        "SETTINGS_MENU": "⚙️ Ласкаво просимо до налаштувань! Давай зробимо все зручним для тебе! 😊",
-        "ROUTINE_MENU_DAY": "🌅 Хочеш налаштувати ранковий чи вечірній розпорядок? Я з тобою! 😄",
-        "MORNING_ROUTINE": "☀️ Твій ранковий розпорядок — заряд на весь день! 💪",
-        "EVENING_ROUTINE": "🌙 Твій вечірній розпорядок — час для релаксу! 😊",
-        "ROUTINES_INVALID": "❌ Ой, щось пішло не так. Давай спробуємо ще раз? 😌",
-        "ADD_MORNING_ROUTINE": "📝 Напиши назву для твого ранкового розпорядку! 😊",
-        "INVALID_MORNING_ROUTINE": "❌ Назва не підходить. Спробуй ще раз, я вірю в тебе! 😄",
-        "ROUTINE_EXISTS": "⚠️ Такий розпорядок уже є. Може, придумаємо нову назву? 😊",
-        "ROUTINE_SAVED": "✅ Розпорядок «{}» готовий! Ти круто справляєшся! 🎉",
-        "MORNING_ROUTINE_SHOW": "☀️ Ось твої ранкові розпорядки — готові до дії! 😊",
-        "EVENING_ROUTINE_SHOW": "🌙 Твої вечірні розпорядки — час для спокою! 😄",
-        "NO_MORNING_ROUTINE": "📝 Ранкового розпорядку ще немає. Давай створимо його разом? 🚀",
-        "PROVIDE_ROUTINE_ID": "🔢 Назви номер розпорядку, і я все зроблю! 😊",
-        "ROUTINE_DELETED": "🗑️ Розпорядок видалено! Готові до нових ідей? 💪",
-        "NEW_ROUTINE_NAME": "✏️ Напиши нову назву для розпорядку! 😊",
-        "ROUTINE_NAME_SET": "✅ Назву розпорядку змінено на «{}»! Ти молодець! 🌟",
-        "SMTP_MESSAGE_TEXT": "📝 Поділися своїм відгуком — я весь у слухах! 😊",
-        "SMTP_MESSAGE_SENT": "🙏 Дякую за твій відгук! Ти допомагаєш нам ставати кращими! 💖",
-        "INVALID_MESSAGE": "❌ Текст не підходить. Спробуй ще раз, я вірю в тебе! 😄",
-        "SET_TIME_MSG": "⏰ Напиши час для таймера (наприклад, 10:00)! 😊",
-        "TIMER_SET": "✅ Таймер на {} встановлено! Ти на правильному шляху! 😄",
-        "ROUTINE_TIME": "⏰ Прокидаєшся о {}, лягаєш спати о {}, загальний час дня: {}. Чудовий план! 😊",
-        "TIMER_INVALID": "❌ Неправильний формат часу (потрібно 10:00). Спробуй ще раз! 😌",
-        "IDEA_EXIST": "⚠️ Ідея з такою назвою вже є. Придумай нову, ти ж креативний! 😊",
-        "SEND_MORNING_MSG": "Доброго ранку, {}",
-        "SEND_EVENING_MSG": "Доброго вечора, {}",
-        "WELCOME_TO_FOCUS": "Вітаємо у фокус зоні",
-        "START_FOCUS_MSG": "Старт фокус сессії",
-        "STOP_FOCUS_MSG": "Стоп фокус сессії - тривалість, {}",
-        "SAVE_FOCUS_ZONE": "Хочете зберегти фокус сессію?",
-        "SAVED_FOCUS_MSG": "Фокус сессію збережено",
-        "TITLE_FOCUS_ZONE_MSG": "Хочете дати назву для цієї сессії?",
-        ""
+        "SETTINGS_RESPONSE": "⚙️ Відкриваємо налаштування. Давайте налаштуємо все під вас. 🔧",
+        "MYDAY_RESPONSE": "📅 Ваш план на день готовий. Перегляньте його! 🕒",
+        "IDEA_RESPONSE": "💡 Маєте ідею? Напишіть, я збережу її. 📝",
+        "IDEA_SAVED": "✅ Ідею збережено. Дякуємо за внесок! 📚",
+        "ADD_TASK_RESPONSE": "📝 Додаємо завдання. Вкажіть деталі. 🛠️",
+        "IDEA_ACTION": "📌 Що зробити з цією ідеєю? Виберіть дію. ⚙️",
+        "IDEA_DELETE": "🗑️ Ідею видалено. Готові до нових? 📝",
+        "IDEA_PROBLEM": "⚠️ Помилка збереження ідеї. Спробуйте ще раз. 🔄",
+        "IDEAS_SHOW": "💡 Ваші ідеї готові до перегляду. 📋",
+        "IDEA_EXISTS": "⚠️ Така ідея вже існує. Спробуйте нову. 💡",
+        "ERROR_SAVING_IDEA": "⚠️ Не вдалося зберегти ідею. Спробуйте пізніше. ⏳",
+        "NO_IDEAS": "📝 Ідей поки немає. Додайте першу! 🚀",
+        "DELETE_IDEA": "ℹ️ Вкажіть номер ідеї для видалення. 🗑️",
+        "UPDATE_IDEA": "ℹ️ Вкажіть номер ідеї для оновлення. ✏️",
+        "NOT_VALID_IDEA_NUM": "❌ Неправильний номер ідеї. Спробуйте ще раз. 🔢",
+        "INVALID_IDEA_NUM": "❌ Номер ідеї некоректний. Перевірте ще раз. 🔍",
+        "IDEA_DELETED": "🗑️ Ідея №{} '{}' видалена. Готові до нових завдань? 📝",
+        "ASK_NEW_IDEA_TEXT": "✏️ Введіть новий текст для ідеї №{} '{}'. 📝",
+        "IDEA_UPDATED": "✅ Ідея №{} оновлена. Відмінна робота! 📚",
+        "TASK_ADD": "📝 Вкажіть назву завдання для додавання. 🛠️",
+        "TASK_DEADLINE_ASK": "⏰ Додати дедлайн до завдання? Виберіть опцію. 🕒",
+        "TASK_DEADLINE_YES": "🕒 Введіть час дедлайну (наприклад, 13:10). 📅",
+        "TASK_DEADLINE_NO": "✅ Завдання збережено без дедлайну. 📝",
+        "TASK_DEADLINE_INVALID": "❌ Некоректний формат часу. Спробуйте ще раз. ⏳",
+        "TASK_SAVED": "✅ Завдання збережено. Продовжуйте! 📋",
+        "TASK_MENU": "📂 Меню завдань. Усе під контролем. 🛠️",
+        "NO_TASKS": "❌ Завдань поки немає. Додайте нове через /task. 🚀",
+        "YOUR_TASKS": "📋 Список ваших завдань. Обирайте! 🛠️",
+        "TASK_DELETE_MSG": "🗑️ Вкажіть номер завдання для видалення. 📝",
+        "INVALID_TASK_NUM": "❌ Некоректний номер завдання. Спробуйте ще раз. 🔢",
+        "TASK_DELETED": "✅ Завдання №{} '{}' видалено. 📝",
+        "TASK_DELETE_PROBLEM": "⚠️ Помилка видалення завдання. Спробуйте пізніше. ⏳",
+        "COMPLETE_TASK_MSG": "✅ Вкажіть номер завершеного завдання. 🏆",
+        "COMPLETE_TASK_INVALID": "❌ Некоректний номер завдання. Спробуйте ще раз. 🔢",
+        "COMPLETE_TASK_SUCCESS": "🏆 Завдання №{} '{}' виконано. Відмінно! 📝",
+        "COMPLETE_TASK_PROBLEM": "⚠️ Помилка оновлення завдання. Спробуйте ще раз. 🔄",
+        "UPDATE_TASK_MSG": "✏️ Вкажіть номер завдання для оновлення. 📝",
+        "UPDATE_TASK_INVALID": "❌ Некоректний номер завдання. Спробуйте ще раз. 🔢",
+        "UPDATE_TASK_SUCCESS": "✅ Завдання №{} оновлено. Гарна робота! 📝",
+        "UPDATE_TASK_PROBLEM": "⚠️ Помилка оновлення завдання. Спробуйте пізніше. ⏳",
+        "UPDATE_TASK_NAME_MSG": "📝 Введіть нову назву завдання. 🛠️",
+        "UPDATE_TASK_NAME_INVALID": "❌ Некоректна назва завдання. Спробуйте ще раз. 🔢",
+        "SETTINGS_MENU": "⚙️ Меню налаштувань. Налаштуйте все за вашим бажанням. 🔧",
+        "ROUTINE_MENU_DAY": "🌅 Налаштувати ранковий чи вечірній розпорядок? 📅",
+        "MORNING_ROUTINE": "☀️ Ваш ранковий розпорядок готовий. 📋",
+        "EVENING_ROUTINE": "🌙 Ваш вечірній розпорядок готовий. 📋",
+        "ROUTINES_INVALID": "❌ Помилка з розпорядками. Спробуйте ще раз. 🔄",
+        "ADD_MORNING_ROUTINE": "📝 Введіть назву ранкового розпорядку. 🛠️",
+        "INVALID_MORNING_ROUTINE": "❌ Некоректна назва. Спробуйте ще раз. 🔢",
+        "ROUTINE_EXISTS": "⚠️ Розпорядок з такою назвою вже існує. Виберіть іншу. 📝",
+        "ROUTINE_SAVED": "✅ Розпорядок «{}» збережено. 📝",
+        "MORNING_ROUTINE_SHOW": "☀️ Ваші ранкові розпорядки. 📋",
+        "EVENING_ROUTINE_SHOW": "🌙 Ваші вечірні розпорядки. 📋",
+        "NO_MORNING_ROUTINE": "📝 Ранкових розпорядків немає. Додайте перший! 🚀",
+        "PROVIDE_ROUTINE_ID": "🔢 Вкажіть номер розпорядку для дії. 📝",
+        "ROUTINE_DELETED": "🗑️ Розпорядок видалено. Готові до нових? 📝",
+        "NEW_ROUTINE_NAME": "✏️ Введіть нову назву розпорядку. 📝",
+        "ROUTINE_NAME_SET": "✅ Назва розпорядку змінена на «{}». 📝",
+        "SMTP_MESSAGE_TEXT": "📝 Напишіть ваш відгук. Ми цінуємо вашу думку! 💬",
+        "SMTP_MESSAGE_SENT": "🙏 Відгук отримано. Дякуємо за ваш внесок! 📝",
+        "INVALID_MESSAGE": "❌ Некоректний текст. Спробуйте ще раз. 🔢",
+        "SET_TIME_MSG": "⏰ Введіть час для таймера (наприклад, 10:00). 🕒",
+        "TIMER_SET": "✅ Таймер встановлено на {}. 📅",
+        "ROUTINE_TIME": "⏰ Прокидання о {}, сон о {}, тривалість дня: {}. 📋",
+        "TIMER_INVALID": "❌ Некоректний формат часу (потрібно 10:00). Спробуйте ще раз. ⏳",
+        "IDEA_EXIST": "⚠️ Ідея з такою назвою вже є. Виберіть іншу. 💡",
+        "SEND_MORNING_MSG": "Доброго ранку, {}! ☀️",
+        "SEND_EVENING_MSG": "Доброго вечора, {}! 🌙",
+        "WELCOME_TO_FOCUS": "Вітаємо у зоні фокусу! 🎯",
+        "START_FOCUS_MSG": "Сесію фокусу розпочато. 🕒",
+        "STOP_FOCUS_MSG": "Сесію фокусу зупинено.\nТривалість: - {}хв {}с. ⏳",
+        "SAVE_FOCUS_ZONE": "Зберегти сесію фокусу? 📝",
+        "SAVED_FOCUS_MSG": "Сесію фокусу збережено. ✅",
+        "TITLE_FOCUS_ZONE_MSG": "Бажаєте дати назву цій сесії? 📝",
         "LANGUAGE_ASK": (
-            "🌐 Яку мову обереш, друже? \n"
-            "Тисни кнопку нижче, і поїхали! 😄"
+            "🌐 Виберіть мову для роботи. \n"
+            "Оберіть опцію нижче. 📚"
         ),
-        "LANGUAGE_OK": "✅ Мову змінено! Готові до нових пригод? 🚀",
-        "LANGUAGE_INVALID": "⚠️ Щось не те з вибором. Спробуй ще раз, я поруч! 😊"
+        "LANGUAGE_OK": "✅ Мову змінено. Готові продовжити? 🚀",
+        "LANGUAGE_INVALID": "❌ Некоректний вибір мови. Спробуйте ще раз. 🔢"
     },
-
     "ENGLISH": {
         "START_MSG": (
-            "🎉 Hey there, friend! \n"
-            "Ready to kick off your day with some energy and good vibes? I’m here to help you shine! 💪"
+            "🎉 Welcome! \n"
+            "Ready to start your day? I’m here to help you stay organized. 📋"
         ),
         "START_MSG_AGAIN": (
-            "👋 Welcome back, champ! \n"
-            "Rocky’s here to cheer you on and keep you moving forward! Your day, your victory! 🌟"
+            "👋 You’re back! \n"
+            "Ready to continue? Use /menu to choose an action. 📌"
         ),
         "HELP_MSG": (
-            "❓ Feeling a bit lost? No worries! \n"
-            "Try /start, /language, or /menu — I’ve got your back! 😊"
+            "❓ Need assistance? \n"
+            "Try /start, /language, or /menu to navigate. 📚"
         ),
         "MENU_MSG": (
-            "📋 Your personal menu is ready! \n"
-            "Pick what you need, and let’s save your time and spark! 💡"
+            "📋 Your menu is ready. \n"
+            "Select an option to proceed. ⚙️"
         ),
         "AUTHORIZATION_PROBLEM": (
-            "🚫 Oops, looks like we need a quick start! \n"
-            "Type /start, and we’ll sort it out together! 😄"
+            "🚫 Authorization issue detected. \n"
+            "Try /start to begin. 🔄"
         ),
         "TEXT_RESPONSE": (
-            "✉️ You wrote: \"{response}\". \n"
-            "Thanks for sharing! I really value your thoughts! 😊"
+            "✉️ Received: \"{response}\". \n"
+            "Thank you for your input! 📝"
         ),
         "CONTINUE_MSG": (
-            "✨ What’s next, buddy? \n"
-            "Open /menu, pick your path, and I’ll be right there with you! 💪"
+            "➡️ What’s next? \n"
+            "Open /menu to select your next action. 📋"
         ),
-        "SETTINGS_RESPONSE": "⚙️ Diving into settings... Let’s make things just right for you! 😊",
-        "MYDAY_RESPONSE": "📅 Here’s your plan for today! Let’s make it an awesome day! 🔥",
-        "IDEA_RESPONSE": "💡 Got a brilliant idea? Jot it down — I’ll keep it safe for you! 😊",
-        "IDEA_SAVED": "✅ Your idea is safe and sound! Nice job writing it down! 🌟",
-        "ADD_TASK_RESPONSE": "📝 Adding a new task... You’re on the right track! 😊",
-        "IDEA_ACTION": "📌 What do you want to do with this idea, friend? 😄",
-        "IDEA_DELETE": "🗑️ Idea deleted! Ready for some fresh ones? 💪",
-        "IDEA_PROBLEM": "⚠️ Uh-oh, something went wrong saving your idea. Try again, I believe in you! 😊",
-        "IDEAS_SHOW": "💡 Here are your awesome ideas, ready to roll! 😄",
-        "IDEA_EXISTS": "⚠️ That idea’s already here! How about something new and exciting? 😊",
-        "ERROR_SAVING_IDEA": "⚠️ Something went wrong with saving. Try again a bit later! 😌",
-        "NO_IDEAS": "📝 No ideas yet, but I know you’re full of them! Add your first one! 🚀",
-        "DELETE_IDEA": "ℹ️ Tell me the idea number to delete, and I’ll take care of it! 😊",
-        "UPDATE_IDEA": "ℹ️ Tell me the idea number to update, and let’s make it even better! ✏️",
-        "NOT_VALID_IDEA_NUM": "❌ Hmm, that number doesn’t look right. Try again! 😄",
-        "INVALID_IDEA_NUM": "❌ Oops, wrong number! Give it another shot, you got this! 😊",
-        "IDEA_DELETED": "🗑️ Idea #{} '{}' deleted! Ready for new adventures? 💪",
-        "ASK_NEW_IDEA_TEXT": "✏️ Type the new text for idea #{} '{}', and I’ll update it! 😊",
-        "IDEA_UPDATED": "✅ Idea #{} updated! You’re killing it! 🔥",
-        "TASK_ADD": "📝 Type the task name, hit the button, and we’re in business! 😄",
-        "TASK_DEADLINE_ASK": "⏰ Want to add a deadline for this task? I’m here for you! 😊",
-        "TASK_DEADLINE_YES": "🕒 Enter the deadline time, like 13:10, and I’ll lock it in! 😄",
-        "TASK_DEADLINE_NO": "✅ Task saved without a deadline! You’re awesome! 🏆",
-        "TASK_DEADLINE_INVALID": "❌ Hmm, that time doesn’t look right. Try again, I know you can! 😊",
-        "TASK_SAVED": "✅ Task saved! You’re on fire! 🎉",
-        "TASK_MENU": "📂 Your task menu — everything’s under control! 😄",
-        "NO_TASKS": "❌ No tasks yet, but I know you’re ready to add some! Try /task! 🚀",
-        "YOUR_TASKS": "📋 Here are your tasks — let’s crush them! 💪",
-        "TASK_DELETE_MSG": "🗑️ Tell me the task number to delete, and I’ll handle it! 😊",
-        "INVALID_TASK_NUM": "❌ Oops, wrong number! Try again! 😄",
-        "TASK_DELETED": "✅ Task #{} '{}' deleted! You’re rocking it! 💥",
-        "TASK_DELETE_PROBLEM": "⚠️ Something went wrong with deleting. Try again later! 😌",
-        "COMPLETE_TASK_MSG": "✅ Tell me the number of the task you nailed — let’s celebrate! 🎉",
-        "COMPLETE_TASK_INVALID": "❌ Hmm, that number’s off. Try again! 😊",
-        "COMPLETE_TASK_SUCCESS": "🏆 Task #{} '{}' done! You’re absolutely crushing it! 🌟",
-        "COMPLETE_TASK_PROBLEM": "⚠️ Something went wrong with updating. Wanna try again? 😌",
-        "UPDATE_TASK_MSG": "✏️ Tell me the task number to update, and we’ll tweak it! 😊",
-        "UPDATE_TASK_INVALID": "❌ Wrong number! Try again, you got this! 😄",
-        "UPDATE_TASK_SUCCESS": "✅ Task #{} updated! You’re on a roll! 🔥",
-        "UPDATE_TASK_PROBLEM": "⚠️ Something went wrong with updating. Try again soon! 😌",
-        "UPDATE_TASK_NAME_MSG": "📝 Type the new task name, and I’ll update it! 😊",
-        "UPDATE_TASK_NAME_INVALID": "❌ That name doesn’t work. Try again, I believe in you! 😄",
-        "SETTINGS_MENU": "⚙️ Welcome to settings! Let’s make everything perfect for you! 😊",
-        "ROUTINE_MENU_DAY": "🌅 Want to set up a morning or evening routine? I’m with you! 😄",
-        "MORNING_ROUTINE": "☀️ Your morning routine — ready to start the day strong! 💪",
-        "EVENING_ROUTINE": "🌙 Your evening routine — time to unwind! 😊",
-        "ROUTINES_INVALID": "❌ Oops, something went wrong. Shall we try again? 😌",
-        "ADD_MORNING_ROUTINE": "📝 Type a title for your morning routine! 😊",
-        "INVALID_MORNING_ROUTINE": "❌ That title doesn’t work. Try another, you got this! 😄",
-        "ROUTINE_EXISTS": "⚠️ A routine with that title already exists. How about a new one? 😊",
-        "ROUTINE_SAVED": "✅ Routine «{}» saved! You’re doing awesome! 🎉",
-        "MORNING_ROUTINE_SHOW": "☀️ Your morning routines, ready to kickstart your day! 😊",
-        "EVENING_ROUTINE_SHOW": "🌙 Your evening routines — perfect for winding down! 😄",
-        "NO_MORNING_ROUTINE": "📝 No morning routine yet. Let’s create one together? 🚀",
-        "PROVIDE_ROUTINE_ID": "🔢 Tell me the routine number, and I’ll take care of it! 😊",
-        "ROUTINE_DELETED": "🗑️ Routine deleted! Ready for new plans? 💪",
-        "NEW_ROUTINE_NAME": "✏️ Type a new name for the routine! 😊",
-        "ROUTINE_NAME_SET": "✅ Routine name changed to «{}». You’re killing it! 🌟",
-        "SMTP_MESSAGE_TEXT": "📝 Share your feedback — I’m all ears! 😊",
-        "SMTP_MESSAGE_SENT": "🙏 Thanks for your feedback! You’re helping us get better! 💖",
-        "INVALID_MESSAGE": "❌ That text doesn’t work. Try again, I know you can! 😄",
-        "SET_TIME_MSG": "⏰ Enter the time for your timer (like 10:00)! 😊",
-        "TIMER_SET": "✅ Timer set for {}! You’re on the right track! 😄",
-        "TIMER_INVALID": "❌ Wrong time format (use 10:00). Try again! 😌",
-        "ROUTINE_TIME": "⏰ Wake up at {}, sleep at {}, total day time: {}. Great plan! 😊",
-        "IDEA_EXIST": "⚠️ An idea with that name already exists. Got another creative one? 😊",
-        "SEND_MORNING_MSG": "Good morning, {}!",
-        "SEND_EVENING_MSG": "Good evening, {}!",
-        "WELCOME_TO_FOCUS": "Welcome to the focus zone",
-        "START_FOCUS_MSG": "Focus session started",
-        "STOP_FOCUS_MSG": "Focus session stopped - duration, {}",
-        "SAVE_FOCUS_ZONE": "Would you like to save the focus session?",
-        "SAVED_FOCUS_MSG": "Focus session saved",
-        "TITLE_FOCUS_ZONE_MSG": "Would you like to give a name to this session?",
-
+        "SETTINGS_RESPONSE": "⚙️ Accessing settings. Let’s customize your experience. 🔧",
+        "MYDAY_RESPONSE": "📅 Your daily plan is ready. Review it now! 🕒",
+        "IDEA_RESPONSE": "💡 Have an idea? Write it down, and I’ll save it. 📝",
+        "IDEA_SAVED": "✅ Idea saved. Thank you for sharing! 📚",
+        "ADD_TASK_RESPONSE": "📝 Adding a task. Provide the details. 🛠️",
+        "IDEA_ACTION": "📌 What would you like to do with this idea? Select an action. ⚙️",
+        "IDEA_DELETE": "🗑️ Idea deleted. Ready for new ones? 📝",
+        "IDEA_PROBLEM": "⚠️ Error saving the idea. Please try again. 🔄",
+        "IDEAS_SHOW": "💡 Your ideas are ready to view. 📋",
+        "IDEA_EXISTS": "⚠️ This idea already exists. Try a new one. 💡",
+        "ERROR_SAVING_IDEA": "⚠️ Failed to save the idea. Try again later. ⏳",
+        "NO_IDEAS": "📝 No ideas yet. Add your first one! 🚀",
+        "DELETE_IDEA": "ℹ️ Specify the idea number to delete. 🗑️",
+        "UPDATE_IDEA": "ℹ️ Specify the idea number to update. ✏️",
+        "NOT_VALID_IDEA_NUM": "❌ Invalid idea number. Try again. 🔢",
+        "INVALID_IDEA_NUM": "❌ Incorrect idea number. Please check again. 🔍",
+        "IDEA_DELETED": "🗑️ Idea #{} '{}' deleted. Ready for new tasks? 📝",
+        "ASK_NEW_IDEA_TEXT": "✏️ Enter new text for idea #{} '{}'. 📝",
+        "IDEA_UPDATED": "✅ Idea #{} updated. Great work! 📚",
+        "TASK_ADD": "📝 Enter the task name to add. 🛠️",
+        "TASK_DEADLINE_ASK": "⏰ Add a deadline for this task? Choose an option. 🕒",
+        "TASK_DEADLINE_YES": "🕒 Enter the deadline time (e.g., 13:10). 📅",
+        "TASK_DEADLINE_NO": "✅ Task saved without a deadline. 📝",
+        "TASK_DEADLINE_INVALID": "❌ Invalid time format. Try again. ⏳",
+        "TASK_SAVED": "✅ Task saved. Keep it up! 📋",
+        "TASK_MENU": "📂 Task menu. Everything is under control. 🛠️",
+        "NO_TASKS": "❌ No tasks yet. Add one with /task. 🚀",
+        "YOUR_TASKS": "📋 List of your tasks. Choose one! 🛠️",
+        "TASK_DELETE_MSG": "🗑️ Specify the task number to delete. 📝",
+        "INVALID_TASK_NUM": "❌ Incorrect task number. Try again. 🔢",
+        "TASK_DELETED": "✅ Task #{} '{}' deleted. 📝",
+        "TASK_DELETE_PROBLEM": "⚠️ Error deleting task. Try again later. ⏳",
+        "COMPLETE_TASK_MSG": "✅ Specify the completed task number. 🏆",
+        "COMPLETE_TASK_INVALID": "❌ Incorrect task number. Try again. 🔢",
+        "COMPLETE_TASK_SUCCESS": "🏆 Task #{} '{}' completed. Well done! 📝",
+        "COMPLETE_TASK_PROBLEM": "⚠️ Error updating task. Try again. 🔄",
+        "UPDATE_TASK_MSG": "✏️ Specify the task number to update. 📝",
+        "UPDATE_TASK_INVALID": "❌ Incorrect task number. Try again. 🔢",
+        "UPDATE_TASK_SUCCESS": "✅ Task #{} updated. Nice job! 📝",
+        "UPDATE_TASK_PROBLEM": "⚠️ Error updating task. Try again later. ⏳",
+        "UPDATE_TASK_NAME_MSG": "📝 Enter the new task name. 🛠️",
+        "UPDATE_TASK_NAME_INVALID": "❌ Invalid task name. Try again. 🔢",
+        "SETTINGS_MENU": "⚙️ Settings menu. Customize as needed. 🔧",
+        "ROUTINE_MENU_DAY": "🌅 Set up a morning or evening routine? 📅",
+        "MORNING_ROUTINE": "☀️ Your morning routine is ready. 📋",
+        "EVENING_ROUTINE": "🌙 Your evening routine is ready. 📋",
+        "ROUTINES_INVALID": "❌ Error with routines. Try again. 🔄",
+        "ADD_MORNING_ROUTINE": "📝 Enter a title for your morning routine. 🛠️",
+        "INVALID_MORNING_ROUTINE": "❌ Invalid title. Try again. 🔢",
+        "ROUTINE_EXISTS": "⚠️ Routine with this title already exists. Choose another. 📝",
+        "ROUTINE_SAVED": "✅ Routine «{}» saved. 📝",
+        "MORNING_ROUTINE_SHOW": "☀️ Your morning routines. 📋",
+        "EVENING_ROUTINE_SHOW": "🌙 Your evening routines. 📋",
+        "NO_MORNING_ROUTINE": "📝 No morning routines yet. Add one! 🚀",
+        "PROVIDE_ROUTINE_ID": "🔢 Specify the routine number for action. 📝",
+        "ROUTINE_DELETED": "🗑️ Routine deleted. Ready for new plans? 📝",
+        "NEW_ROUTINE_NAME": "✏️ Enter a new name for the routine. 📝",
+        "ROUTINE_NAME_SET": "✅ Routine name changed to «{}». 📝",
+        "SMTP_MESSAGE_TEXT": "📝 Share your feedback. We value your input! 💬",
+        "SMTP_MESSAGE_SENT": "🙏 Feedback received. Thank you! 📝",
+        "INVALID_MESSAGE": "❌ Invalid text. Try again. 🔢",
+        "SET_TIME_MSG": "⏰ Enter the timer time (e.g., 10:00). 🕒",
+        "TIMER_SET": "✅ Timer set for {}. 📅",
+        "TIMER_INVALID": "❌ Invalid time format (use 10:00). Try again. ⏳",
+        "ROUTINE_TIME": "⏰ Wake up at {}, sleep at {}, total day time: {}. 📋",
+        "IDEA_EXIST": "⚠️ Idea with this name already exists. Choose another. 💡",
+        "SEND_MORNING_MSG": "Good morning, {}! ☀️",
+        "SEND_EVENING_MSG": "Good evening, {}! 🌙",
+        "WELCOME_TO_FOCUS": "Welcome to the focus zone! 🎯",
+        "START_FOCUS_MSG": "Focus session started. 🕒",
+        "STOP_FOCUS_MSG": "Focus session stopped.\nDuration - {}m {}s. ⏳",
+        "SAVE_FOCUS_ZONE": "Save the focus session? 📝",
+        "SAVED_FOCUS_MSG": "Focus session saved. ✅",
+        "TITLE_FOCUS_ZONE_MSG": "Would you like to name this session? 📝",
         "LANGUAGE_ASK": (
-            "🌐 What language would you like, friend? \n"
-            "Pick one below, and let’s roll! 😄"
+            "🌐 Choose your language. \n"
+            "Select an option below. 📚"
         ),
-        "LANGUAGE_OK": "✅ Language updated! Ready for new adventures? 🚀",
-        "LANGUAGE_INVALID": "⚠️ Something’s off with that choice. Try again, I’m here! 😊"
+        "LANGUAGE_OK": "✅ Language updated. Ready to proceed? 🚀",
+        "LANGUAGE_INVALID": "❌ Invalid language choice. Try again. 🔢"
     }
 }
 
@@ -269,15 +266,15 @@ EVENING_ROUTINE_DELETE_BTN = "🗑️ Delete Evening Routine"
 EVENING_ROUTINE_EDIT_BTN = "✏️ Edit Evening Routine"
 MY_EVENING_ROUTINE_BTN = "🌙 My Evening Routine"
 
-FOCUS_ZONE_START = "Start Focus Zone"
-FOCUS_ZONE_END = "End Focus Zone"
+FOCUS_ZONE_START = "🟢 Start"
+FOCUS_ZONE_END = "🔴 Stop"
 FOCUS_INLINE_YES = "Yes"
 FOCUS_INLINE_NO = "No"
 
 USER_FEEDBACK_MAIL_TEXT = """
-📬 Hey, we’ve got new feedback!
+📬 New feedback received!
 
-Here’s what our awesome user shared:
+User's input:
 
 ------------------------
 {feedback}
@@ -288,28 +285,28 @@ Here’s what our awesome user shared:
 - User ID: {user_id}
 - Date: {date}
 
-Let’s take a look and make things even better!
+Please review to improve our service!
 """
 
 def generate_daily_stats_message(language: str, created_ideas: int, completed_tasks: int, created_tasks: int) -> str:
     lang = language.upper()
     if lang == "UKRANIAN":
         return (
-            "📊 *Твоя щоденна статистика, друже!*\n\n"
-            f"🧠 *Створено ідей*: {created_ideas}\n"
-            f"✅ *Виконано завдань*: {completed_tasks}\n"
-            f"📝 *Додано завдань*: {created_tasks}\n\n"
-            "🔄 Оновлюється щодня о 00:00.\n\n"
-            "Ти просто зірка, так тримати! 🌟"
+            "📊 Щоденна статистика:\n\n"
+            f"🧠 Створено ідей: {created_ideas}\n"
+            f"✅ Виконано завдань: {completed_tasks}\n"
+            f"📝 Додано завдань: {created_tasks}\n\n"
+            "🔄 Оновлення щодня о 00:00.\n\n"
+            "Продовжуйте в тому ж дусі! 📝"
         )
     else:
         return (
-            "📊 *Your Daily Stats, Champ!*\n\n"
-            f"🧠 *Ideas created*: {created_ideas}\n"
-            f"✅ *Tasks completed*: {completed_tasks}\n"
-            f"📝 *Tasks added*: {created_tasks}\n\n"
-            "🔄 Updates every day at 00:00.\n\n"
-            "You’re absolutely crushing it! Keep shining! 🌟"
+            "📊 Daily Stats:\n\n"
+            f"🧠 Ideas created: {created_ideas}\n"
+            f"✅ Tasks completed: {completed_tasks}\n"
+            f"📝 Tasks added: {created_tasks}\n\n"
+            "🔄 Updates daily at 00:00.\n\n"
+            "Keep up the good work! 📝"
         )
 
 async def send_morning_message(bot: Bot, user_id: int):

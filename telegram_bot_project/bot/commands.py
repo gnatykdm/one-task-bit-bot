@@ -446,4 +446,4 @@ async def show_focus_menu(message: types.Message) -> None:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         print(f"[INFO] - User with id: {user_id} - opened /focus.")
-        await message.answer(MESSAGES[language]['WELCOME_TO_FOCUS'], reply_markup=focus_menu_keyboard(started=True))
+        await message.answer(MESSAGES[language]['WELCOME_TO_FOCUS'], reply_markup=focus_menu_keyboard())
