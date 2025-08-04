@@ -9,6 +9,7 @@ from service.myday import MyDayService
 from service.task import TaskService
 from service.user import UserService
 from states import DialogStates
+from service.focus import FocusService
 
 async def start_callback_language(callback_query: types.CallbackQuery) -> None:
     await callback_query.answer()
@@ -130,3 +131,52 @@ async def callback_routines(callback_query: types.CallbackQuery) -> None:
             await callback_query.message.answer(MESSAGES[language]['EVENING_ROUTINE'], reply_markup=evening_routine_keyboard())
         case _:
             await callback_query.message.answer(MESSAGES[language]["ROUTINES_INVALID"])
+
+async def callback_focus(callback_query: types.CallbackQuery, state: FSMContext) -> None:
+    await callback_query.answer()
+
+    user_id: int = callback_query.from_user.id
+    user_find: Optional[dict] = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+    if not language:
+        language = 'ENGLISH'
+    if not user_find:
+        await callback_query.message.answer(MESSAGES['ENGLISH']["AUTHORIZATION_PROBLEM"])
+        return
+
+    match callback_query.data:
+        case "save_focus":
+            await callback_query.message.answer(MESSAGES[language]["TITLE_FOCUS_ZONE_MSG"], reply_markup=focus_title_ask_keyboard())
+        case "not_save_focus":
+            await callback_query.message.answer(MESSAGES[language]["NOT_SAVED_FOCUS_MSG"], reply_markup=focus_menu_keyboard())
+        case _:
+            await callback_query.message.answer(MESSAGES[language]["FOCUS_INVALID"], reply_markup=focus_menu_keyboard())
+
+async def callback_focus_title(callback_query: types.CallbackQuery, state: FSMContext) -> None:
+    await callback_query.answer()
+
+    user_id: int = callback_query.from_user.id
+    user_find: Optional[dict] = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+    if not language:
+        language = 'ENGLISH'
+    if not user_find:
+        await callback_query.message.answer(MESSAGES['ENGLISH']["AUTHORIZATION_PROBLEM"])
+        return
+
+    match callback_query.data:
+        case "add_title":
+            await state.set_state(DialogStates.provide_title_focusing)
+            await callback_query.message.answer(MESSAGES[language]["FOCUS_TITLE_ASK"])
+        case "not_add_title":
+            print(f"[INFO] - User {user_id} canceled adding title.")
+
+            data = await state.get_data()
+            time_d = data.get("duration")
+            await FocusService.create_focus(user_id, duration=time_d)
+
+            print(f"[INFO] - User {user_id} saved focus: {time_d}")
+            await callback_query.message.answer(MESSAGES[language]["SAVED_FOCUS_MSG"], reply_markup=focus_menu_keyboard())
+            await state.clear()
+        case _:
+            await callback_query.message.answer(MESSAGES[language]["FOCUS_INVALID"], reply_markup=focus_menu_keyboard())

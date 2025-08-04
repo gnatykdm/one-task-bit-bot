@@ -159,9 +159,13 @@ def evening_routine_keyboard() -> ReplyKeyboardMarkup:
 def focus_menu_keyboard(started: Optional[bool] = False) -> ReplyKeyboardMarkup:
     menu_btn = KeyboardButton(text=MENU_BUTTON)
     focus_btn = KeyboardButton(text=FOCUS_ZONE_END if started else FOCUS_ZONE_START)
+    focus_list = KeyboardButton(text=ALL_FOCUSES_BTN)
+    delete_focus = KeyboardButton(text=DELETE_FOCUS)
 
     keyboard = [
         [focus_btn],
+        [focus_list],
+        [delete_focus],
         [menu_btn]
     ]
 
@@ -173,9 +177,21 @@ def focus_menu_keyboard(started: Optional[bool] = False) -> ReplyKeyboardMarkup:
 def focus_save_question_keyboard() -> InlineKeyboardMarkup:
     inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
 
-    save_focus_btn: InlineKeyboardButton = InlineKeyboardButton(text=FOCUS_INLINE_YES, callback_data="save_focus")
-    not_save_focus_btn: InlineKeyboardButton = InlineKeyboardButton(text=FOCUS_INLINE_NO, callback_data="not_save_focus")
+    save_focus_btn = InlineKeyboardButton(text=FOCUS_INLINE_YES, callback_data="save_focus")
+    not_save_focus_btn = InlineKeyboardButton(text=FOCUS_INLINE_NO, callback_data="not_save_focus")
 
-    inline_markup.add(save_focus_btn)
-    inline_markup.add(not_save_focus_btn)
+    inline_markup.inline_keyboard.append([save_focus_btn, not_save_focus_btn])
+
     return inline_markup
+
+
+def focus_title_ask_keyboard() -> InlineKeyboardMarkup:
+    inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
+
+    add_title = InlineKeyboardButton(text=FOCUS_INLINE_YES, callback_data="add_title")
+    not_add_title = InlineKeyboardButton(text=FOCUS_INLINE_NO, callback_data="not_add_title")
+
+    inline_markup.inline_keyboard.append([add_title, not_add_title])
+
+    return inline_markup
+

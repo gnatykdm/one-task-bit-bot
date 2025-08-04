@@ -19,3 +19,5 @@ class DialogStates(StatesGroup):
     update_morning_routine = State()
     update_morning_routine_id = State()
     feedback_message = State()
+    provide_title_focusing = State()
+    delete_focus = State()
