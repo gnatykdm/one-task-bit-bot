@@ -14,11 +14,21 @@ CREATE TABLE users (
     sleep_time TIME DEFAULT NULL
 );
 
+-- TABLE routines --
 CREATE TABLE routines (
     id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     routine_type routine_type NOT NULL,
     routine_name VARCHAR(255) NOT NULL
+);
+
+-- TABLE Focuses --
+CREATE TABLE focuses (
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    duration BIGINT NOT NULL,
+    title VARCHAR(225),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- TABLE tasks
