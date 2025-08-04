@@ -26,7 +26,7 @@ CREATE TABLE routines (
 CREATE TABLE focuses (
     id SERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    duration BIGINT NOT NULL,
+    duration VARCHAR(255) NOT NULL,
     title VARCHAR(225),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

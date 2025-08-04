@@ -1,7 +1,7 @@
 # bot/commands.py
-from typing import List
 from aiogram.fsm.context import FSMContext
 
+from service.focus import FocusService
 from bot.utills import format_date, calculate_awake_hours
 from service.idea import IdeaService
 from service.task import TaskService
@@ -447,3 +447,53 @@ async def show_focus_menu(message: types.Message) -> None:
     else:
         print(f"[INFO] - User with id: {user_id} - opened /focus.")
         await message.answer(MESSAGES[language]['WELCOME_TO_FOCUS'], reply_markup=focus_menu_keyboard())
+
+# Show All Focus Sessions Handler
+async def show_all_focuses(message: types.Message) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES[language]['AUTHORIZATION_PROBLEM'])
+        return
+
+    print(f"[INFO] - User with id: {user_id} - opened /show_all_focuses.")
+    focuses = await FocusService.get_focuses_by_user(user_id)
+
+    if not focuses:
+        await message.answer(MESSAGES[language]['NO_FOCUS_SESSIONS'])
+        return
+
+    dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['FOCUS_LIST_TITLE']) * 1.65))
+    formatted_focuses = "\n".join(
+        f"# {idx}. {focus['title']} ({focus['duration']}) – {focus['created_at'].strftime('%Y-%m-%d %H:%M')}"
+        for idx, focus in enumerate(focuses, start=1)
+    )
+
+    formatted_response = (
+        MESSAGES[language]['FOCUS_LIST_TITLE'] +
+        dividers +
+        "\n" +
+        formatted_focuses
+    )
+
+    await message.answer(formatted_response, reply_markup=focus_menu_keyboard())
+
+# Delete Focus Session Handler
+async def delete_focus_session(message: types.Message, state: FSMContext) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+    else:
+        focuses = await FocusService.get_focuses_by_user(user_id)
+        if not focuses:
+            await message.answer(MESSAGES[language]['NO_FOCUS_SESSIONS'])
+            return
+
+        await state.update_data(focuses=focuses)
+        await state.set_state(DialogStates.delete_focus)
+        await message.answer(MESSAGES[language]['DELETE_FOCUS_SESSION_MSG'])

@@ -47,3 +47,7 @@ async def fallback(message: types.Message, state: FSMContext):
         await process_update_morning_routine(message, state, type=routine_type)
     elif current_state == DialogStates.feedback_message:
         await process_feedback_message(message, state)
+    elif current_state == DialogStates.provide_title_focusing:
+        await process_save_focus_session_title(message, state)
+    elif current_state == DialogStates.delete_focus:
+        await process_delete_focus_session(message, state)

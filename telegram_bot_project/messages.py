@@ -106,13 +106,22 @@ MESSAGES: Any = {
         "STOP_FOCUS_MSG": "Сесію фокусу зупинено.\nТривалість: - {}хв {}с. ⏳",
         "SAVE_FOCUS_ZONE": "Зберегти сесію фокусу? 📝",
         "SAVED_FOCUS_MSG": "Сесію фокусу збережено. ✅",
+        "NOT_SAVED_FOCUS_MSG": "Сесію фокусу не збережено. ❌",
         "TITLE_FOCUS_ZONE_MSG": "Бажаєте дати назву цій сесії? 📝",
+        "NOT_FOUND_FOCUS_SESSION": "❗ Не знайдено початку фокус-сесії.",
+        "FOCUS_INVALID": "❗ Неправильний параметр фокусування",
+        "FOCUS_TITLE_ASK": "Будь ласка, введіть назву фокус-сесії.",
+        "FOCUS_EXISTS": "❗ Фокус-сесія вже активна.",
+        "FOCUS_LIST_TITLE": "🧠 Список ваших фокус-сесій",
+        "NO_FOCUS_SESSIONS": "😕 У вас ще немає жодної фокус-сесії.",
         "LANGUAGE_ASK": (
             "🌐 Виберіть мову для роботи. \n"
             "Оберіть опцію нижче. 📚"
         ),
         "LANGUAGE_OK": "✅ Мову змінено. Готові продовжити? 🚀",
-        "LANGUAGE_INVALID": "❌ Некоректний вибір мови. Спробуйте ще раз. 🔢"
+        "LANGUAGE_INVALID": "❌ Некоректний вибір мови. Спробуйте ще раз. 🔢",
+        "DELETE_FOCUS_SESSION_MSG": "Вкажіть номер сесії, яку ви хочете видалити.",
+        "FOCUS_DELETED": "✅ Фокус-сесію №{} з назвою \"{}\" успішно видалено.",
     },
     "ENGLISH": {
         "START_MSG": (
@@ -216,13 +225,22 @@ MESSAGES: Any = {
         "STOP_FOCUS_MSG": "Focus session stopped.\nDuration - {}m {}s. ⏳",
         "SAVE_FOCUS_ZONE": "Save the focus session? 📝",
         "SAVED_FOCUS_MSG": "Focus session saved. ✅",
+        "NOT_SAVED_FOCUS_MSG": "Focus session not saved. ❌",
         "TITLE_FOCUS_ZONE_MSG": "Would you like to name this session? 📝",
+        "NOT_FOUND_FOCUS_SESSION": "❗ Focus session start not found.",
+        "FOCUS_INVALID": "Invalid option for focus",
+        "FOCUS_TITLE_ASK": "Please provide the title for focus session.",
+        "FOCUS_EXISTS": "❗ A focus session is already active.",
+        "FOCUS_LIST_TITLE": "🧠 Your Focus Sessions",
+        "NO_FOCUS_SESSIONS": "😕 No focus sessions found.",
+        "DELETE_FOCUS_SESSION_MSG": "Provide a number of session which you want to delete.",
         "LANGUAGE_ASK": (
             "🌐 Choose your language. \n"
             "Select an option below. 📚"
         ),
         "LANGUAGE_OK": "✅ Language updated. Ready to proceed? 🚀",
-        "LANGUAGE_INVALID": "❌ Invalid language choice. Try again. 🔢"
+        "LANGUAGE_INVALID": "❌ Invalid language choice. Try again. 🔢",
+        "FOCUS_DELETED": "✅ Focus session #{} with the title \"{}\" has been successfully deleted.",
     }
 }
 
@@ -270,6 +288,8 @@ FOCUS_ZONE_START = "🟢 Start"
 FOCUS_ZONE_END = "🔴 Stop"
 FOCUS_INLINE_YES = "Yes"
 FOCUS_INLINE_NO = "No"
+ALL_FOCUSES_BTN = "All Focuses"
+DELETE_FOCUS = "Delete"
 
 USER_FEEDBACK_MAIL_TEXT = """
 📬 New feedback received!

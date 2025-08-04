@@ -14,6 +14,7 @@ from service.routine import RoutineService
 from bot.utills import check_valid_time, validate_text
 from service.myday import MyDayService
 from bot.scheduler import update_user_job
+from service.focus import FocusService
 
 async def process_idea_save(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
@@ -501,3 +502,59 @@ async def process_feedback_message(message: Message, state: FSMContext):
     await SmtpService.send_feedback_message(feedback_message, user_id, user_name)
     await message.answer(MESSAGES[language]['SMTP_MESSAGE_SENT'], reply_markup=settings_menu_keyboard())
     await state.clear()
+
+async def process_save_focus_session_title(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    focus_title: str = message.text.strip()
+    if not validate_text(focus_title):
+        await message.answer(MESSAGES[language]['FOCUS_INVALID'])
+        return
+
+    data = await state.get_data()
+    time_d = data.get("duration")
+
+    try:
+        await FocusService.create_focus(user_id, time_d, focus_title)
+
+        print(f"[INFO] - User with id: {user_id} created focus session with title: {focus_title}")
+        await message.answer(MESSAGES[language]['SAVED_FOCUS_MSG'].format(focus_title), reply_markup=focus_menu_keyboard())
+        await state.clear()
+    except Exception as e:
+        print(f"[ERROR] - {e}")
+        await message.answer(MESSAGES[language]['FOCUS_INVALID'])
+
+async def process_delete_focus_session(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    number = message.text.strip()
+    if not number.isdigit():
+        await message.answer(MESSAGES[language]['FOCUS_INVALID'])
+        return
+
+    data = await state.get_data()
+    focus_sessions = data.get("focuses")
+
+    try:
+        focus_to_delete = focus_sessions[int(number) - 1]
+        real_id = focus_to_delete["id"]
+
+        print(f"[INFO] - User with id: {user_id} deleted focus session with id: {real_id}")
+        await FocusService.delete_focus(real_id)
+        await message.answer(MESSAGES[language]['FOCUS_DELETED'].format(number, focus_to_delete['title']), reply_markup=focus_menu_keyboard())
+        await state.clear()
+    except Exception as e:
+        print(f"[ERROR] - {e}")
+        await message.answer(MESSAGES[language]['FOCUS_INVALID'])

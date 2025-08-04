@@ -192,7 +192,7 @@ async def focus_start(message: Message):
 
 
 @dp.message(lambda m: m.text == FOCUS_ZONE_END)
-async def focus_end(message: Message):
+async def focus_end(message: Message, state: FSMContext):
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
     language = await UserService.get_user_language(user_id)
@@ -207,7 +207,10 @@ async def focus_end(message: Message):
     start_time = focus_times.get(user_id)
 
     if not start_time:
-        await message.answer("❗ Не знайдено початку фокус-сесії.")
+        await message.answer(
+            MESSAGES[language]['NOT_FOUND_FOCUS_SESSION'],
+            reply_markup=focus_menu_keyboard(FOCUS_STATUS)
+        )
         return
 
     end_time = datetime.now()
@@ -219,12 +222,21 @@ async def focus_end(message: Message):
 
     focus_times.pop(user_id, None)
 
+    await state.update_data(duration=f"{minutes}m:{seconds}s")
     await message.answer(
-        MESSAGES[language]['STOP_FOCUS_MSG'].format(minutes, seconds),
-        reply_markup=focus_menu_keyboard(FOCUS_STATUS)
+        MESSAGES[language]['STOP_FOCUS_MSG'].format(minutes, seconds) +
+        '\n' + MESSAGES[language]['SAVE_FOCUS_ZONE'],
+        reply_markup=focus_save_question_keyboard()
     )
 
+@dp.message(Command("focuses"))
+@dp.message(lambda m: m.text == ALL_FOCUSES_BTN)
+async def show_saved_focus(message: Message):
+    await show_all_focuses(message)
 
+@dp.message(lambda m: m.text == DELETE_FOCUS)
+async def delete_focus(message: Message, state: FSMContext):
+    await delete_focus_session(message, state)
 
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):
@@ -241,6 +253,14 @@ async def callback_idea(callback_query: CallbackQuery, state: FSMContext):
 @dp.callback_query(F.data.in_({"yes_task", "no_task"}))
 async def callback_idea(callback_query: CallbackQuery, state: FSMContext):
     await callback_task_deadline(callback_query, state)
+
+@dp.callback_query(F.data.in_({"save_focus", "not_save_focus"}))
+async def callback_focus_save(callback_query: CallbackQuery, state: FSMContext):
+    await callback_focus(callback_query, state)
+
+@dp.callback_query(F.data.in_({"add_title", "not_add_title"}))
+async def callback_focus_title_save(callback_query: CallbackQuery, state: FSMContext):
+    await callback_focus_title(callback_query, state)
 
 @dp.message()
 async def process_fallback(message: Message, state: FSMContext):
