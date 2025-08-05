@@ -1,5 +1,5 @@
+# main.py
 import asyncio
-from datetime import datetime
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from config import TOKEN
-from bot.scheduler import initialize_scheduler, schedule_all_users_jobs
+from bot.scheduler import initialize_scheduler, schedule_all_users_jobs, check_upcoming_tasks
 from bot.commands import *
 from bot.callbacks import *
 from bot.fallbacks import *
@@ -262,6 +262,10 @@ async def callback_focus_save(callback_query: CallbackQuery, state: FSMContext):
 async def callback_focus_title_save(callback_query: CallbackQuery, state: FSMContext):
     await callback_focus_title(callback_query, state)
 
+@dp.callback_query(F.data.startswith(("complete_task", "cancel_task")))
+async def callback_task_status(callback_query: CallbackQuery) -> None:
+    await callback_task_menu(callback_query)
+
 @dp.message()
 async def process_fallback(message: Message, state: FSMContext):
     await fallback(message, state)
@@ -269,6 +273,7 @@ async def process_fallback(message: Message, state: FSMContext):
 # Main Function
 async def main():
     bot = Bot(token=TOKEN)
+    storage = dp.storage
 
     scheduler: AsyncIOScheduler = initialize_scheduler()
     scheduler.add_job(
@@ -276,6 +281,13 @@ async def main():
         trigger='cron',
         hour='0',
         minute='0'
+    )
+
+    scheduler.add_job(
+        check_upcoming_tasks,
+        trigger='interval',
+        minutes=1,
+        args={bot}
     )
 
     await schedule_all_users_jobs(bot)

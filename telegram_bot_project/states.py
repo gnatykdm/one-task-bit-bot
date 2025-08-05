@@ -1,3 +1,4 @@
+# states.py
 from aiogram.fsm.state import StatesGroup, State
 
 class DialogStates(StatesGroup):
@@ -21,3 +22,4 @@ class DialogStates(StatesGroup):
     feedback_message = State()
     provide_title_focusing = State()
     delete_focus = State()
+    start_work = State()

@@ -53,8 +53,8 @@ def idea_reply_keyboard() -> ReplyKeyboardMarkup:
 def task_reply_keyboard() -> InlineKeyboardMarkup:
     inline_markup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
 
-    button_yes: InlineKeyboardButton = InlineKeyboardButton(text=BUTTON_YES, callback_data="yes_task")
-    button_no: InlineKeyboardButton = InlineKeyboardButton(text=BUTTON_NO, callback_data="no_task")
+    button_yes: InlineKeyboardButton = InlineKeyboardButton(text=BUTTON_YES_BTN, callback_data="yes_task")
+    button_no: InlineKeyboardButton = InlineKeyboardButton(text=BUTTON_NO_BTN, callback_data="no_task")
 
     inline_markup.inline_keyboard.append([button_yes, button_no])
     return inline_markup
@@ -195,3 +195,11 @@ def focus_title_ask_keyboard() -> InlineKeyboardMarkup:
 
     return inline_markup
 
+def work_buttons_keyboard(task_id: int) -> InlineKeyboardMarkup:
+    inline_markup: InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard=[], row_width=2)
+
+    start_work_btn: InlineKeyboardButton = InlineKeyboardButton(text=START_WORK_BTN, callback_data=f"complete_task:{task_id}")
+    cancel_work_btn: InlineKeyboardButton = InlineKeyboardButton(text=CANCEL_WORK_BTN, callback_data=f"cancel_task:{task_id}")
+
+    inline_markup.inline_keyboard.append([start_work_btn, cancel_work_btn])
+    return inline_markup

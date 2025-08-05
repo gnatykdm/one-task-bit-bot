@@ -1,5 +1,7 @@
 # bot/callbacks.py
 from typing import Optional
+
+from aiogram import types
 from aiogram.fsm.context import FSMContext
 
 from bot.buttons import *
@@ -180,3 +182,38 @@ async def callback_focus_title(callback_query: types.CallbackQuery, state: FSMCo
             await state.clear()
         case _:
             await callback_query.message.answer(MESSAGES[language]["FOCUS_INVALID"], reply_markup=focus_menu_keyboard())
+
+async def callback_work_buttons(callback_query: types.CallbackQuery, state: FSMContext) -> None:
+    await callback_query.answer()
+
+    user_id: int = callback_query.from_user.id
+    user_find: Optional[dict] = await UserService.get_user_by_id(user_id)
+    if not user_find:
+        await callback_query.message.answer(MESSAGES['ENGLISH']["AUTHORIZATION_PROBLEM"])
+        return
+
+async def callback_task_menu(callback_query: types.CallbackQuery) -> None:
+    await callback_query.answer()
+
+    user_id: int = callback_query.from_user.id
+    user_find: Optional[dict] = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id)
+    if not language:
+        language = 'ENGLISH'
+    if not user_find:
+        await callback_query.message.answer(MESSAGES['ENGLISH']["AUTHORIZATION_PROBLEM"])
+        return
+
+    data = callback_query.data
+    action, task_id_str = data.split(":")
+    task_id = int(task_id_str)
+
+    match action:
+        case "complete_task":
+            await TaskService.update_started_status(task_id)
+            await callback_query.message.answer(MESSAGES[language]['REMIND_WORK_CANCEL'],
+                                                reply_markup=menu_reply_keyboard())
+        case "cancel_task":
+            await TaskService.update_started_status(task_id)
+            await callback_query.message.answer(MESSAGES[language]['REMIND_WORK_CANCEL'],
+                                                reply_markup=menu_reply_keyboard())

@@ -1,5 +1,6 @@
+# messages.py
 from typing import Any
-from aiogram import types, Bot
+from aiogram import Bot
 from service.user import UserService
 from service.routine import RoutineService
 
@@ -122,6 +123,7 @@ MESSAGES: Any = {
         "LANGUAGE_INVALID": "❌ Некоректний вибір мови. Спробуйте ще раз. 🔢",
         "DELETE_FOCUS_SESSION_MSG": "Вкажіть номер сесії, яку ви хочете видалити.",
         "FOCUS_DELETED": "✅ Фокус-сесію №{} з назвою \"{}\" успішно видалено.",
+        "REMIND_WORK_CANCEL": "Нагадування для цього завдання було вимкнено",
     },
     "ENGLISH": {
         "START_MSG": (
@@ -234,6 +236,7 @@ MESSAGES: Any = {
         "FOCUS_LIST_TITLE": "🧠 Your Focus Sessions",
         "NO_FOCUS_SESSIONS": "😕 No focus sessions found.",
         "DELETE_FOCUS_SESSION_MSG": "Provide a number of session which you want to delete.",
+        "REMIND_WORK_CANCEL": "Reminders for this task was deactivated",
         "LANGUAGE_ASK": (
             "🌐 Choose your language. \n"
             "Select an option below. 📚"
@@ -258,8 +261,8 @@ SAVE_BUTTON: str = "✅ Save"
 MENU_BUTTON: str = "🏠 Main Menu"
 UPDATE_IDEA_BUTTON: str = "🆙 Update Idea"
 ALL_IDEAS: str = "🔍 View All Ideas"
-BUTTON_YES: str = "👍 Yes"
-BUTTON_NO: str = "🙅 No"
+BUTTON_YES_BTN: str = "👍 Yes"
+BUTTON_NO_BTN: str = "🙅 No"
 BUTTON_DELETE_TASK = "🗑️ Delete Task"
 BUTTON_EDIT_TASK = "✏️ Edit Task"
 BUTTON_TOGGLE_STATUS = "✅ Mark Complete"
@@ -290,6 +293,9 @@ FOCUS_INLINE_YES = "Yes"
 FOCUS_INLINE_NO = "No"
 ALL_FOCUSES_BTN = "All Focuses"
 DELETE_FOCUS = "Delete"
+
+START_WORK_BTN = "Start"
+CANCEL_WORK_BTN = "Cancel"
 
 USER_FEEDBACK_MAIL_TEXT = """
 📬 New feedback received!
