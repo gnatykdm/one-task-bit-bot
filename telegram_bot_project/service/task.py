@@ -1,7 +1,8 @@
 from sqlalchemy import text
 from config import get_session
 from typing import Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
+
 
 class TaskService:
     @staticmethod
@@ -64,6 +65,37 @@ class TaskService:
                     """
                 ),
                 {"user_id": user_id}
+            )
+            tasks = result.fetchall()
+            return [
+                {
+                    "id": task.id,
+                    "user_id": task.user_id,
+                    "task_name": task.task_name,
+                    "status": task.status,
+                    "start_time": task.start_time,
+                    "creation_date": task.creation_date
+                }
+                for task in tasks
+            ]
+
+    @staticmethod
+    async def get_all_upcoming_tasks() -> List[dict]:
+        async with get_session() as session:
+            now = datetime.now()
+            past = now - timedelta(minutes=20)
+            future = now + timedelta(minutes=31)
+            result = await session.execute(
+                text(
+                    """
+                    SELECT id, user_id, task_name, status, start_time, creation_date
+                    FROM tasks
+                    WHERE start_time IS NOT NULL
+                      AND start_time BETWEEN :past AND :future
+                      AND status = FALSE
+                    """
+                ),
+                {"past": past, "future": future}
             )
             tasks = result.fetchall()
             return [
@@ -145,3 +177,37 @@ class TaskService:
             updated = result.scalar_one_or_none()
             await session.commit()
             return updated is not None
+
+    @staticmethod
+    async def get_started_status(task_id: int) -> bool:
+        async with get_session() as session:
+            result: Any = await session.execute(
+                text(
+                    """
+                    SELECT started
+                    FROM tasks
+                    WHERE id = :task_id
+                    """
+                ),
+                {"task_id": task_id}
+            )
+            started = result.scalar_one_or_none()
+            print(f"[DEBUG DB] get_started_status({task_id}) -> {started}")
+            return bool(started)
+
+    @staticmethod
+    async def update_started_status(task_id):
+        async with get_session() as session:
+            result: Any = await session.execute(
+                text(
+                    """
+                    UPDATE tasks
+                    SET started = TRUE
+                    WHERE id = :task_id"""
+                ),
+                {"task_id": task_id}
+            )
+
+            await session.commit()
+            return result.rowcount == 1
+

@@ -1,4 +1,5 @@
 # bot/commands.py
+from aiogram import types
 from aiogram.fsm.context import FSMContext
 
 from service.focus import FocusService
@@ -7,6 +8,7 @@ from service.idea import IdeaService
 from service.task import TaskService
 from bot.buttons import *
 from states import DialogStates
+from messages import MESSAGES
 from service.myday import MyDayService
 
 # Start Command Handler

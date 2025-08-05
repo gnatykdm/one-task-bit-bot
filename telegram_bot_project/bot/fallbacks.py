@@ -1,4 +1,6 @@
 # bot/fallbacks.py
+from aiogram import types
+
 from bot.handlers import *
 from states import DialogStates
 

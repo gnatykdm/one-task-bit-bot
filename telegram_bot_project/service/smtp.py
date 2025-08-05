@@ -1,3 +1,4 @@
+# service/smtp.py
 import aiosmtplib
 from datetime import datetime
 from email.mime.text import MIMEText

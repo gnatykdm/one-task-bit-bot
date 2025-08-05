@@ -1,3 +1,4 @@
+# config.py
 import os
 import logging
 from dotenv import load_dotenv
@@ -42,3 +43,4 @@ class SmtpData:
 
 def get_smtp_data() -> SmtpData:
     return SmtpData()
+
