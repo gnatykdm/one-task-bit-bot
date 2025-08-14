@@ -203,3 +203,28 @@ def work_buttons_keyboard(task_id: int) -> InlineKeyboardMarkup:
 
     inline_markup.inline_keyboard.append([start_work_btn, cancel_work_btn])
     return inline_markup
+
+def get_work_session_keyboard() -> None:
+    task_finished = KeyboardButton(text=STOP_WORK_SESSION)
+    task_break = KeyboardButton(text=CANCEL_WORK_BTN)
+
+    keyboard = [
+        [task_break, task_finished]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True
+    )
+
+def get_start_day_btn() -> ReplyKeyboardMarkup:
+    start_day_btn = KeyboardButton(text=START_DAY_BTN)
+
+    keyboard = [
+        [start_day_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True
+    )

@@ -1,5 +1,6 @@
 # service/myday.py
 from sqlalchemy import text
+from datetime import datetime
 from config import get_session
 from typing import Any, Optional
 
@@ -52,7 +53,7 @@ class MyDayService:
             result: Any = await session.execute(
                 text(
                     """
-                    SELECT id, user_id, created_tasks, created_ideas, completed_tasks, stats_day_date
+                    SELECT id, user_id, created_tasks, created_ideas, completed_tasks, wake_up_time, stats_day_date
                     FROM daily_stats
                     WHERE user_id = :user_id AND stats_day_date = CURRENT_DATE
                     """
@@ -67,6 +68,7 @@ class MyDayService:
                     "created_tasks": stat.created_tasks,
                     "created_ideas": stat.created_ideas,
                     "completed_tasks": stat.completed_tasks,
+                    "wake_up_time": stat.wake_up_time,
                     "stats_day_date": stat.stats_day_date,
                 }
             return None
@@ -165,4 +167,22 @@ class MyDayService:
                 ),
                 {"user_id": user_id}
             )
+            await session.commit()
+        
+    @staticmethod
+    async def add_wake_up_time(user_id: int, wake_time_str: str) -> None:
+        async with get_session() as session:
+            try:
+                wake_time = datetime.strptime(wake_time_str, "%H:%M").time()
+            except ValueError:
+                raise ValueError(f"Invalid time format: {wake_time_str}. Expected HH:MM")
+            
+            query_stats = text(
+                """
+                UPDATE daily_stats
+                SET wake_up_time = :time
+                WHERE user_id = :user_id
+                """
+            )
+            await session.execute(query_stats, {"time": wake_time, "user_id": user_id})
             await session.commit()

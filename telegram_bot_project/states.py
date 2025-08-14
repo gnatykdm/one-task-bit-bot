@@ -23,3 +23,8 @@ class DialogStates(StatesGroup):
     provide_title_focusing = State()
     delete_focus = State()
     start_work = State()
+
+user_task_start_time = {}
+routine_start_time = {}
+focus_times = {}
+FOCUS_ZONE_START_TIME: int = None

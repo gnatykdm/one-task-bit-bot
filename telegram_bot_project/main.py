@@ -7,17 +7,15 @@ from aiogram.types import CallbackQuery
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from config import TOKEN
-from bot.scheduler import initialize_scheduler, schedule_all_users_jobs, check_upcoming_tasks
+from bot.scheduler import *
 from bot.commands import *
 from bot.callbacks import *
 from bot.fallbacks import *
 from messages import *
+from states import *
 
 storage: MemoryStorage = MemoryStorage()
 dp = Dispatcher(storage=storage)
-
-focus_times = {}
-FOCUS_ZONE_START_TIME: int = None
 
 # Command Handlers
 @dp.message(Command("start"))
@@ -229,6 +227,62 @@ async def focus_end(message: Message, state: FSMContext):
         reply_markup=focus_save_question_keyboard()
     )
 
+@dp.message(lambda m: m.text == STOP_WORK_SESSION)
+async def start_work_btn(message: Message) -> None:
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+
+    task_info = user_task_start_time.get(user_id)
+    if not task_info:
+        await message.answer(MESSAGES[language]['AUTHORIZATION_PROBLEM'])
+        return
+    
+    task_id, task_data = task_info
+    print(f"[DEBUG] - Task id: {task_id} - Start Time: {task_data}")
+
+    stop_time = datetime.now()
+    total_seconds = int((stop_time - task_data).total_seconds())
+    minutes, seconds = divmod(total_seconds, 60)
+
+    user_task_start_time.pop(user_id, None)
+
+    print(f"[DEBUG] - User with id {user_id} add duration {total_seconds}s to task {task_id}.")
+    await TaskService.add_task_complete_duration(task_id, total_seconds)
+
+    task = await TaskService.get_task_by_id(task_id)
+
+    await TaskService.toggle_task_status(task_id)
+    await MyDayService.increment_completed_tasks(user_id)
+
+    task_name = task['task_name'] if task else f"Task {task_id}"
+
+    await message.answer(
+        MESSAGES[language]['FINISH_WORK_SESSION'].format(task_name, minutes, seconds),
+        reply_markup=menu_reply_keyboard()
+    )
+
+@dp.message(lambda m: m.text == STOP_WORK_CANCEL)
+async def cancel_work_btn(message: Message) -> None:
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+
+    user_task_start_time.pop(user_id, None)
+    await message.answer(MESSAGES[language]['BREAK_WORK_SESSION'], reply_markup=menu_reply_keyboard())
+
+@dp.message(lambda m: m.text == START_DAY_BTN)
+async def start_day_btn(message: Message) -> None:
+    await start_day_command(message)
+
 @dp.message(Command("focuses"))
 @dp.message(lambda m: m.text == ALL_FOCUSES_BTN)
 async def show_saved_focus(message: Message):
@@ -270,30 +324,55 @@ async def callback_task_status(callback_query: CallbackQuery) -> None:
 async def process_fallback(message: Message, state: FSMContext):
     await fallback(message, state)
 
-# Main Function
 async def main():
     bot = Bot(token=TOKEN)
     storage = dp.storage
-
-    scheduler: AsyncIOScheduler = initialize_scheduler()
+    
+    scheduler = initialize_scheduler()
     scheduler.add_job(
         MyDayService.create_stats_for_all_users,
         trigger='cron',
-        hour='0',
-        minute='0'
+        hour=0,
+        minute=0,
+        id='daily_stats'
     )
-
+    
     scheduler.add_job(
-        check_upcoming_tasks,
-        trigger='interval',
-        minutes=1,
-        args={bot}
+        cleanup_old_notifications,
+        trigger='cron',
+        hour=1,
+        minute=0,
+        id='cleanup_notifications'
     )
-
+    
+    notifier = PreciseTaskNotifier(bot, scheduler)
+    get_notifier_instance(bot) 
+    
+    print("[STARTUP] Planning precise notifications for all tasks...")
+    await notifier.schedule_all_task_notifications()
+    
+    scheduler.add_job(
+        notifier.schedule_all_task_notifications,
+        trigger='interval',
+        minutes=10,
+        id='reschedule_notifications'
+    )
+    
+    scheduler.add_job(
+        check_upcoming_tasks_v2,
+        trigger='interval',
+        minutes=2,
+        args=[bot],
+        id='backup_task_check'
+    )
+    
     await schedule_all_users_jobs(bot)
+    
+    print("[STARTUP] All jobs scheduled successfully")
+    
+    # Запускаем бота
     await dp.start_polling(bot)
 
-# Start point
 if __name__ == "__main__":
-    print("-- STARTING ROCKY --\n")
+    import asyncio
     asyncio.run(main())
