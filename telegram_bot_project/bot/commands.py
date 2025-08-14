@@ -1,6 +1,7 @@
 # bot/commands.py
 from aiogram import types
 from aiogram.fsm.context import FSMContext
+from datetime import datetime
 
 from service.focus import FocusService
 from bot.utills import format_date, calculate_awake_hours
@@ -385,7 +386,7 @@ async def show_evening_routines(message: types.Message):
     print(f"[INFO] - User with id: {user_id} - opened /evening_routines.")
     evening_routine = await RoutineService.get_user_routines(user_id, routine_type="evening")
     if not evening_routine:
-        await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
+        await message.answer(MESSAGES[language]['NO_EVENING_ROUTINE'])
         return
 
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['EVENING_ROUTINE_SHOW']) * 1.65))
@@ -499,3 +500,29 @@ async def delete_focus_session(message: types.Message, state: FSMContext) -> Non
         await state.update_data(focuses=focuses)
         await state.set_state(DialogStates.delete_focus)
         await message.answer(MESSAGES[language]['DELETE_FOCUS_SESSION_MSG'])
+
+async def start_day_command(message: types.Message) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+
+    morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
+    print(f"[INFO] - Sending morning routine to user with id {user_id}")
+
+    time_str = datetime.now().strftime("%H:%M")  
+
+    await MyDayService.add_wake_up_time(user_id, time_str)
+
+    formatted_routine_items = "\n".join(
+        f"# {idx}. {routine['routine_name']}"
+        for idx, routine in enumerate(morning_routine, start=1)
+    )
+
+    await message.answer(
+        MESSAGES[language]['SEND_MORNING_MSG'] + '\n' + formatted_routine_items,
+        reply_markup=menu_reply_keyboard()
+    )

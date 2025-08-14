@@ -1,5 +1,6 @@
 # bot/callbacks.py
 from typing import Optional
+from datetime import datetime
 
 from aiogram import types
 from aiogram.fsm.context import FSMContext
@@ -12,6 +13,7 @@ from service.task import TaskService
 from service.user import UserService
 from states import DialogStates
 from service.focus import FocusService
+from states import user_task_start_time
 
 async def start_callback_language(callback_query: types.CallbackQuery) -> None:
     await callback_query.answer()
@@ -208,12 +210,18 @@ async def callback_task_menu(callback_query: types.CallbackQuery) -> None:
     action, task_id_str = data.split(":")
     task_id = int(task_id_str)
 
+    print(f"[DEBUG] - Task id: {task_id}")
+    task = await TaskService.get_task_by_id(task_id)
+    task_name = task['task_name']
+
     match action:
         case "complete_task":
             await TaskService.update_started_status(task_id)
-            await callback_query.message.answer(MESSAGES[language]['REMIND_WORK_CANCEL'],
-                                                reply_markup=menu_reply_keyboard())
+            user_task_start_time[user_id] = (task_id, datetime.now())  
+            await callback_query.message.answer(MESSAGES[language]['REMIND_WORK_START'].format(task_name),
+                                                reply_markup=get_work_session_keyboard())
         case "cancel_task":
             await TaskService.update_started_status(task_id)
+            user_task_start_time[user_id] = (task_id, datetime.now())  
             await callback_query.message.answer(MESSAGES[language]['REMIND_WORK_CANCEL'],
                                                 reply_markup=menu_reply_keyboard())

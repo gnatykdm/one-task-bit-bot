@@ -211,3 +211,16 @@ class TaskService:
             await session.commit()
             return result.rowcount == 1
 
+
+    @staticmethod
+    async def add_task_complete_duration(task_id: int, duration: int) -> None:
+        async with get_session() as session:
+            query = text(
+                """
+                UPDATE tasks
+                SET completion_duration = :duration
+                WHERE id = :task_id
+                """
+            )
+            await session.execute(query, {"task_id": task_id, "duration": duration})
+            await session.commit()
