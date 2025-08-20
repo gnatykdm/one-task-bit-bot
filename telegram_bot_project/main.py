@@ -36,12 +36,12 @@ async def menu(message: Message):
 async def language(message: Message):
     await language_command(message)
 
-@dp.message(Command("idea"))
+@dp.message(Command("note"))
 @dp.message(lambda m: m.text == BUTTON_IDEA)
 async def idea(message: Message, state: FSMContext):
     await idea_command(message, state)
 
-@dp.message(Command("ideas"))
+@dp.message(Command("notes"))
 @dp.message(lambda m: m.text == ALL_IDEAS)
 async def ideas(message: Message):
     await ideas_command(message)
@@ -166,6 +166,7 @@ async def my_day(message: Message):
     await show_daily_stats_command(message)
 
 @dp.message(Command("focus"))
+@dp.message(lambda m: m.text == FOCUS_CALL_BTN)
 async def focus(message: Message):
     await show_focus_menu(message)
 
@@ -369,8 +370,6 @@ async def main():
     await schedule_all_users_jobs(bot)
     
     print("[STARTUP] All jobs scheduled successfully")
-    
-    # Запускаем бота
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

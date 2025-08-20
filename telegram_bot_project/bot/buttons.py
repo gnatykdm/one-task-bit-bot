@@ -20,9 +20,12 @@ def menu_reply_keyboard() -> ReplyKeyboardMarkup:
     button_idea = KeyboardButton(text=BUTTON_IDEA)
     button_day = KeyboardButton(text=BUTTON_MYDAY)
     button_task = KeyboardButton(text=BUTTON_ADD_TASK)
+    focus_btn = KeyboardButton(text=FOCUS_CALL_BTN)
+    ai_rocky_btn = KeyboardButton(text=AI_ROCKY_BTN)
 
     menu_reply_keyboard.keyboard.append([button_settings, button_idea])
     menu_reply_keyboard.keyboard.append([button_day, button_task])
+    menu_reply_keyboard.keyboard.append([ai_rocky_btn, focus_btn])
 
     return menu_reply_keyboard
 

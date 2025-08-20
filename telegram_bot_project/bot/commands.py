@@ -2,6 +2,7 @@
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 from datetime import datetime
+from aiogram.types import FSInputFile
 
 from service.focus import FocusService
 from bot.utills import format_date, calculate_awake_hours
@@ -17,6 +18,7 @@ async def start_command(message: types.Message):
     user_id: int = message.from_user.id
     user_name: str = message.from_user.username or "unknown"
 
+    photo = FSInputFile(path="logo.jpg")
     print(f"[INFO] - User {user_id} ({user_name}) - started the bot")
     user_find = await UserService.get_user_by_id(user_id)
     language: str = await UserService.get_user_language(user_id)
@@ -25,7 +27,12 @@ async def start_command(message: types.Message):
         await message.answer(MESSAGES[language]["MENU_MSG"], reply_markup=menu_reply_keyboard())
     else:
         await UserService.create_user(user_id, user_name)
-        await message.answer(MESSAGES['ENGLISH']['START_MSG'])
+
+        await message.answer_photo(
+            photo=photo,
+            caption=MESSAGES['ENGLISH']['START_MSG']
+        )
+
         keyboard = get_language_keyboard()
         await message.answer(MESSAGES['ENGLISH']['LANGUAGE_ASK'], reply_markup=keyboard)
 

@@ -7,12 +7,15 @@ from service.routine import RoutineService
 MESSAGES: Any = {
     "UKRANIAN": {
         "START_MSG": (
-            "🎉 Вітаємо! \n"
-            "Готові розпочати роботу? Я допоможу організувати ваш день."
+            "🎉 Вітаємо!\n\n"
+            "Я — Роккі, твій персональний помічник для організації дня.\n"
+            "Зі мною ти зможеш створювати завдання, отримувати нагадування в потрібний час і ефективно планувати свій день.\n"
+            "Я допоможу слідкувати за важливими справами та не забути про головне.\n"
+            "Просто почни додавати завдання, і Роккі буде стежити за їх виконанням!"
         ),
         "START_MSG_AGAIN": (
             "👋 Ви повернулися! \n"
-            "Готові продовжити? Обирайте дію через /menu. 📌"
+            "Готові продовжити? Обирайте дію через /menu."
         ),
         "HELP_MSG": (
             "❓ Потрібна допомога? \n"
@@ -36,23 +39,23 @@ MESSAGES: Any = {
         ),
         "SETTINGS_RESPONSE": "⚙️ Відкриваємо налаштування. Давайте налаштуємо все під вас.",
         "MYDAY_RESPONSE": "📅 Ваш план на день готовий. Перегляньте його!",
-        "IDEA_RESPONSE": "💡 Маєте ідею? Напишіть, я збережу її.",
-        "IDEA_SAVED": "✅ Ідею збережено. Дякуємо за внесок!",
+        "IDEA_RESPONSE": "💡 Маєте нотатка? Напишіть, я збережу її.",
+        "IDEA_SAVED": "✅ Нотатку збережено. Дякуємо за внесок!",
         "ADD_TASK_RESPONSE": "📝 Додаємо завдання. Вкажіть деталі.",
-        "IDEA_ACTION": "📌 Що зробити з цією ідеєю? Виберіть дію.",
-        "IDEA_DELETE": "🗑️ Ідею видалено. Готові до нових?",
-        "IDEA_PROBLEM": "⚠️ Помилка збереження ідеї. Спробуйте ще раз.",
-        "IDEAS_SHOW": "💡 Ваші ідеї готові до перегляду.",
-        "IDEA_EXISTS": "⚠️ Така ідея вже існує. Спробуйте нову.",
-        "ERROR_SAVING_IDEA": "⚠️ Не вдалося зберегти ідею. Спробуйте пізніше.",
-        "NO_IDEAS": "📝 Ідей поки немає. Додайте першу!",
-        "DELETE_IDEA": "ℹ️ Вкажіть номер ідеї для видалення.",
-        "UPDATE_IDEA": "ℹ️ Вкажіть номер ідеї для оновлення.",
-        "NOT_VALID_IDEA_NUM": "❌ Неправильний номер ідеї. Спробуйте ще раз.",
-        "INVALID_IDEA_NUM": "❌ Номер ідеї некоректний. Перевірте ще раз.",
-        "IDEA_DELETED": "🗑️ Ідея №{} '{}' видалена. Готові до нових завдань?",
-        "ASK_NEW_IDEA_TEXT": "✏️ Введіть новий текст для ідеї №{} '{}'.",
-        "IDEA_UPDATED": "✅ Ідея №{} оновлена. Відмінна робота!",
+        "IDEA_ACTION": "📌 Що зробити з цією нотаткою? Виберіть дію.",
+        "IDEA_DELETE": "🗑️ Нотатку видалено. Готові до нових?",
+        "IDEA_PROBLEM": "⚠️ Помилка збереження нотатки. Спробуйте ще раз.",
+        "IDEAS_SHOW": "💡 Ваші нотатки готові до перегляду.",
+        "IDEA_EXISTS": "⚠️ Нотатка вже існує. Спробуйте нову.",
+        "ERROR_SAVING_IDEA": "⚠️ Не вдалося зберегти нотатку. Спробуйте пізніше.",
+        "NO_IDEAS": "📝 Нотатку поки немає. Додайте першу!",
+        "DELETE_IDEA": "ℹ️ Вкажіть номер нотатки для видалення.",
+        "UPDATE_IDEA": "ℹ️ Вкажіть номер нотатки для оновлення.",
+        "NOT_VALID_IDEA_NUM": "❌ Неправильний номер нотатки. Спробуйте ще раз.",
+        "INVALID_IDEA_NUM": "❌ Номер нотатки некоректний. Перевірте ще раз.",
+        "IDEA_DELETED": "🗑️ Нотатка №{} '{}' видалена. Готові до нових завдань?",
+        "ASK_NEW_IDEA_TEXT": "✏️ Введіть новий текст для нотатки №{} '{}'.",
+        "IDEA_UPDATED": "✅ Нотатка №{} оновлена. Відмінна робота!",
         "TASK_ADD": "📝 Вкажіть назву завдання для додавання.",
         "TASK_DEADLINE_ASK": "⏰ Додати дедлайн до завдання? Виберіть опцію.",
         "TASK_DEADLINE_YES": "🕒 Введіть час дедлайну (наприклад, 13:10).",
@@ -101,7 +104,7 @@ MESSAGES: Any = {
         "TIMER_SET": "✅ Таймер встановлено на {}.",
         "ROUTINE_TIME": "⏰ Прокидання о {}, сон о {}, тривалість дня: {}.",
         "TIMER_INVALID": "❌ Некоректний формат часу (потрібно 10:00). Спробуйте ще раз.",
-        "IDEA_EXIST": "⚠️ Ідея з такою назвою вже існує.",
+        "IDEA_EXIST": "⚠️ Нотатка з такою назвою вже існує.",
         "SEND_MORNING_MSG": "Відмінний початок дня! ☀️\nТвій ранковий розпорядок:\n",
         "SEND_EVENING_MSG": "🌙 Доброго вечора, {}!",
         "WELCOME_TO_FOCUS": "🎯 Вітаємо у зоні фокусу!",
@@ -133,20 +136,23 @@ MESSAGES: Any = {
     },
     "ENGLISH": {
         "START_MSG": (
-            "🎉 Welcome! \n"
-            "Ready to start your day? I’m here to help you stay organized. 📋"
+            "🎉 Welcome!\n\n"
+            "I’m Rocky, your personal assistant for organizing your day.\n"
+            "With me, you can create tasks, receive reminders at the right time, and plan your day effectively.\n"
+            "I’ll help you keep track of important things and make sure you don’t forget what matters most.\n"
+            "Just start adding tasks, and Rocky will take care of the rest!"
         ),
         "START_MSG_AGAIN": (
             "👋 You’re back! \n"
-            "Ready to continue? Use /menu to choose an action. 📌"
+            "Ready to continue? Use /menu to choose an action."
         ),
         "HELP_MSG": (
             "❓ Need assistance? \n"
-            "Try /start, /language, or /menu to navigate. 📚"
+            "Try /start, /language, or /menu to navigate."
         ),
         "MENU_MSG": (
             "📋 Your menu is ready. \n"
-            "Select an option to proceed. ⚙️"
+            "Select an option to proceed."
         ),
         "AUTHORIZATION_PROBLEM": (
             "🚫 Authorization issue detected. \n"
@@ -154,31 +160,31 @@ MESSAGES: Any = {
         ),
         "TEXT_RESPONSE": (
             "✉️ Received: \"{response}\". \n"
-            "Thank you for your input! 📝"
+            "Thank you for your input!"
         ),
         "CONTINUE_MSG": (
             "➡️ What’s next? \n"
-            "Open /menu to select your next action. 📋"
+            "Open /menu to select your next action."
         ),
         "SETTINGS_RESPONSE": "⚙️ Accessing settings. Let’s customize your experience.",
         "MYDAY_RESPONSE": "📅 Your daily plan is ready. Review it now!",
-        "IDEA_RESPONSE": "💡 Have an idea? Write it down, and I’ll save it.",
-        "IDEA_SAVED": "✅ Idea saved. Thank you for sharing!",
+        "IDEA_RESPONSE": "💡 Have an note? Write it down, and I’ll save it.",
+        "IDEA_SAVED": "✅ Note saved. Thank you for sharing!",
         "ADD_TASK_RESPONSE": "📝 Adding a task. Provide the details.",
-        "IDEA_ACTION": "📌 What would you like to do with this idea? Select an action.",
-        "IDEA_DELETE": "🗑️ Idea deleted. Ready for new ones? ",
-        "IDEA_PROBLEM": "⚠️ Error saving the idea. Please try again.",
-        "IDEAS_SHOW": "💡 Your ideas are ready to view.",
-        "IDEA_EXISTS": "⚠️ This idea already exists. Try a new one.",
-        "ERROR_SAVING_IDEA": "⚠️ Failed to save the idea. Try again later.",
-        "NO_IDEAS": "📝 No ideas yet. Add your first one!",
-        "DELETE_IDEA": "ℹ️ Specify the idea number to delete.",
-        "UPDATE_IDEA": "ℹ️ Specify the idea number to update.",
-        "NOT_VALID_IDEA_NUM": "❌ Invalid idea number. Try again.",
-        "INVALID_IDEA_NUM": "❌ Incorrect idea number. Please check again.",
-        "IDEA_DELETED": "🗑️ Idea #{} '{}' deleted. Ready for new tasks?",
-        "ASK_NEW_IDEA_TEXT": "✏️ Enter new text for idea #{} '{}'.",
-        "IDEA_UPDATED": "✅ Idea #{} updated. Great work!",
+        "IDEA_ACTION": "📌 What would you like to do with this note? Select an action.",
+        "IDEA_DELETE": "🗑️ Note deleted. Ready for new ones? ",
+        "IDEA_PROBLEM": "⚠️ Error saving the note. Please try again.",
+        "IDEAS_SHOW": "💡 Your notes are ready to view.",
+        "IDEA_EXISTS": "⚠️ This note already exists. Try a new one.",
+        "ERROR_SAVING_IDEA": "⚠️ Failed to save the note. Try again later.",
+        "NO_IDEAS": "📝 No notes yet. Add your first one!",
+        "DELETE_IDEA": "ℹ️ Specify the note number to delete.",
+        "UPDATE_IDEA": "ℹ️ Specify the note number to update.",
+        "NOT_VALID_IDEA_NUM": "❌ Invalid note number. Try again.",
+        "INVALID_IDEA_NUM": "❌ Incorrect note number. Please check again.",
+        "IDEA_DELETED": "🗑️ Note #{} '{}' deleted. Ready for new tasks?",
+        "ASK_NEW_IDEA_TEXT": "✏️ Enter new text for note #{} '{}'.",
+        "IDEA_UPDATED": "✅ Note #{} updated. Great work!",
         "TASK_ADD": "📝 Enter the task name to add.",
         "TASK_DEADLINE_ASK": "⏰ Add a deadline for this task? Choose an option.",
         "TASK_DEADLINE_YES": "🕒 Enter the deadline time (e.g., 13:10).",
@@ -227,7 +233,7 @@ MESSAGES: Any = {
         "TIMER_SET": "✅ Timer set for {}.",
         "TIMER_INVALID": "❌ Invalid time format (use 10:00). Try again.",
         "ROUTINE_TIME": "⏰ Wake up at {}, sleep at {}, total day time: {}.",
-        "IDEA_EXIST": "⚠️ Idea with this name already exists. Choose another.",
+        "IDEA_EXIST": "⚠️ Note with this name already exists. Choose another.",
         "SEND_MORNING_MSG": "☀️ Excellent start a day!\nYour morning routine:\n",
         "SEND_EVENING_MSG": "🌙 Good evening, {}!",
         "WELCOME_TO_FOCUS": "🎯 Welcome to the focus zone!",
@@ -260,19 +266,19 @@ MESSAGES: Any = {
 }
 
 # Buttons
-BUTTON_SETTINGS = "⚙️ Settings"
-BUTTON_ADD_TASK: str = "📝 Add a Task"
-BUTTON_IDEA: str = "💾 Save an Idea"
+BUTTON_SETTINGS = "⬅️ Settings"
+BUTTON_ADD_TASK: str = "✅ Add Task"
+BUTTON_IDEA: str = "✏️ Note"
 BUTTON_MYDAY: str = "📅 My Day"
 BUTTON_HELP: str = "❓ Help"
 BUTTON_UA_LANG: str = "🇺🇦 Українська"
 BUTTON_EN_LANG: str = "🇬🇧 English"
-DEL_BUTTON: str = "🗑️ Remove Idea"
-DEL_IDEA_BUTTON: str = "🗑️ Delete Idea"
+DEL_BUTTON: str = "🗑️ Remove Note"
+DEL_IDEA_BUTTON: str = "🗑️ Delete Note"
 SAVE_BUTTON: str = "✅ Save"
 MENU_BUTTON: str = "🏠 Main Menu"
-UPDATE_IDEA_BUTTON: str = "🆙 Update Idea"
-ALL_IDEAS: str = "🔍 View All Ideas"
+UPDATE_IDEA_BUTTON: str = "🆙 Update Note"
+ALL_IDEAS: str = "🔍 View All Notes"
 BUTTON_YES_BTN: str = "👍 Yes"
 BUTTON_NO_BTN: str = "🙅 No"
 BUTTON_DELETE_TASK = "🗑️ Delete Task"
@@ -282,7 +288,7 @@ BUTTON_ALL_TASKS = "📋 All Tasks"
 SETTINGS_BUTTON_LANGUAGE = "🌐 Language"
 SETTINGS_BUTTON_FEEDBACK = "💬 Feedback"
 SETTINGS_BUTTON_ROUTINE = "⏰ Routine"
-SETTINGS_BUTTON_ROUTINE_TIME = "🕒 Routine Time"
+SETTINGS_BUTTON_ROUTINE_TIME = "⏳ Bedtime & Wake Up"
 ROUTINE_SET_WAKE_BUTTON = "⏰ Set Wake-Up Time"
 ROUTINE_SET_SLEEP_BUTTON = "🛌 Set Sleep Time"
 ROUTINE_MY_TIME = "⏳ My Routine"
@@ -306,6 +312,7 @@ FOCUS_INLINE_NO = "❌ No"
 ALL_FOCUSES_BTN = "📝 All Focuses"
 DELETE_FOCUS = "🗑️ Delete"
 
+FOCUS_CALL_BTN = "🎯 Focus"
 START_WORK_BTN = "✅ Start"
 CANCEL_WORK_BTN = "❌ Cancel"
 
@@ -313,6 +320,8 @@ START_DAY_BTN = "🚀 Start Day"
 
 STOP_WORK_SESSION = "✅ Finished"
 STOP_WORK_CANCEL = "❌ Break Work Session"
+
+AI_ROCKY_BTN = "🤖 AI Rocky"
 
 USER_FEEDBACK_MAIL_TEXT = """
 📬 New feedback received!
@@ -336,18 +345,18 @@ def generate_daily_stats_message(language: str, created_ideas: int, completed_ta
     if lang == "UKRANIAN":
         return (
             "📊 Щоденна статистика:\n\n"
-            f"🧠 Створено ідей: {created_ideas}\n"
+            f"✏️ Створено нотаток: {created_ideas}\n"
             f"✅ Виконано завдань: {completed_tasks}\n"
-            f"📝 Додано завдань: {created_tasks}\n\n"
+            f"🚩 Додано завдань: {created_tasks}\n\n"
             "🔄 Оновлення щодня о 00:00.\n\n"
             "Продовжуйте в тому ж дусі! 📝"
         )
     else:
         return (
             "📊 Daily Stats:\n\n"
-            f"🧠 Ideas created: {created_ideas}\n"
+            f"✏️ Notes created: {created_ideas}\n"
             f"✅ Tasks completed: {completed_tasks}\n"
-            f"📝 Tasks added: {created_tasks}\n\n"
+            f"🚩 Tasks added: {created_tasks}\n\n"
             "🔄 Updates daily at 00:00.\n\n"
             "Keep up the good work! 📝"
         )

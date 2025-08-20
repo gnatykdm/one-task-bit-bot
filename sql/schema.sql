@@ -39,6 +39,7 @@ CREATE TABLE tasks (
     status BOOLEAN NOT NULL DEFAULT FALSE,
     start_time TIMESTAMP UNIQUE NOT NULL,
     started BOOLEAN DEFAULT FALSE NOT NULL,
+	completion_duration BIGINT, 
     creation_date TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -56,6 +57,7 @@ CREATE TABLE IF NOT EXISTS daily_stats (
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_tasks INT NOT NULL DEFAULT 0,
     created_ideas INT NOT NULL DEFAULT 0,
+    wake_up_time TIME,
     stats_day TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
