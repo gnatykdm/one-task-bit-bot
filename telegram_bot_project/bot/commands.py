@@ -245,7 +245,7 @@ async def setting_menu_command(message: types.Message):
     else:
         await message.answer(MESSAGES[language]['SETTINGS_MENU'], reply_markup=settings_menu_keyboard())
 
-#Routine Time Command Handler
+# Routine Time Command Handler
 async def routine_time_command(message: types.Message):
     user_id: int = message.from_user.id
     user_find: Any = await UserService.get_user_by_id(user_id)
@@ -253,15 +253,28 @@ async def routine_time_command(message: types.Message):
 
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
-    else:
-        wake_time, sleep_time = await UserService.get_wake_and_sleep_times(user_id)
-        if not wake_time and not sleep_time:
-            await message.answer(MESSAGES[language]['ROUTINE_TIME_NOT'], reply_markup=routine_time_keyboard())
-            return
-        wake_time = None if not wake_time else wake_time.strftime("%H:%M")
-        sleep_time = None if not sleep_time else sleep_time.strftime("%H:%M")
-        awake_time = calculate_awake_hours(wake_time, sleep_time)
-        await message.answer(MESSAGES[language]['ROUTINE_TIME'].format(wake_time, sleep_time, awake_time), reply_markup=routine_time_keyboard())
+        return
+
+    wake_time, sleep_time = await UserService.get_wake_and_sleep_times(user_id)
+
+    if not wake_time and not sleep_time:
+        await message.answer(
+            MESSAGES[language]['ROUTINE_TIME_NOT'],
+            reply_markup=routine_time_keyboard()
+        )
+        return
+
+    wake_display = wake_time.strftime("%H:%M") if wake_time else "—"
+    sleep_display = sleep_time.strftime("%H:%M") if sleep_time else "—"
+
+    awake_time = calculate_awake_hours(wake_time, sleep_time) if (wake_time and sleep_time) else "unknown"
+    msg_text = MESSAGES[language]['ROUTINE_TIME'].format(
+        wake=wake_display,
+        sleep=sleep_display,
+        duration=awake_time
+    )
+
+    await message.answer(msg_text, reply_markup=routine_time_keyboard())
 
 #Set Wake Time Command Handler
 async def set_wake_time_command(message: types.Message, state: FSMContext):
@@ -434,16 +447,21 @@ async def show_daily_stats_command(message: types.Message):
         return
 
     stats = await MyDayService.get_today_stats(user_id)
-    if not stats:
-        created_ideas = 0
-        completed_tasks = 0
-        created_tasks = 0
-    else:
-        created_ideas = stats.get("created_ideas", 0)
-        completed_tasks = stats.get("completed_tasks", 0)
-        created_tasks = stats.get("created_tasks", 0)
 
-    text = generate_daily_stats_message(language, created_ideas, completed_tasks, created_tasks)
+    if not stats:
+        created_ideas, completed_tasks, created_tasks, wake_up_time = 0, 0, 0, None
+    else:
+        created_ideas = stats["created_ideas"]
+        completed_tasks = stats["completed_tasks"]
+        created_tasks = stats["created_tasks"]
+        wake_up_time = stats["wake_up_time"]
+
+        if wake_up_time:
+            wake_up_time = wake_up_time.strftime("%H:%M")
+
+    text = generate_daily_stats_message(
+        language, created_ideas, completed_tasks, created_tasks, wake_up_time
+    )
     await message.answer(text, parse_mode="Markdown", reply_markup=menu_reply_keyboard())
 
 # Focus Zone Menu Handler
@@ -521,15 +539,58 @@ async def start_day_command(message: types.Message) -> None:
     print(f"[INFO] - Sending morning routine to user with id {user_id}")
 
     time_str = datetime.now().strftime("%H:%M")  
-
     await MyDayService.add_wake_up_time(user_id, time_str)
 
-    formatted_routine_items = "\n".join(
-        f"# {idx}. {routine['routine_name']}"
-        for idx, routine in enumerate(morning_routine, start=1)
-    )
+    if morning_routine:
+        formatted_routine_items = "\n".join(
+            f"# {idx}. {routine['routine_name']}" 
+            for idx, routine in enumerate(morning_routine, start=1)
+        )
+    else:
+        formatted_routine_items = MESSAGES[language]['NO_MORNING_ROUTINE']
 
     await message.answer(
-        MESSAGES[language]['SEND_MORNING_MSG'] + '\n' + formatted_routine_items,
+        f"{MESSAGES[language]['SEND_MORNING_MSG']}\n{formatted_routine_items}",
+        reply_markup=get_morning_timer_menu()
+    )
+
+# Talk with Rocky Command
+async def talk_with_rocky_command(message: types.Message, state: FSMContext) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+    
+    user_name: str = message.from_user.username
+
+    print(f"[INFO] - User with id: {user_id} opened ai chat")
+
+    await state.set_state(DialogStates.ai_talk)
+    await message.answer(
+        MESSAGES[language]['AI_ROCKY_TALK_MSG'].format(user_name),
+        reply_markup=get_stop_chat_btn()
+    )
+
+# Finish Rocky Conversation Command
+async def stop_talk_command(message: types.Message, state: FSMContext) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+    
+    user_name: str = message.from_user.username
+
+    print(f"[INFO] - User with id: {user_id} stop ai chat")
+    
+    await message.answer(
+        MESSAGES[language]['AI_ROCKY_TALK_END_MSG'].format(user_name),
         reply_markup=menu_reply_keyboard()
     )
+
+    await state.clear()

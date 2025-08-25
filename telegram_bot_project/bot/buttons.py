@@ -167,8 +167,7 @@ def focus_menu_keyboard(started: Optional[bool] = False) -> ReplyKeyboardMarkup:
 
     keyboard = [
         [focus_btn],
-        [focus_list],
-        [delete_focus],
+        [focus_list, delete_focus],
         [menu_btn]
     ]
 
@@ -225,6 +224,43 @@ def get_start_day_btn() -> ReplyKeyboardMarkup:
 
     keyboard = [
         [start_day_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True
+    )
+
+def get_morning_timer_menu() -> ReplyKeyboardMarkup:
+    start_timer_btn = KeyboardButton(text=MORNING_ROUTINE_TIMER_START_BTN)
+    nope_timer_btn = KeyboardButton(text=MORNING_ROUTINE_TIMER_NOPE_BTN)
+
+    keyboard = [
+        [nope_timer_btn, start_timer_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True
+    )
+
+def stop_routine_button_timer() -> ReplyKeyboardMarkup:
+    stop_timer_btn = KeyboardButton(text=STOP_ROUTINE_TIMER_BTN)
+
+    keyboard = [
+        [stop_timer_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True
+    )
+
+def get_stop_chat_btn() -> ReplyKeyboardMarkup:
+    btn: KeyboardButton = KeyboardButton(text=STOP_CHAT)
+
+    keyboard = [
+        [btn]
     ]
 
     return ReplyKeyboardMarkup(

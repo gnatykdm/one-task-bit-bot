@@ -53,3 +53,5 @@ async def fallback(message: types.Message, state: FSMContext):
         await process_save_focus_session_title(message, state)
     elif current_state == DialogStates.delete_focus:
         await process_delete_focus_session(message, state)
+    elif current_state == DialogStates.ai_talk:
+        await process_ai_talk(message)

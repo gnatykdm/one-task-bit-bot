@@ -65,13 +65,14 @@ class MyDayService:
                 return {
                     "id": stat.id,
                     "user_id": stat.user_id,
-                    "created_tasks": stat.created_tasks,
-                    "created_ideas": stat.created_ideas,
-                    "completed_tasks": stat.completed_tasks,
+                    "created_tasks": stat.created_tasks or 0,
+                    "created_ideas": stat.created_ideas or 0,
+                    "completed_tasks": stat.completed_tasks or 0,
                     "wake_up_time": stat.wake_up_time,
                     "stats_day_date": stat.stats_day_date,
                 }
             return None
+
 
     @staticmethod
     async def increment_task_count(user_id: int) -> None:

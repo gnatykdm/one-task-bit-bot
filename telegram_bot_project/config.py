@@ -12,6 +12,7 @@ logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
 
 TOKEN: str = os.getenv("BOT_TOKEN")
 DB_URL: str = os.getenv("DATABASE_URL")
+OPENAI_KEY = os.getenv("OPEN_AI_KEY")
 
 engine = create_async_engine(DB_URL, echo=False)
 
@@ -44,3 +45,5 @@ class SmtpData:
 def get_smtp_data() -> SmtpData:
     return SmtpData()
 
+def get_openai_key() -> str:
+    return OPENAI_KEY

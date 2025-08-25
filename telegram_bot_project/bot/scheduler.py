@@ -10,6 +10,7 @@ from service.user import UserService
 from collections import defaultdict
 from typing import Set
 from messages import *
+from service.myday import MyDayService
 
 scheduler: AsyncIOScheduler = AsyncIOScheduler()
 notified_task_ids = set()
@@ -20,20 +21,27 @@ def initialize_scheduler():
     return scheduler
 
 def update_user_job(user_id: int, when: time, bot: Bot, job_type: str):
+    if not when:
+        print(f"[WARNING] - No time provided for job '{job_type}' (user_id={user_id})")
+        return
+
     job_id = f"{job_type}_message_{user_id}"
 
+    job_func = send_morning_message if job_type == "wake" else send_evening_message
     if scheduler.get_job(job_id):
         scheduler.remove_job(job_id)
+        print(f"[INFO] - Removed old job: {job_id}")
 
     scheduler.add_job(
-        send_morning_message if job_type == "wake" else send_evening_message,
+        job_func,
         trigger=CronTrigger(hour=when.hour, minute=when.minute),
         args=[bot, user_id],
         id=job_id,
         replace_existing=True
     )
 
-    print(f"[INFO] - User with id: {user_id} updated job, {job_id}")
+    print(f"[INFO] - Scheduled {job_type} job for user {user_id} at {when.strftime('%H:%M')}")
+
 
 async def schedule_all_users_jobs(bot: Bot):
     users = await UserService.get_all_users()
@@ -238,7 +246,6 @@ async def remove_task_notifications(task_id: int):
     if notifier:
         await notifier.remove_task_notifications(task_id)
 
-
 async def send_morning_message(bot: Bot, user_id: int):
     language = await UserService.get_user_language(user_id) or "ENGLISH"
     user = await UserService.get_user_by_id(user_id)  
@@ -253,8 +260,40 @@ async def send_morning_message(bot: Bot, user_id: int):
 
 async def send_evening_message(bot: Bot, user_id: int):
     language = await UserService.get_user_language(user_id) or "ENGLISH"
-    print(f"[INFO] - Sending evening routine to user with id, {user_id}")
-    await bot.send_message(
-        user_id,
-        MESSAGES[language]['SEND_EVENING_MSG'].format("👤")
-    )
+    stats = await MyDayService.get_today_stats(user_id)
+    user = await UserService.get_user_by_id(user_id)
+
+    if not stats:
+        created_ideas, completed_tasks, created_tasks, wake_up_time = 0, 0, 0, None
+    else:
+        created_ideas = stats["created_ideas"]
+        completed_tasks = stats["completed_tasks"]
+        created_tasks = stats["created_tasks"]
+        wake_up_time = stats["wake_up_time"]
+        if wake_up_time:
+            wake_up_time = wake_up_time.strftime("%H:%M")
+
+    if language.upper() == "UKRANIAN":
+        evening_message = (
+            f"🌙 Доброго вечора, {user['user_name']}!\n\n"
+            "Сподіваюся, твій день був продуктивним 🙌\n"
+            "Ось твоя статистика за сьогодні:\n\n"
+            f"⏰ Час пробудження: {wake_up_time or '—'}\n"
+            f"🚩 Додано завдань: {created_tasks}\n"
+            f"✏️ Створено нотаток: {created_ideas}\n"
+            f"✅ Виконано завдань: {completed_tasks}\n\n"
+            "Бережи сили, завтра новий день 💫"
+        )
+    else:
+        evening_message = (
+            f"🌙 Good evening, {user['user_name']}!\n\n"
+            "I hope your day was productive 🙌\n"
+            "Here’s your daily recap:\n\n"
+            f"⏰ Wake up time: {wake_up_time or '—'}\n"
+            f"🚩 Tasks added: {created_tasks}\n"
+            f"✏️ Notes created: {created_ideas}\n"
+            f"✅ Tasks completed: {completed_tasks}\n\n"
+            "Recharge well — tomorrow is a new day 💫"
+        )
+
+    await bot.send_message(user_id, evening_message)

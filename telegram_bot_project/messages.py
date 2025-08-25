@@ -64,7 +64,7 @@ MESSAGES: Any = {
         "TASK_SAVED": "✅ Завдання збережено. Продовжуйте!",
         "TASK_MENU": "📂 Меню завдань. Усе під контролем.",
         "NO_TASKS": "❌ Завдань поки немає.\nДодайте нове через /task",
-        "YOUR_TASKS": "📋 Список ваших завдань.",
+        "YOUR_TASKS": "📋 Список ваших завдань",
         "TASK_DELETE_MSG": "🗑️ Вкажіть номер завдання для видалення.",
         "INVALID_TASK_NUM": "❌ Некоректний номер завдання.\nСпробуйте ще раз. 🔢",
         "TASK_DELETED": "✅ Завдання №{} '{}' видалено.",
@@ -88,8 +88,8 @@ MESSAGES: Any = {
         "INVALID_MORNING_ROUTINE": "❌ Некоректна назва.\nСпробуйте ще раз. 🔢",
         "ROUTINE_EXISTS": "⚠️ Розпорядок з такою назвою вже існує.\nВиберіть іншу. 📝",
         "ROUTINE_SAVED": "✅ Розпорядок «{}» збережено.",
-        "MORNING_ROUTINE_SHOW": "☀️ Ваші ранкові розпорядки.",
-        "EVENING_ROUTINE_SHOW": "🌙 Ваші вечірні розпорядки.",
+        "MORNING_ROUTINE_SHOW": "☀️ Ваші ранкові розпорядки:",
+        "EVENING_ROUTINE_SHOW": "🌙 Ваші вечірні розпорядки:",
         "NO_MORNING_ROUTINE": "📝 Ранкових розпорядків немає. Додайте перший!",
         "NO_EVENING_ROUTINE": "📝 Вечірних розпорядків немає. Додайте перший!",
         "ROUTINE_TIME_NOT": "⚠️ Ви ще не маєте налаштованих годин пробудження і сну.",
@@ -102,10 +102,10 @@ MESSAGES: Any = {
         "INVALID_MESSAGE": "❌ Некоректний текст.\nСпробуйте ще раз. 🔢",
         "SET_TIME_MSG": "⏰ Введіть час для таймера (наприклад, 10:00).",
         "TIMER_SET": "✅ Таймер встановлено на {}.",
-        "ROUTINE_TIME": "⏰ Прокидання о {}, сон о {}, тривалість дня: {}.",
+        "ROUTINE_TIME": "🌅 Прокидання: {wake}\n🌙 Сон: {sleep}\n⏳ Тривалість дня: {duration}",
         "TIMER_INVALID": "❌ Некоректний формат часу (потрібно 10:00). Спробуйте ще раз.",
         "IDEA_EXIST": "⚠️ Нотатка з такою назвою вже існує.",
-        "SEND_MORNING_MSG": "Відмінний початок дня! ☀️\nТвій ранковий розпорядок:\n",
+        "SEND_MORNING_MSG": "Твій ранковий розпорядок ☀️:\n",
         "SEND_EVENING_MSG": "🌙 Доброго вечора, {}!",
         "WELCOME_TO_FOCUS": "🎯 Вітаємо у зоні фокусу!",
         "START_FOCUS_MSG": "Сесію фокусу розпочато. 🕒",
@@ -132,7 +132,12 @@ MESSAGES: Any = {
         "REMIND_WORK_START": "✅ Починаємо задачу - {}",
         "FINISH_WORK_SESSION": "🎉 Вітаємо, ви виконали завдання - {}\n⏳ Час, витрачений на завдання: {}хв {}с\nПродовжуйте в тому ж дусі! 🏆",
         "BREAK_WORK_SESSION": "✅ Ви успішно зробили перерву в робочій сесії.\nЗакінчіть її, коли знайдете час :)",
-        "WAKE_UP_MESSAGE": "☀️ Ти готовий до нового дня - {}?"
+        "WAKE_UP_MESSAGE": "☀️ Доброго ранку, {}! Час прокидатися та розпочати свій день.",
+        "MORNING_TASK_CREATE_MSG": "Гарного дня!\nНе забудь скласти завдання на сьогодні. /task 📝",
+        "MORNING_ROUTINE_TIMES_START": "🕒 Таймер ранкової рутини увімкнено.",
+        "MORNING_TASK_CREATE_TIMER_MSG": "Гарного дня!\n🕒 Час на виконання ранкової рутини: {}m {}s\nНе забудь скласти завдання на сьогодні. /task 📝",
+        "AI_ROCKY_TALK_MSG": "Привіт, {} 👋\nЧим я можу допомогти тобі сьогодні❓",
+        "AI_ROCKY_TALK_END_MSG": "Було приємно поспілкуватися з тобою, {} ✨\nБажаю чудового дня! 🌿",
     },
     "ENGLISH": {
         "START_MSG": (
@@ -193,7 +198,7 @@ MESSAGES: Any = {
         "TASK_SAVED": "✅ Task saved. Keep it up!",
         "TASK_MENU": "📂 Task menu. Everything is under control.",
         "NO_TASKS": "❌ No tasks yet. Add one with /task.",
-        "YOUR_TASKS": "📋 List of your tasks. Choose one!",
+        "YOUR_TASKS": "📋 List of your tasks. Choose one:",
         "TASK_DELETE_MSG": "🗑️ Specify the task number to delete.",
         "INVALID_TASK_NUM": "❌ Incorrect task number. Try again.",
         "TASK_DELETED": "✅ Task #{} '{}' deleted.",
@@ -217,8 +222,8 @@ MESSAGES: Any = {
         "INVALID_MORNING_ROUTINE": "❌ Invalid title. Try again.",
         "ROUTINE_EXISTS": "⚠️ Routine with this title already exists. Choose another.",
         "ROUTINE_SAVED": "✅ Routine «{}» saved.",
-        "MORNING_ROUTINE_SHOW": "☀️ Your morning routines.",
-        "EVENING_ROUTINE_SHOW": "🌙 Your evening routines.",
+        "MORNING_ROUTINE_SHOW": "☀️ Your morning routines:",
+        "EVENING_ROUTINE_SHOW": "🌙 Your evening routines:",
         "NO_MORNING_ROUTINE": "📝 No morning routines yet. Add one!",
         "NO_EVENING_ROUTINE": "📝 No evening routines yet. Add the first one!",
         "PROVIDE_ROUTINE_ID": "🔢 Specify the routine number for action.",
@@ -232,9 +237,9 @@ MESSAGES: Any = {
         "SET_TIME_MSG": "⏰ Enter the timer time (e.g., 10:00).",
         "TIMER_SET": "✅ Timer set for {}.",
         "TIMER_INVALID": "❌ Invalid time format (use 10:00). Try again.",
-        "ROUTINE_TIME": "⏰ Wake up at {}, sleep at {}, total day time: {}.",
+        "ROUTINE_TIME": "⏰ Wake up: {wake}\n😴 Sleep: {sleep}\n⏳ Total day time: {duration}",
         "IDEA_EXIST": "⚠️ Note with this name already exists. Choose another.",
-        "SEND_MORNING_MSG": "☀️ Excellent start a day!\nYour morning routine:\n",
+        "SEND_MORNING_MSG": "Your morning routine ☀️:\n",
         "SEND_EVENING_MSG": "🌙 Good evening, {}!",
         "WELCOME_TO_FOCUS": "🎯 Welcome to the focus zone!",
         "START_FOCUS_MSG": "🕒 Focus session started.",
@@ -261,13 +266,18 @@ MESSAGES: Any = {
         "LANGUAGE_OK": "✅ Language updated. Ready to proceed? 🚀",
         "LANGUAGE_INVALID": "❌ Invalid language choice. Try again. 🔢",
         "FOCUS_DELETED": "✅ Focus session #{} with the title \"{}\" has been successfully deleted.",
-        "WAKE_UP_MESSAGE": "☀️ Are you ready for new day - {}?",
+        "WAKE_UP_MESSAGE": "☀️ Good morning, {}! Time to wake up and start your day.",
+        "MORNING_TASK_CREATE_MSG": "Have a nice day!\nDon't forget to plan your tasks today. /task 📝",
+        "MORNING_ROUTINE_TIMES_START": "🕒 Morning routine times is turn on.",
+        "MORNING_TASK_CREATE_TIMER_MSG": "Have a nice day!\n🕒 Your working routine duration was: {}m {}s\nDon't forget to plan your tasks today. /task 📝",
+        "AI_ROCKY_TALK_MSG": "Hello, {} 👋\nHow i can help you today❓",
+        "AI_ROCKY_TALK_END_MSG": "It was nice talking to you, {} ✨\nHave a wonderful day ahead! 🌿",
     }
 }
 
 # Buttons
 BUTTON_SETTINGS = "⬅️ Settings"
-BUTTON_ADD_TASK: str = "✅ Add Task"
+BUTTON_ADD_TASK: str = "🆕 Add Task"
 BUTTON_IDEA: str = "✏️ Note"
 BUTTON_MYDAY: str = "📅 My Day"
 BUTTON_HELP: str = "❓ Help"
@@ -287,7 +297,7 @@ BUTTON_TOGGLE_STATUS = "✅ Mark Complete"
 BUTTON_ALL_TASKS = "📋 All Tasks"
 SETTINGS_BUTTON_LANGUAGE = "🌐 Language"
 SETTINGS_BUTTON_FEEDBACK = "💬 Feedback"
-SETTINGS_BUTTON_ROUTINE = "⏰ Routine"
+SETTINGS_BUTTON_ROUTINE = "📅 Daily Routine"
 SETTINGS_BUTTON_ROUTINE_TIME = "⏳ Bedtime & Wake Up"
 ROUTINE_SET_WAKE_BUTTON = "⏰ Set Wake-Up Time"
 ROUTINE_SET_SLEEP_BUTTON = "🛌 Set Sleep Time"
@@ -321,7 +331,13 @@ START_DAY_BTN = "🚀 Start Day"
 STOP_WORK_SESSION = "✅ Finished"
 STOP_WORK_CANCEL = "❌ Break Work Session"
 
+MORNING_ROUTINE_TIMER_START_BTN = "🟢 Start routine timer"
+MORNING_ROUTINE_TIMER_NOPE_BTN = "🔴 Nope"
+
+STOP_ROUTINE_TIMER_BTN = "🔴 Stop routine timer"
+
 AI_ROCKY_BTN = "🤖 AI Rocky"
+STOP_CHAT = "❌ Stop"
 
 USER_FEEDBACK_MAIL_TEXT = """
 📬 New feedback received!
@@ -340,23 +356,25 @@ User's input:
 Please review to improve our service!
 """
 
-def generate_daily_stats_message(language: str, created_ideas: int, completed_tasks: int, created_tasks: int) -> str:
+def generate_daily_stats_message(language: str, created_ideas: int, completed_tasks: int, created_tasks: int, wake_up_time: str = None) -> str:
     lang = language.upper()
     if lang == "UKRANIAN":
         return (
-            "📊 Щоденна статистика:\n\n"
-            f"✏️ Створено нотаток: {created_ideas}\n"
-            f"✅ Виконано завдань: {completed_tasks}\n"
-            f"🚩 Додано завдань: {created_tasks}\n\n"
-            "🔄 Оновлення щодня о 00:00.\n\n"
-            "Продовжуйте в тому ж дусі! 📝"
+            "📊 *Твоя щоденна статистика*:\n\n"
+            f"⏰ Час пробудження: *{wake_up_time if wake_up_time else '—'}*\n"
+            f"📝 Нотаток створено: *{created_ideas}*\n"
+            f"🚀 Завдань додано: *{created_tasks}*\n"
+            f"✅ Завдань виконано: *{completed_tasks}*\n\n"
+            "🔄 Статистика оновлюється щодня опівночі.\n"
+            "✨ Продовжуй рухатися до своїх цілей!"
         )
     else:
         return (
-            "📊 Daily Stats:\n\n"
-            f"✏️ Notes created: {created_ideas}\n"
-            f"✅ Tasks completed: {completed_tasks}\n"
-            f"🚩 Tasks added: {created_tasks}\n\n"
-            "🔄 Updates daily at 00:00.\n\n"
-            "Keep up the good work! 📝"
+            "📊 *Your Daily Stats*:\n\n"
+            f"⏰ Wake-up time: *{wake_up_time if wake_up_time else '—'}*\n"
+            f"📝 Notes created: *{created_ideas}*\n"
+            f"🚀 Tasks added: *{created_tasks}*\n"
+            f"✅ Tasks completed: *{completed_tasks}*\n\n"
+            "🔄 Stats refresh daily at midnight.\n"
+            "✨ Keep pushing towards your goals!"
         )

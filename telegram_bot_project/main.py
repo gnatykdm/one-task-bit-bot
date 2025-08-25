@@ -63,7 +63,7 @@ async def task(message: Message, state: FSMContext):
 async def task_menu(message: Message):
     await task_menu_command(message)
 
-@dp.message(Command("tasks"))
+@dp.message(Command("mytasks"))
 @dp.message(lambda m: m.text == BUTTON_ALL_TASKS)
 async def show_tasks(message: Message):
     await tasks_show_command(message)
@@ -292,6 +292,72 @@ async def show_saved_focus(message: Message):
 @dp.message(lambda m: m.text == DELETE_FOCUS)
 async def delete_focus(message: Message, state: FSMContext):
     await delete_focus_session(message, state)
+
+@dp.message(lambda m: m.text == MORNING_ROUTINE_TIMER_START_BTN)
+async def start_morning_routine_timer(message: Message):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+    
+    morning_routine_timer[user_id] = datetime.now()
+    await message.answer(
+        MESSAGES[language]['MORNING_ROUTINE_TIMES_START'],
+        reply_markup=stop_routine_button_timer()
+    )
+
+@dp.message(lambda m: m.text == STOP_ROUTINE_TIMER_BTN)
+async def stop_routine_timer(message: Message):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+    
+    now_time = datetime.now()
+    start_time = morning_routine_timer.get(user_id)
+    if not start_time:
+        await message.answer("⚠️ You don't have an active routine timer.")
+        return
+
+    delta = now_time - start_time
+    minutes, seconds = divmod(delta.seconds, 60)
+
+    morning_routine_timer.pop(user_id)
+    await message.answer(
+        MESSAGES[language]['MORNING_TASK_CREATE_TIMER_MSG'].format(minutes, seconds),
+        reply_markup=task_menu_keyboard()
+    )
+
+@dp.message(lambda m: m.text == MORNING_ROUTINE_TIMER_NOPE_BTN)
+async def nope_morning_routine_timer(message: Message):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+    
+    await message.answer(
+        MESSAGES[language]['MORNING_TASK_CREATE_MSG'],
+        reply_markup=task_menu_keyboard()
+    )
+
+@dp.message(Command("talk"))
+@dp.message(lambda m: m.text == AI_ROCKY_BTN)
+async def talk_with_rocky(message: Message, state: FSMContext):
+    await talk_with_rocky_command(message, state)
+
+@dp.message(Command("stop_talk"))
+@dp.message(lambda m: m.text == STOP_CHAT)
+async def stop_talk_with_rocky(message: Message, state: FSMContext):
+    await stop_talk_command(message, state)
 
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):

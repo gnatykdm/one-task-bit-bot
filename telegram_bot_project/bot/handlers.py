@@ -3,6 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from datetime import datetime
 
+from ai_client import ask_gpt
 from service.smtp import SmtpService
 from bot.buttons import *
 from messages import *
@@ -558,3 +559,21 @@ async def process_delete_focus_session(message: Message, state: FSMContext):
     except Exception as e:
         print(f"[ERROR] - {e}")
         await message.answer(MESSAGES[language]['FOCUS_INVALID'])
+
+async def process_ai_talk(message: Message):
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+    
+    text: str = message.text.strip()
+
+    try:
+        response: str = await ask_gpt(text, language=language)
+        await message.answer(response, parse_mode="Markdown")
+    except Exception as e:
+        print(f"[ERROR] AI talk process: {e}")
+        await message.answer("⚠️ Sorry, something went wrong while processing your request.")
