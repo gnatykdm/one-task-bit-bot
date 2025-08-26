@@ -295,7 +295,7 @@ class PreciseTaskNotifier:
                         id=job_id,
                         replace=True,
                         max_instances=1,
-                        misfire_grace_time=60
+                        misfire_grace_time=300
                     )
 
                     self.scheduled_jobs[job_id] = True

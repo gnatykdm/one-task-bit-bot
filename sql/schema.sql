@@ -11,7 +11,8 @@ CREATE TABLE users (
     language lan NOT NULL DEFAULT 'ENGLISH',
     register_date TIMESTAMP NOT NULL DEFAULT NOW(),
     wake_time TIME DEFAULT NULL,
-    sleep_time TIME DEFAULT NULL
+    sleep_time TIME DEFAULT NULL,
+    time_zone VARCHAR(50)
 );
 
 -- TABLE routines --
@@ -37,7 +38,7 @@ CREATE TABLE tasks (
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     task_name VARCHAR(255) NOT NULL,
     status BOOLEAN NOT NULL DEFAULT FALSE,
-    start_time TIMESTAMP UNIQUE NOT NULL,
+    start_time TIMESTAMP UNIQUE,
     started BOOLEAN DEFAULT FALSE NOT NULL,
 	completion_duration BIGINT, 
     creation_date TIMESTAMP NOT NULL DEFAULT NOW()
@@ -57,7 +58,8 @@ CREATE TABLE IF NOT EXISTS daily_stats (
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_tasks INT NOT NULL DEFAULT 0,
     created_ideas INT NOT NULL DEFAULT 0,
-    wake_up_time TIME,
+    wake_up_time TEXT,
+    completed_tasks INT DEFAULT 0,
     stats_day TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
