@@ -15,7 +15,7 @@ MESSAGES: Any = {
         ),
         "START_MSG_AGAIN": (
             "👋 Ви повернулися! \n"
-            "Готові продовжити? Обирайте дію через /menu."
+            "Обирайте дію через /menu."
         ),
         "HELP_MSG": (
             "❓ Потрібна допомога? \n"
@@ -129,7 +129,7 @@ MESSAGES: Any = {
         "DELETE_FOCUS_SESSION_MSG": "🔢 Вкажіть номер сесії, яку ви хочете видалити.",
         "FOCUS_DELETED": "✅ Фокус-сесію №{} з назвою \"{}\" успішно видалено.",
         "REMIND_WORK_CANCEL": "✅ Нагадування для цього завдання було вимкнено",
-        "REMIND_WORK_START": "✅ Починаємо задачу - {}",
+        "REMIND_WORK_START": "⏰ Увага! Завдання *{}* починається — час діяти!",
         "FINISH_WORK_SESSION": "🎉 Вітаємо, ви виконали завдання - {}\n⏳ Час, витрачений на завдання: {}хв {}с\nПродовжуйте в тому ж дусі! 🏆",
         "BREAK_WORK_SESSION": "✅ Ви успішно зробили перерву в робочій сесії.\nЗакінчіть її, коли знайдете час :)",
         "WAKE_UP_MESSAGE": "☀️ Доброго ранку, {}! Час прокидатися та розпочати свій день.",
@@ -149,7 +149,7 @@ MESSAGES: Any = {
         ),
         "START_MSG_AGAIN": (
             "👋 You’re back! \n"
-            "Ready to continue? Use /menu to choose an action."
+            "Use /menu to choose an action."
         ),
         "HELP_MSG": (
             "❓ Need assistance? \n"
@@ -256,7 +256,7 @@ MESSAGES: Any = {
         "NO_FOCUS_SESSIONS": "😕 No focus sessions found.",
         "DELETE_FOCUS_SESSION_MSG": "Provide a number of session which you want to delete.",
         "REMIND_WORK_CANCEL": "✅ Reminders for this task was deactivated",
-        "REMIND_WORK_START": "✅ Starting task - {}",
+        "REMIND_WORK_START": "⏰ Heads up! Task *{}* is starting — make it count!",
         "FINISH_WORK_SESSION": "🎉 Congratulations you done task - '{}'.\n⏳ Time duration for this task was: {}m:{}s\nKeep going 🏆! ",
         "BREAK_WORK_SESSION": "✅ You succesfully break the work session.\nComplete it when you will find the time :)",
         "LANGUAGE_ASK": (

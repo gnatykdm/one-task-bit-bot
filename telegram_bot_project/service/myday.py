@@ -3,6 +3,10 @@ from sqlalchemy import text
 from datetime import datetime
 from config import get_session
 from typing import Any, Optional
+from apscheduler.triggers.cron import CronTrigger
+from datetime import time
+from service.user import UserService
+import pytz
 
 class MyDayService:
     @staticmethod
@@ -33,19 +37,26 @@ class MyDayService:
             return stat_id
 
     @staticmethod
-    async def create_stats_for_all_users() -> None:
-        print("[INFO] - Creating daily stats for all users")
-        async with get_session() as session:
-            result = await session.execute(
-                text("SELECT id FROM users")
+    async def schedule_daily_stats(bot, scheduler):
+        users = await UserService.get_all_users()
+        for user in users:
+            user_tz_str = user.get('timezone', 'UTC')
+            user_tz = pytz.timezone(user_tz_str)
+            wake_time = user.get('wake_time') or time(hour=8)  
+            job_id = f"daily_stats_{user['id']}"
+            
+            if scheduler.get_job(job_id):
+                scheduler.remove_job(job_id)
+            
+            scheduler.add_job(
+                MyDayService.create_daily_stats,
+                trigger=CronTrigger(hour=wake_time.hour, minute=wake_time.minute, timezone=user_tz),
+                args=[user['id']],
+                id=job_id,
+                replace_existing=True
             )
-            user_ids = [row.id for row in result.fetchall()]
-
-        for user_id in user_ids:
-            try:
-                await MyDayService.create_daily_stats(user_id)
-            except Exception as e:
-                print(f"[ERROR] - Failed to create stats for user {user_id}: {e}")
+            
+            print(f"[SCHEDULED] - Daily stats for user {user['id']} at {wake_time} ({user_tz_str})")
 
     @staticmethod
     async def get_today_stats(user_id: int) -> Optional[dict]:
@@ -73,6 +84,13 @@ class MyDayService:
                 }
             return None
 
+    @staticmethod
+    async def create_stats_for_user(user_id: int):
+        print(f"[INFO] - Creating daily stats for user {user_id}")
+        try:
+            await MyDayService.create_daily_stats(user_id)
+        except Exception as e:
+            print(f"[ERROR] - Failed to create stats for user {user_id}: {e}")
 
     @staticmethod
     async def increment_task_count(user_id: int) -> None:

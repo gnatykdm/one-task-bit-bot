@@ -6,18 +6,34 @@ from datetime import datetime
 
 class UserService:
     @staticmethod
-    async def create_user(user_id: int, user_name: str, language: str = "ENGLISH") -> int:
+    async def create_user(user_id: int, user_name: str, language: str = "ENGLISH", timezone: str | None = None) -> int:
         async with get_session() as session:
             result = await session.execute(
                 text("""
-                    INSERT INTO users (id, user_name, language)
-                    VALUES (:id, :user_name, :language)
+                    INSERT INTO users (id, user_name, language, timezone)
+                    VALUES (:id, :user_name, :language, :timezone)
                     RETURNING id
                 """),
-                {"id": user_id, "user_name": user_name, "language": language}
+                {"id": user_id, "user_name": user_name, "language": language, "timezone": timezone}
             )
             await session.commit()
             return result.scalar_one()
+
+    @staticmethod
+    async def update_user_timezone(user_id: int, timezone: str):
+        async with get_session() as session:
+            await session.execute(
+                text("UPDATE users SET timezone = :timezone WHERE id = :id"),
+                {"timezone": timezone, "id": user_id}
+            )
+            await session.commit()
+
+    @staticmethod
+    async def get_user_timezone(user_id: int) -> str:
+        user = await UserService.get_user_by_id(user_id)
+        if user:
+            return user.get("timezone", "UTC")
+        return "UTC"
 
     @staticmethod
     async def get_all_users() -> list[dict]:

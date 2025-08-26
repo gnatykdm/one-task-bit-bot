@@ -1,5 +1,6 @@
 # bot/buttons.py
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from aiogram import types
 from messages import *
 from typing import Optional, List
 
@@ -208,10 +209,9 @@ def work_buttons_keyboard(task_id: int) -> InlineKeyboardMarkup:
 
 def get_work_session_keyboard() -> None:
     task_finished = KeyboardButton(text=STOP_WORK_SESSION)
-    task_break = KeyboardButton(text=CANCEL_WORK_BTN)
 
     keyboard = [
-        [task_break, task_finished]
+        [task_finished]
     ]
 
     return ReplyKeyboardMarkup(
@@ -266,4 +266,18 @@ def get_stop_chat_btn() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=keyboard,
         resize_keyboard=True
+    )
+
+async def ask_user_timezone_location(message):
+    location_button = KeyboardButton(text="🌐 Send my location", request_location=True)
+
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[[location_button]], 
+        resize_keyboard=True,
+        one_time_keyboard=True
+    )
+
+    await message.answer(
+        "Please send your location to automatically detect your timezone.",
+        reply_markup=keyboard
     )

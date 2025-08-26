@@ -1,10 +1,13 @@
 # main.py
 import asyncio
+from aiogram import types
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import CallbackQuery
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from timezonefinder import TimezoneFinder
+import pytz
 
 from config import TOKEN
 from bot.scheduler import *
@@ -13,7 +16,10 @@ from bot.callbacks import *
 from bot.fallbacks import *
 from messages import *
 from states import *
+from bot.scheduler import check_upcoming_tasks_v2
+from bot.scheduler import cleanup_old_notifications
 
+bot = Bot(token=TOKEN)
 storage: MemoryStorage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
@@ -21,6 +27,25 @@ dp = Dispatcher(storage=storage)
 @dp.message(Command("start"))
 async def start(message: Message):
     await start_command(message)
+
+async def handle_user_location(message: Message):
+    user_id = message.from_user.id
+    lat = message.location.latitude
+    lon = message.location.longitude
+
+    tf = TimezoneFinder()
+    tz = tf.timezone_at(lat=lat, lng=lon)
+
+    if tz:
+        await UserService.update_user_timezone(user_id, tz)
+        await message.answer(f"🌐 Your timezone has been set to: {tz}")
+    else:
+        await message.answer("❌ Could not detect your timezone. Please select manually.")
+
+    keyboard = get_language_keyboard()
+    await message.answer(MESSAGES['ENGLISH']['LANGUAGE_ASK'], reply_markup=keyboard)
+
+dp.message.register(handle_user_location, F.content_type == "location")
 
 @dp.message(Command("help"))
 async def help(message: Message):
@@ -41,7 +66,7 @@ async def language(message: Message):
 async def idea(message: Message, state: FSMContext):
     await idea_command(message, state)
 
-@dp.message(Command("notes"))
+@dp.message(Command("mynotes"))
 @dp.message(lambda m: m.text == ALL_IDEAS)
 async def ideas(message: Message):
     await ideas_command(message)
@@ -277,7 +302,7 @@ async def cancel_work_btn(message: Message) -> None:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
         return
 
-    user_task_start_time.pop(user_id, None)
+    user_task_start_time.pop(user_id)
     await message.answer(MESSAGES[language]['BREAK_WORK_SESSION'], reply_markup=menu_reply_keyboard())
 
 @dp.message(lambda m: m.text == START_DAY_BTN)
@@ -391,19 +416,13 @@ async def callback_task_status(callback_query: CallbackQuery) -> None:
 async def process_fallback(message: Message, state: FSMContext):
     await fallback(message, state)
 
+
 async def main():
     bot = Bot(token=TOKEN)
-    storage = dp.storage
     
     scheduler = initialize_scheduler()
-    scheduler.add_job(
-        MyDayService.create_stats_for_all_users,
-        trigger='cron',
-        hour=0,
-        minute=0,
-        id='daily_stats'
-    )
-    
+    await MyDayService.schedule_daily_stats(bot, scheduler)
+
     scheduler.add_job(
         cleanup_old_notifications,
         trigger='cron',

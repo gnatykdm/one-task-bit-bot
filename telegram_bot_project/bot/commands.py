@@ -13,6 +13,11 @@ from states import DialogStates
 from messages import MESSAGES
 from service.myday import MyDayService
 
+from aiogram import types
+from aiogram.types import FSInputFile, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
+from service.user import UserService
+from messages import MESSAGES
+
 # Start Command Handler
 async def start_command(message: types.Message):
     user_id: int = message.from_user.id
@@ -20,10 +25,12 @@ async def start_command(message: types.Message):
 
     photo = FSInputFile(path="logo.jpg")
     print(f"[INFO] - User {user_id} ({user_name}) - started the bot")
+
     user_find = await UserService.get_user_by_id(user_id)
     language: str = await UserService.get_user_language(user_id)
+
     if user_find:
-        await message.answer(MESSAGES[language]["START_MSG"])
+        await message.answer(MESSAGES[language]["START_MSG_AGAIN"])
         await message.answer(MESSAGES[language]["MENU_MSG"], reply_markup=menu_reply_keyboard())
     else:
         await UserService.create_user(user_id, user_name)
@@ -33,8 +40,7 @@ async def start_command(message: types.Message):
             caption=MESSAGES['ENGLISH']['START_MSG']
         )
 
-        keyboard = get_language_keyboard()
-        await message.answer(MESSAGES['ENGLISH']['LANGUAGE_ASK'], reply_markup=keyboard)
+        await ask_user_timezone_location(message)
 
 # Help Command Handler
 async def help_command(message: types.Message):
@@ -343,7 +349,7 @@ async def show_morning_routines(message: types.Message):
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['MORNING_ROUTINE_SHOW']) * 1.65))
 
     formatted_routine_items = "\n".join(
-        f"# {idx}. {routine['routine_name']}"
+        f"✦ {idx}. {routine['routine_name']}"
         for idx, routine in enumerate(morning_routine, start=1)
     )
 
@@ -411,7 +417,7 @@ async def show_evening_routines(message: types.Message):
 
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['EVENING_ROUTINE_SHOW']) * 1.65))
     formatted_routine_items = "\n".join(
-        f"# {idx}. {routine['routine_name']}"
+        f"✦ {idx}. {routine['routine_name']}"
         for idx, routine in enumerate(evening_routine, start=1)
     )
 
@@ -495,7 +501,7 @@ async def show_all_focuses(message: types.Message) -> None:
 
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['FOCUS_LIST_TITLE']) * 1.65))
     formatted_focuses = "\n".join(
-        f"# {idx}. {focus['title']} ({focus['duration']}) – {focus['created_at'].strftime('%Y-%m-%d %H:%M')}"
+        f"✦ {idx}. {focus['title']} ({focus['duration']}) – {focus['created_at'].strftime('%Y-%m-%d %H:%M')}"
         for idx, focus in enumerate(focuses, start=1)
     )
 
@@ -543,7 +549,7 @@ async def start_day_command(message: types.Message) -> None:
 
     if morning_routine:
         formatted_routine_items = "\n".join(
-            f"# {idx}. {routine['routine_name']}" 
+            f"✦ {idx}. {routine['routine_name']}" 
             for idx, routine in enumerate(morning_routine, start=1)
         )
     else:

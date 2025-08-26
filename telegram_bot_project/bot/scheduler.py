@@ -11,6 +11,7 @@ from collections import defaultdict
 from typing import Set
 from messages import *
 from service.myday import MyDayService
+import pytz
 
 scheduler: AsyncIOScheduler = AsyncIOScheduler()
 notified_task_ids = set()
@@ -20,11 +21,12 @@ def initialize_scheduler():
     scheduler.start()
     return scheduler
 
-def update_user_job(user_id: int, when: time, bot: Bot, job_type: str):
+def update_user_job(user_id: int, when: time, bot: Bot, job_type: str, timezone_str: str = 'UTC'):
     if not when:
         print(f"[WARNING] - No time provided for job '{job_type}' (user_id={user_id})")
         return
 
+    tz = pytz.timezone(timezone_str)
     job_id = f"{job_type}_message_{user_id}"
 
     job_func = send_morning_message if job_type == "wake" else send_evening_message
@@ -34,7 +36,7 @@ def update_user_job(user_id: int, when: time, bot: Bot, job_type: str):
 
     scheduler.add_job(
         job_func,
-        trigger=CronTrigger(hour=when.hour, minute=when.minute),
+        trigger=CronTrigger(hour=when.hour, minute=when.minute, timezone=tz),
         args=[bot, user_id],
         id=job_id,
         replace_existing=True
@@ -42,14 +44,25 @@ def update_user_job(user_id: int, when: time, bot: Bot, job_type: str):
 
     print(f"[INFO] - Scheduled {job_type} job for user {user_id} at {when.strftime('%H:%M')}")
 
-
 async def schedule_all_users_jobs(bot: Bot):
     users = await UserService.get_all_users()
     for user in users:
         if user["wake_time"]:
-            update_user_job(user["id"], user["wake_time"], bot, job_type="wake")
+            update_user_job(
+                user_id=user["id"],
+                when=user["wake_time"],
+                bot=bot,
+                job_type="wake",
+                timezone_str=user.get('timezone', 'UTC')
+            )
         if user["sleep_time"]:
-            update_user_job(user["id"], user["sleep_time"], bot, job_type="sleep")
+            update_user_job(
+                user_id=user["id"],
+                when=user["sleep_time"],
+                bot=bot,
+                job_type="sleep",
+                timezone_str=user.get('timezone', 'UTC')
+            )
 
 class PreciseTaskNotifier:
     def __init__(self, bot: Bot, scheduler: AsyncIOScheduler):
@@ -57,9 +70,12 @@ class PreciseTaskNotifier:
         self.scheduler = scheduler
         self.scheduled_jobs = {} 
     
-    async def schedule_task_notifications(self, task_id: int, user_id: int, task_name: str, start_time: datetime, language: str):
-        now = datetime.now()
+    async def schedule_task_notifications(self, task_id: int, user_id: int, task_name: str, start_time: datetime, language: str, timezone_str: str = "UTC"):
+        tz = pytz.timezone(timezone_str)
+        now = datetime.now(tz)
         
+        start_time = tz.localize(start_time) if start_time.tzinfo is None else start_time
+
         notification_times = [
             (start_time - timedelta(minutes=30), 30, "30min"),
             (start_time - timedelta(minutes=15), 15, "15min"),
@@ -71,24 +87,18 @@ class PreciseTaskNotifier:
             if notification_time > now:
                 job_id = f"task_{task_id}_{notification_type}"
                 
-                try:
-                    if self.scheduler.get_job(job_id):
-                        self.scheduler.remove_job(job_id)
-                except:
-                    pass  
+                if self.scheduler.get_job(job_id):
+                    self.scheduler.remove_job(job_id)
                 
-                try:
-                    self.scheduler.add_job(
-                        self._send_notification,
-                        trigger=DateTrigger(run_date=notification_time),
-                        args=[language, user_id, task_name, minutes, task_id],
-                        id=job_id,
-                        replace_existing=True
-                    )
-                    self.scheduled_jobs[job_id] = True
-                    print(f"[SCHEDULED] - Notification for task {task_id} at {notification_time.strftime('%H:%M:%S')}")
-                except Exception as e:
-                    print(f"[ERROR] Failed to schedule notification for task {task_id}: {e}")
+                self.scheduler.add_job(
+                    self._send_notification,
+                    trigger=DateTrigger(run_date=notification_time),
+                    args=[language, user_id, task_name, minutes, task_id],
+                    id=job_id,
+                    replace_existing=True
+                )
+                self.scheduled_jobs[job_id] = True
+                print(f"[SCHEDULED] - Notification for task {task_id} at {notification_time.strftime('%Y-%m-%d %H:%M:%S %Z')}")
     
     async def _send_notification(self, language: str, user_id: int, task_name: str, minutes: int, task_id: int):
         try:
@@ -136,9 +146,6 @@ class PreciseTaskNotifier:
                 print(f"[ERROR] Failed to remove notification job {job_id}: {e}")
 
 async def check_upcoming_tasks_v2(bot: Bot):
-    now = datetime.now()
-    print(f"[BACKUP CHECK] - Checking for upcoming tasks at {now.strftime('%Y-%m-%d %H:%M:%S')}")
-
     try:
         tasks = await TaskService.get_all_upcoming_tasks()
 
@@ -151,11 +158,16 @@ async def check_upcoming_tasks_v2(bot: Bot):
             user_id = task["user_id"]
             task_name = task["task_name"]
             language: str = await UserService.get_user_language(user_id)
+            timezone_str: str = await UserService.get_user_timezone(user_id) or "UTC"
+            tz = pytz.timezone(timezone_str)
+
+            task_time = tz.localize(task_time) if task_time.tzinfo is None else task_time
+            now = datetime.now(tz)
 
             time_diff = (task_time - now).total_seconds()
             time_after_start = (now - task_time).total_seconds()
 
-            print(f"[DEBUG] - Task: '{task_name}' | user_id: {user_id} | time_diff: {time_diff:.2f} sec | start_time: {task_time.strftime('%H:%M:%S')}")
+            print(f"[DEBUG] - Task: '{task_name}' | user_id: {user_id} | time_diff: {time_diff:.2f} sec | start_time: {task_time.strftime('%H:%M:%S %Z')}")
 
             notifications_to_check = [
                 (1800, 30, "30min"), 
@@ -189,7 +201,6 @@ async def check_upcoming_tasks_v2(bot: Bot):
                                 sent_notifications[user_id].add(reminder_key)
                 except Exception as e:
                     print(f"[ERROR] Failed to check task status for {task_id}: {e}")
-
     except Exception as e:
         print(f"[ERROR] Failed in backup task check: {e}")
 
