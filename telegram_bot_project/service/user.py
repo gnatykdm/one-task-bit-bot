@@ -39,7 +39,7 @@ class UserService:
     async def get_all_users() -> list[dict]:
         async with get_session() as session:
             result = await session.execute(
-                text("SELECT id, wake_time, sleep_time FROM users")
+                text("SELECT id, wake_time, sleep_time, timezone FROM users")
             )
             rows = result.fetchall()
             return [dict(row._mapping) for row in rows]

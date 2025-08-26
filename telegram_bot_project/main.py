@@ -423,6 +423,7 @@ async def main():
     scheduler = initialize_scheduler()
     await MyDayService.schedule_daily_stats(bot, scheduler)
 
+    print(f"[SYSTEM] Scheduler timezone: {scheduler.timezone}")
     scheduler.add_job(
         cleanup_old_notifications,
         trigger='cron',

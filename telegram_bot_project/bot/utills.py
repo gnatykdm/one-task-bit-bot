@@ -1,5 +1,6 @@
 # bot/utills.py
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
+import pytz
 
 def format_date(dt: datetime) -> str:
     return dt.strftime("%d.%m.%Y %H:%M")
@@ -35,3 +36,9 @@ def calculate_awake_hours(wake_time, sleep_time) -> str:
 
 def validate_text(text: str) -> bool:
     return text and len(text) <= 100
+
+def validate_time(target_time: time, timezone_str: str) -> bool:
+    tz = pytz.timezone(timezone_str)
+    now = datetime.now(tz)
+    today_target = datetime.combine(now.date(), target_time, tzinfo=tz)
+    return today_target > now 

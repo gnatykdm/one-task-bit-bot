@@ -53,7 +53,8 @@ class MyDayService:
                 trigger=CronTrigger(hour=wake_time.hour, minute=wake_time.minute, timezone=user_tz),
                 args=[user['id']],
                 id=job_id,
-                replace_existing=True
+                replace_existing=True,
+                misfire_grace_time=60
             )
             
             print(f"[SCHEDULED] - Daily stats for user {user['id']} at {wake_time} ({user_tz_str})")
