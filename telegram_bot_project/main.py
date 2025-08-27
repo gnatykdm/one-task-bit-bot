@@ -420,7 +420,7 @@ async def process_fallback(message: Message, state: FSMContext):
 async def main():
     bot = Bot(token=TOKEN)
     
-    scheduler = initialize_scheduler()
+    scheduler = await initialize_scheduler(bot)
     await MyDayService.schedule_daily_stats(bot, scheduler)
 
     print(f"[SYSTEM] Scheduler timezone: {scheduler.timezone}")

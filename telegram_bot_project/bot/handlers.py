@@ -1,7 +1,8 @@
 # bot/handlers.py
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 
 from ai_client import ask_gpt
 from service.smtp import SmtpService
@@ -16,6 +17,7 @@ from bot.utills import check_valid_time, validate_text, validate_time
 from service.myday import MyDayService
 from bot.scheduler import update_user_schedule
 from service.focus import FocusService
+from bot.scheduler import schedule_new_task_notifications
 
 async def process_idea_save(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
@@ -188,11 +190,34 @@ async def process_task_deadline(message: Message, state: FSMContext):
 
     try:
         time_obj = datetime.strptime(deadline_str, "%H:%M").time()
-        deadline_dt = datetime.combine(datetime.now().date(), time_obj)
 
-        print(f"[INFO] - User with id: {user_id} provided deadline: {deadline_dt}")
+        timezone: str = await UserService.get_user_timezone(user_id) or 'UTC'
+        tz = pytz.timezone(timezone)
+        now = datetime.now(tz)
 
-        await TaskService.create_task(user_id, task, False, deadline_dt)
+        deadline_dt = datetime.combine(now.date(), time_obj)
+        deadline_dt = tz.localize(deadline_dt)
+
+        if deadline_dt <= now:
+            deadline_dt += timedelta(days=1)
+
+        print(f"[INFO] - User {user_id} set deadline: {deadline_dt} ({timezone})")
+
+        task_id = await TaskService.create_task(
+            user_id=user_id,
+            task_name=task,
+            task_status=False,
+            start_time=deadline_dt
+        )
+
+        await schedule_new_task_notifications(
+            task_id=task_id,
+            user_id=user_id,
+            task_name=task,
+            start_time=deadline_dt,
+            language=language
+        )
+
         await MyDayService.increment_task_count(user_id)
         await message.answer(MESSAGES[language]['TASK_SAVED'], reply_markup=task_menu_keyboard())
         await state.clear()

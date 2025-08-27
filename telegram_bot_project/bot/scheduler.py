@@ -24,15 +24,75 @@ scheduler: AsyncIOScheduler = AsyncIOScheduler(timezone=pytz.timezone(SYSTEM_TIM
 notified_task_ids = set()
 sent_notifications: defaultdict[int, Set[str]] = defaultdict(set)
 
-def initialize_scheduler():
-    """Инициализация планировщика с правильными настройками"""
+async def initialize_scheduler(bot: Bot):
     try:
         scheduler.start()
         logger.info("Scheduler started successfully")
+        
+        await remove_duplicate_jobs()
+        await schedule_all_users_jobs(bot)
+        
+        notifier = get_notifier_instance(bot)
+        if notifier:
+            await notifier.schedule_all_task_notifications()
+        
+        scheduler.add_job(
+            cleanup_expired_jobs,
+            trigger="interval",
+            minutes=30,
+            id="cleanup_expired_jobs",
+            replace_existing=True
+        )
+        
+        logger.info("[STARTUP] Scheduler initialized with cleanup")
         return scheduler
+        
     except Exception as e:
-        logger.error(f"Failed to start scheduler: {e}")
+        logger.error(f"Failed to initialize scheduler: {e}")
         raise
+
+async def remove_duplicate_jobs():
+    try:
+        jobs = scheduler.get_jobs()
+        job_counts = {}
+        to_remove = []
+        
+        for job in jobs:
+            if '_message_' in job.id:
+                parts = job.id.split('_')
+                if len(parts) >= 3:
+                    job_type = parts[0]  
+                    user_id = parts[2]   
+                    key = f"{job_type}_{user_id}"
+                    
+                    if key not in job_counts:
+                        job_counts[key] = []
+                    job_counts[key].append(job)
+        
+        for key, jobs_list in job_counts.items():
+            if len(jobs_list) > 1:
+                logger.warning(f"Found {len(jobs_list)} duplicate jobs for {key}")
+                cron_job = None
+                for job in jobs_list:
+                    if 'cron' in str(type(job.trigger)).lower():
+                        cron_job = job
+                        break
+                
+                for job in jobs_list:
+                    if job != cron_job:
+                        to_remove.append(job.id)
+        
+        for job_id in to_remove:
+            try:
+                scheduler.remove_job(job_id)
+                logger.info(f"Removed duplicate job: {job_id}")
+            except Exception as e:
+                logger.error(f"Error removing duplicate job {job_id}: {e}")
+                
+        logger.info(f"Removed {len(to_remove)} duplicate jobs")
+        
+    except Exception as e:
+        logger.error(f"Error in remove_duplicate_jobs: {e}")
 
 async def update_user_job(user_id: int, when: time, bot: Bot, job_type: str, timezone_str: str = None):
     if not when:
@@ -44,12 +104,10 @@ async def update_user_job(user_id: int, when: time, bot: Bot, job_type: str, tim
         job_id = f"{job_type}_message_{user_id}"
         job_func = send_morning_message if job_type == "wake" else send_evening_message
 
-        # Удаляем старую задачу если существует
         if scheduler.get_job(job_id):
             scheduler.remove_job(job_id)
             logger.info(f"Removed old job: {job_id}")
 
-        # Используем CronTrigger для ежедневного повтора
         scheduler.add_job(
             job_func,
             trigger=CronTrigger(
@@ -71,15 +129,12 @@ async def update_user_job(user_id: int, when: time, bot: Bot, job_type: str, tim
         logger.error(f"Error scheduling job for user {user_id}: {e}")
 
 
-# Упрощенная функция - убираем дублирующие задачи
 async def update_single_user_job(user_id: int, when: time, bot: Bot, job_type: str, timezone_str: str = None):
-    """Обновление задачи для одного пользователя (используется при изменении времени)"""
     if not when:
         logger.warning(f"No time provided for job '{job_type}' (user_id={user_id})")
         return
 
     try:
-        # Получаем timezone пользователя если не передан
         if not timezone_str:
             timezone_str = await UserService.get_user_timezone(user_id) or "UTC"
             
@@ -87,12 +142,10 @@ async def update_single_user_job(user_id: int, when: time, bot: Bot, job_type: s
         job_id = f"{job_type}_message_{user_id}"
         job_func = send_morning_message if job_type == "wake" else send_evening_message
 
-        # Удаляем старую задачу если существует
         if scheduler.get_job(job_id):
             scheduler.remove_job(job_id)
             logger.info(f"Removed old job: {job_id}")
 
-        # Используем CronTrigger для ежедневного повтора
         scheduler.add_job(
             job_func,
             trigger=CronTrigger(
@@ -110,16 +163,14 @@ async def update_single_user_job(user_id: int, when: time, bot: Bot, job_type: s
 
         logger.info(f"Updated {job_type} job for user {user_id} at {when.strftime('%H:%M')} ({timezone_str})")
         
-        # Проверяем, нужно ли отправить сообщение сегодня
         now = datetime.now(tz)
         target_time = datetime.combine(now.date(), when)
-        target_time = tz.localize(target_time)
-        
-        # Создаем дополнительную задачу на сегодня только если время еще не прошло 
-        # И до него осталось больше 2 минут (чтобы избежать дублирования с CronTrigger)
+        target_time = tz.localize(target_time) if target_time.tzinfo is None else target_time.replace(tzinfo=tz)
         time_until_target = (target_time - now).total_seconds()
-        if time_until_target > 120:  # Больше 2 минут
+        
+        if 300 < time_until_target <= 86400: 
             today_job_id = f"{job_type}_today_{user_id}"
+            
             if scheduler.get_job(today_job_id):
                 scheduler.remove_job(today_job_id)
                 
@@ -133,16 +184,15 @@ async def update_single_user_job(user_id: int, when: time, bot: Bot, job_type: s
                 misfire_grace_time=60
             )
             logger.info(f"Scheduled today's {job_type} message for user {user_id} at {target_time}")
-        elif time_until_target > 0:
-            logger.info(f"Skipping today's {job_type} job for user {user_id} - too close to CronTrigger execution ({time_until_target:.0f}s remaining)")
+            
+        elif time_until_target <= 300:
+            logger.info(f"Skipping today's {job_type} job for user {user_id} - too close to execution time ({time_until_target:.0f}s remaining)")
         
     except Exception as e:
         logger.error(f"Error updating job for user {user_id}: {e}")
 
 
-# Упрощенная функция планирования для всех пользователей
 async def schedule_all_users_jobs(bot: Bot):
-    """Планируем wake и sleep сообщения для всех пользователей с учетом timezone"""
     try:
         users = await UserService.get_all_users()
         logger.info(f"Scheduling jobs for {len(users)} users")
@@ -184,18 +234,24 @@ async def schedule_all_users_jobs(bot: Bot):
         logger.error(f"Error in schedule_all_users_jobs: {e}")
 
 
-# Функция для добавления задачи очистки старых одноразовых задач
-async def cleanup_expired_next_jobs():
-    """Очищает просроченные одноразовые задачи"""
+async def cleanup_expired_jobs():
     try:
         jobs = scheduler.get_jobs()
         removed_count = 0
+        now = datetime.now(pytz.UTC)
         
         for job in jobs:
-            # Очищаем как _next_ так и _today_ задачи
-            if ('_next_' in job.id or '_today_' in job.id) and job.next_run_time and job.next_run_time < datetime.now(job.next_run_time.tzinfo):
-                scheduler.remove_job(job.id)
-                removed_count += 1
+            try:
+                if '_today_' in job.id and job.next_run_time:
+                    job_time_utc = job.next_run_time.astimezone(pytz.UTC)
+                    
+                    if (now - job_time_utc).total_seconds() > 300:
+                        scheduler.remove_job(job.id)
+                        removed_count += 1
+                        logger.info(f"Removed expired today job: {job.id}")
+                        
+            except Exception as e:
+                logger.error(f"Error processing job {job.id}: {e}")
                 
         if removed_count > 0:
             logger.info(f"Cleaned up {removed_count} expired jobs")
@@ -203,10 +259,7 @@ async def cleanup_expired_next_jobs():
     except Exception as e:
         logger.error(f"Error cleaning up expired jobs: {e}")
 
-
-# Функция для вызова при изменении времени пользователем
 async def update_user_schedule(user_id: int, wake_time: time = None, sleep_time: time = None, bot: Bot = None):
-    """Вызывается при изменении расписания пользователя"""
     try:
         if not bot:
             logger.error("Bot instance is required for updating user schedule")
@@ -237,8 +290,31 @@ async def update_user_schedule(user_id: int, wake_time: time = None, sleep_time:
     except Exception as e:
         logger.error(f"Error updating user schedule for {user_id}: {e}")
 
+async def debug_duplicate_jobs():
+    try:
+        jobs = scheduler.get_jobs()
+        job_groups = {}
+        
+        for job in jobs:
+            base_id = job.id.replace('_today_', '_').replace('_next_', '_')
+            if base_id not in job_groups:
+                job_groups[base_id] = []
+            job_groups[base_id].append(job)
+        
+        duplicates_found = False
+        for base_id, jobs_list in job_groups.items():
+            if len(jobs_list) > 1:
+                duplicates_found = True
+                logger.warning(f"DUPLICATE JOBS FOUND for {base_id}:")
+                for job in jobs_list:
+                    logger.warning(f"  - {job.id}: next run {job.next_run_time}")
+        
+        if not duplicates_found:
+            logger.info("No duplicate jobs found")
+            
+    except Exception as e:
+        logger.error(f"Error in debug_duplicate_jobs: {e}")
 
-# Функция для отладки - показать все запланированные задачи
 async def debug_scheduled_jobs():
     """Отладочная функция для просмотра всех запланированных задач"""
     try:
@@ -274,7 +350,10 @@ class PreciseTaskNotifier:
             
             logger.info(f"Scheduling notifications for task {task_id}: {start_time} ({timezone_str})")
             
-            # Время уведомлений
+            if start_time <= now:
+                logger.warning(f"Task {task_id} start time is in the past: {start_time} <= {now}")
+                return
+            
             notification_times = [
                 (start_time - timedelta(minutes=30), "30min"),
                 (start_time - timedelta(minutes=15), "15min"),
@@ -284,16 +363,19 @@ class PreciseTaskNotifier:
 
             scheduled_count = 0
             for notification_time, notification_type in notification_times:
-                if notification_time > now - timedelta(seconds=60):
+                if notification_time > now:
                     job_id = f"task_{task_id}_{notification_type}"
+                    
                     if self.scheduler.get_job(job_id):
                         self.scheduler.remove_job(job_id)
+                        logger.debug(f"Removed existing job {job_id}")
+                        
                     self.scheduler.add_job(
                         self._send_notification,
                         trigger=DateTrigger(run_date=notification_time, timezone=tz),
                         args=[language, user_id, task_name, notification_type, task_id],
                         id=job_id,
-                        replace=True,
+                        replace_existing=True,
                         max_instances=1,
                         misfire_grace_time=300
                     )
@@ -302,16 +384,19 @@ class PreciseTaskNotifier:
                     scheduled_count += 1
                     logger.info(f"Scheduled notification {notification_type} for task {task_id} at {notification_time}")
                 else:
-                    logger.debug(f"Skipping past notification time for task {task_id}: {notification_time}")
+                    logger.debug(f"Skipping past notification time for task {task_id}: {notification_time} (now: {now})")
 
-            logger.info(f"Scheduled {scheduled_count} notifications for task {task_id}")
+            logger.info(f"Successfully scheduled {scheduled_count}/4 notifications for task {task_id}")
+            
+            if scheduled_count == 0:
+                logger.warning(f"No notifications scheduled for task {task_id} - all times are in the past")
             
         except Exception as e:
             logger.error(f"Error scheduling notifications for task {task_id}: {e}")
 
 
+
     async def _send_notification(self, language: str, user_id: int, task_name: str, notification_type: str, task_id: int):
-        """Отправка уведомления с учетом типа уведомления"""
         try:
             await send_task_notification(language, self.bot, user_id, task_name, notification_type, task_id)
             sent_notifications[user_id].add(f"{task_id}_{notification_type}")
@@ -321,7 +406,6 @@ class PreciseTaskNotifier:
 
 
     async def schedule_all_task_notifications(self):
-        """ИСПРАВЛЕНИЕ 8: Добавляем детальное логирование"""
         try:
             tasks = await TaskService.get_all_upcoming_tasks()
             logger.info(f"Found {len(tasks)} upcoming tasks to schedule")
@@ -354,7 +438,6 @@ class PreciseTaskNotifier:
             logger.error(f"Error in schedule_all_task_notifications: {e}")
 
     async def remove_task_notifications(self, task_id: int):
-        """Удаление уведомлений задачи"""
         notification_types = ["30min", "15min", "5min", "now"]
         removed_count = 0
         
@@ -373,9 +456,7 @@ class PreciseTaskNotifier:
         
         logger.info(f"Removed {removed_count} notification jobs for task {task_id}")
 
-# ИСПРАВЛЕНИЕ 9: Добавляем функцию для проверки здоровья планировщика
 async def check_scheduler_health():
-    """Проверка состояния планировщика"""
     try:
         if not scheduler.running:
             logger.error("Scheduler is not running!")
@@ -384,8 +465,7 @@ async def check_scheduler_health():
         jobs = scheduler.get_jobs()
         logger.info(f"Scheduler is running with {len(jobs)} active jobs")
         
-        # Логируем информацию о ближайших задачах
-        for job in jobs[:5]:  # Показываем первые 5 задач
+        for job in jobs[:5]:  
             logger.info(f"Job {job.id}: next run at {job.next_run_time}")
         
         return True
@@ -394,7 +474,6 @@ async def check_scheduler_health():
         return False
 
 async def check_upcoming_tasks_v2(bot: Bot):
-    """ИСПРАВЛЕНИЕ 10: Улучшенная резервная проверка задач"""
     try:
         tasks = await TaskService.get_all_upcoming_tasks()
         logger.debug(f"Backup check: found {len(tasks)} upcoming tasks")
@@ -413,7 +492,6 @@ async def check_upcoming_tasks_v2(bot: Bot):
 
                 tz = pytz.timezone(timezone_str)
                 
-                # Правильная работа с timezone
                 if task_time.tzinfo is None:
                     task_time = tz.localize(task_time)
                 else:
@@ -425,27 +503,25 @@ async def check_upcoming_tasks_v2(bot: Bot):
 
                 logger.debug(f"Task {task_id}: time_diff={time_diff:.0f}s, after_start={time_after_start:.0f}s")
 
-                # Проверяем уведомления
                 notifications_to_check = [
-                    (1800, 30, "30min"),  # 30 минут до
-                    (900, 15, "15min"),   # 15 минут до  
-                    (300, 5, "5min"),     # 5 минут до
-                    (0, 0, "now")         # сейчас
+                    (1800, 30, "30min"),  
+                    (900, 15, "15min"),     
+                    (300, 5, "5min"),     
+                    (0, 0, "now")         
                 ]
 
                 for target_seconds, minutes, notification_type in notifications_to_check:
-                    if abs(time_diff - target_seconds) <= 60:  # В пределах минуты
+                    if abs(time_diff - target_seconds) <= 60: 
                         notification_key = f"{task_id}_{notification_type}"
                         if notification_key not in sent_notifications[user_id]:
                             logger.info(f"Backup notification: User {user_id}, Task '{task_name}', type: {notification_type}")
                             await send_task_notification(language, bot, user_id, task_name, notification_type, task_id)
                             sent_notifications[user_id].add(notification_key)
 
-                # Проверяем напоминания для просроченных задач
-                if time_after_start >= 300:  # 5+ минут после начала
+                if time_after_start >= 300:  
                     try:
                         started = await TaskService.get_started_status(task_id)
-                        if not started:  # Задача не начата
+                        if not started:  
                             for target_minute in [5, 10, 15]:
                                 lower = target_minute * 60 - 60
                                 upper = target_minute * 60 + 60
@@ -466,7 +542,6 @@ async def check_upcoming_tasks_v2(bot: Bot):
         logger.error(f"Error in backup task check: {e}")
 
 async def send_task_notification(language: str, bot: Bot, user_id: int, task_name: str, notification_type: str, task_id: int):
-    """Отправка уведомления о задаче с правильной логикой soon/now/reminder"""
     messages = {
         "UKRANIAN": {
             "30min": f"⏰ Завдання *\"{task_name}\"* почнеться через 30 хвилин!",
@@ -507,13 +582,11 @@ async def send_task_notification(language: str, bot: Bot, user_id: int, task_nam
 
 
 async def cleanup_old_notifications():
-    """Очистка старых уведомлений"""
     global sent_notifications
     old_size = sum(len(notifications) for notifications in sent_notifications.values())
     sent_notifications.clear()
     logger.info(f"Cleaned up {old_size} old notification entries")
 
-# Глобальный экземпляр уведомителя
 _notifier_instance = None
 
 def get_notifier_instance(bot: Bot = None) -> PreciseTaskNotifier:
@@ -523,20 +596,23 @@ def get_notifier_instance(bot: Bot = None) -> PreciseTaskNotifier:
     return _notifier_instance
 
 async def schedule_new_task_notifications(task_id: int, user_id: int, task_name: str, start_time: datetime, language: str):
-    """Планирование уведомлений для новой задачи"""
-    notifier = get_notifier_instance()
-    if notifier:
-        timezone_str = await UserService.get_user_timezone(user_id) or "UTC"
-        await notifier.schedule_task_notifications(task_id, user_id, task_name, start_time, language, timezone_str)
+    try:
+        notifier = get_notifier_instance()
+        if notifier:
+            timezone_str = await UserService.get_user_timezone(user_id) or "UTC"
+            await notifier.schedule_task_notifications(task_id, user_id, task_name, start_time, language, timezone_str)
+            logger.info(f"Scheduled notifications for new task {task_id} ({task_name}) for user {user_id}")
+        else:
+            logger.error("Notifier instance not available - cannot schedule task notifications")
+    except Exception as e:
+        logger.error(f"Error scheduling notifications for new task {task_id}: {e}")
 
 async def remove_task_notifications(task_id: int):
-    """Удаление уведомлений задачи"""
     notifier = get_notifier_instance()
     if notifier:
         await notifier.remove_task_notifications(task_id)
 
 async def send_morning_message(bot: Bot, user_id: int):
-    """Отправка утреннего сообщения"""
     try:
         language = await UserService.get_user_language(user_id) or "ENGLISH"
         user = await UserService.get_user_by_id(user_id)
@@ -553,7 +629,6 @@ async def send_morning_message(bot: Bot, user_id: int):
         logger.error(f"Failed to send morning message to user {user_id}: {e}")
 
 async def send_evening_message(bot: Bot, user_id: int):
-    """Отправка вечернего сообщения"""
     try:
         language = await UserService.get_user_language(user_id) or "ENGLISH"
         stats = await MyDayService.get_today_stats(user_id)
