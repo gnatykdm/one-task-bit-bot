@@ -105,7 +105,7 @@ async def ask_gpt(messages: List[Dict[str, str]], user_id: int, **kwargs) -> str
         ]
         
         api_params = {
-            "model": kwargs.get("model", "gpt-4o-mini"),
+            "model": kwargs.get("model", "gpt-4o-mini-2024-07-18"),
             "messages": api_messages,
             "max_tokens": kwargs.get("max_tokens", 500),
             "temperature": kwargs.get("temperature", 0.8),
