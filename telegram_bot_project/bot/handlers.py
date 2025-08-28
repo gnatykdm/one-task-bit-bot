@@ -589,25 +589,37 @@ async def process_ai_talk(message: Message):
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
     language = await UserService.get_user_language(user_id) or "ENGLISH"
+    user_timezone = await UserService.get_user_timezone(user_id)
 
     if not user_find:
         await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
         return
     
     text: str = message.text.strip()
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     if user_id not in AI_CHAT_CONTEXT:
         AI_CHAT_CONTEXT[user_id] = []
 
-    AI_CHAT_CONTEXT[user_id].append({"role": "user", "content": text})
+    AI_CHAT_CONTEXT[user_id].append({
+        "role": "user",
+        "content": text,
+        "date": now
+    })
 
     try:
-        response: str = await ask_gpt(
-            AI_CHAT_CONTEXT[user_id],  
-            language=language
-        )
+        messages_for_gpt = [
+            {"role": msg["role"], "content": msg["content"]}
+            for msg in AI_CHAT_CONTEXT[user_id]
+        ]
 
-        AI_CHAT_CONTEXT[user_id].append({"role": "assistant", "content": response})
+        response: str = await ask_gpt(messages_for_gpt, language=language)
+
+        AI_CHAT_CONTEXT[user_id].append({
+            "role": "assistant",
+            "content": response,
+            "date": datetime.now(user_timezone).strftime("%Y-%m-%d %H:%M:%S")
+        })
 
         await message.answer(response, parse_mode="Markdown")
     except Exception as e:
