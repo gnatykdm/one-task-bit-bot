@@ -6,7 +6,7 @@ from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import CallbackQuery
 from fastapi import Request
-from typing import Dict, Any
+from typing import Any
 from fastapi import FastAPI
 import uvicorn
 
@@ -32,15 +32,16 @@ async def start(message: Message):
     await start_command(message)
 
 @app.post("/api/check-geo-data")
-async def check_geo_data(request: Request) -> Dict[str, str]:
+async def check_geo_data(request: Request) -> dict:
     if not request:
-        return {400: "Invalid geo request."}
+        return {"status": 400, "message": "Invalid geo request."}
     
     data: Any = await request.json()
     user_geo_data: UserGeoDataDTO = UserGeoDataDTO(
         user_id=data.get("user_id"),
         chat_id=data.get("chat_id"),
-        timezone=data.get("timezone")
+        timezone=data.get("timezone"),
+        switch_type=data.get("switch_type")
     )
 
     print(f"[DEBUG] - User with id: {user_geo_data.user_id} sent geo-data.")
@@ -50,19 +51,28 @@ async def check_geo_data(request: Request) -> Dict[str, str]:
         timezone=user_geo_data.timezone
     )
 
-    await bot.send_message(
-        chat_id=user_geo_data.chat_id,
-        text=f"✅ Successfully set timezone to {user_geo_data.timezone}"
-    )
+    language = await UserService.get_user_language(user_geo_data.user_id)
+    match user_geo_data.switch_type:
+        case "default":
+            await bot.send_message(
+                chat_id=user_geo_data.chat_id,
+                text=f"✅ Successfully set timezone to {user_geo_data.timezone}\nYou can change timezone using /timezone"
+            )
 
-    keyboard = get_language_keyboard()
-    await bot.send_message(   
-        chat_id=user_geo_data.chat_id,
-        text=MESSAGES['ENGLISH']['LANGUAGE_ASK'], 
-        reply_markup=keyboard
-    )
+            keyboard = get_language_keyboard()
+            await bot.send_message(   
+                chat_id=user_geo_data.chat_id,
+                text=MESSAGES['ENGLISH']['LANGUAGE_ASK'], 
+                reply_markup=keyboard
+            )
+        case "manually":
+            await bot.send_message(
+                chat_id=user_geo_data.chat_id,
+                text=MESSAGES[language]['TIMEZONE_SWITCHED_OK'],
+                reply_markup=timezone_menu_keyboard()
+            )
     
-    return {200: "OK"}
+    return {"status": 200, "message": "OK"}
 
 @dp.message(Command("help"))
 async def help(message: Message):
@@ -269,6 +279,15 @@ async def focus_end(message: Message, state: FSMContext):
         '\n' + MESSAGES[language]['SAVE_FOCUS_ZONE'],
         reply_markup=focus_save_question_keyboard()
     )
+
+@dp.message(Command("timezone"))
+@dp.message(lambda m: m.text == TIME_ZONE_BTN)
+async def timezone_menu(message: Message) -> None:
+    await timezone_command(message)
+
+@dp.message(lambda m: m.text == CHANGE_TIMEZONE_BTN)
+async def change_timezone(message: Message) -> None:
+    await change_timezone_command(message)
 
 @dp.message(lambda m: m.text == STOP_WORK_SESSION)
 async def start_work_btn(message: Message) -> None:

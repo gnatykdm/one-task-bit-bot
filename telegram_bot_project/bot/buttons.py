@@ -87,10 +87,11 @@ def settings_menu_keyboard() -> ReplyKeyboardMarkup:
     language_button = KeyboardButton(text=SETTINGS_BUTTON_LANGUAGE)
     routine_button = KeyboardButton(text=SETTINGS_BUTTON_ROUTINE)
     routine_time = KeyboardButton(text=SETTINGS_BUTTON_ROUTINE_TIME)
+    timezon_btn = KeyboardButton(text=TIME_ZONE_BTN)
 
     settings_menu_keyboard.keyboard.append([routine_time, routine_button])
     settings_menu_keyboard.keyboard.append([language_button, feedback_button])
-    settings_menu_keyboard.keyboard.append([main_menu_button])
+    settings_menu_keyboard.keyboard.append([timezon_btn, main_menu_button])
 
     return settings_menu_keyboard
 
@@ -275,7 +276,7 @@ async def ask_user_timezone_location(message: types.Message):
     location_button = InlineKeyboardButton(
         text="🌐 Send my location",
         web_app=WebAppInfo(
-            url=f'https://ellipsai.com/?user_id={user_id}&chat_id={chat_id}'
+            url=f'https://ellipsai.com/?user_id={user_id}&chat_id={chat_id}%type=default'
         )
     )
 
@@ -291,3 +292,33 @@ async def ask_user_timezone_location(message: types.Message):
         message_text,
         reply_markup=keyboard
     )
+
+def timezone_menu_keyboard() -> ReplyKeyboardMarkup:
+    settings_btn: KeyboardButton = KeyboardButton(text=BUTTON_SETTINGS)
+    switch_timezone_btn = KeyboardButton(text=CHANGE_TIMEZONE_BTN)
+
+    keyboard = [
+        [settings_btn, switch_timezone_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True
+    )
+
+def timezone_btn(message: types.Message) -> InlineKeyboardButton:
+    inline_markup: InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard=[], row_width=1)
+
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+
+    location_button = InlineKeyboardButton(
+        text="🌐 Send my location",
+        web_app=WebAppInfo(
+            url=f'https://ellipsai.com/?user_id={user_id}&chat_id={chat_id}&type=manually'
+        )
+    )
+
+    inline_markup.inline_keyboard.append([location_button])
+    return inline_markup
+

@@ -600,3 +600,24 @@ async def stop_talk_command(message: types.Message, state: FSMContext) -> None:
     )
 
     await state.clear()
+
+# Timezone Command Handler
+async def timezone_command(message: types.Message) -> None:
+    user_id = message.from_user.id
+    user_timezone = await UserService.get_user_timezone(user_id)
+    language = await UserService.get_user_language(user_id)
+
+    await message.answer(
+        text=MESSAGES[language]['CURRENT_TIMEZONE'].format(user_timezone),
+        reply_markup=timezone_menu_keyboard()
+    )
+
+# Change Timezon Handler
+async def change_timezone_command(message: types.Message) -> None:
+    user_id = message.from_user.id
+    language = await UserService.get_user_language(user_id)
+
+    await message.answer(
+        text=MESSAGES[language]['TIMEZONE_BTN_MSG'],
+        reply_markup=timezone_btn(message)
+    )

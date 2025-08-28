@@ -138,6 +138,9 @@ MESSAGES: Any = {
         "MORNING_TASK_CREATE_TIMER_MSG": "Гарного дня!\n🕒 Час на виконання ранкової рутини: {}m {}s\nНе забудь скласти завдання на сьогодні. /task 📝",
         "AI_ROCKY_TALK_MSG": "Привіт, {} 👋\nЧим я можу допомогти тобі сьогодні❓",
         "AI_ROCKY_TALK_END_MSG": "Було приємно поспілкуватися з тобою, {} ✨\nБажаю чудового дня! 🌿",
+        "CURRENT_TIMEZONE": "Ваш поточний часовий пояс:\n🕒 {}",
+        "TIMEZONE_SWITCHED_OK": "✅ Часовий пояс успішно змінено",
+        "TIMEZONE_BTN_MSG": "ℹ️ Будь ласка, натисніть кнопку, щоб змінити часовий пояс"
     },
     "ENGLISH": {
         "START_MSG": (
@@ -272,6 +275,9 @@ MESSAGES: Any = {
         "MORNING_TASK_CREATE_TIMER_MSG": "Have a nice day!\n🕒 Your working routine duration was: {}m {}s\nDon't forget to plan your tasks today. /task 📝",
         "AI_ROCKY_TALK_MSG": "Hello, {} 👋\nHow i can help you today❓",
         "AI_ROCKY_TALK_END_MSG": "It was nice talking to you, {} ✨\nHave a wonderful day ahead! 🌿",
+        "CURRENT_TIMEZONE": "You current timezone is:\n🕒 {}",
+        "TIMEZONE_SWITCHED_OK": "✅ Timezone switched successfully",
+        "TIMEZONE_BTN_MSG": "ℹ️ Please press the button to switch timezone",
     }
 }
 
@@ -301,6 +307,8 @@ SETTINGS_BUTTON_ROUTINE = "📅 Daily Routine"
 SETTINGS_BUTTON_ROUTINE_TIME = "⏳ Bedtime & Wake Up"
 ROUTINE_SET_WAKE_BUTTON = "⏰ Set Wake-Up Time"
 ROUTINE_SET_SLEEP_BUTTON = "🛌 Set Sleep Time"
+TIME_ZONE_BTN = "🌐 Time zone"
+CHANGE_TIMEZONE_BTN = "🌐 Switch Time Zone"
 ROUTINE_MY_TIME = "⏳ My Routine"
 ROUTINE_MORNING_VIEW = "🌞 Morning Routine"
 ROUTINE_EVENING_VIEW = "🌙 Evening Routine"
