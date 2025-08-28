@@ -9,6 +9,7 @@ from fastapi import Request
 from typing import Any
 from fastapi import FastAPI
 import uvicorn
+import signal
 
 from models import UserGeoDataDTO
 from config import TOKEN
@@ -479,10 +480,24 @@ async def run_api():
     await server.serve()
 
 async def main():
-    await asyncio.gather(
-        run_bot(),
-        run_api()
-    )
+    loop = asyncio.get_running_loop()
+    stop_event = asyncio.Event()
+
+    def shutdown():
+        print("\n[SHUTDOWN] Stopping gracefully...")
+        stop_event.set()
+
+    loop.add_signal_handler(signal.SIGINT, shutdown)
+    loop.add_signal_handler(signal.SIGTERM, shutdown)
+
+    bot_task = asyncio.create_task(run_bot())
+    api_task = asyncio.create_task(run_api())
+
+    await stop_event.wait()
+
+    bot_task.cancel()
+    api_task.cancel()
+    await asyncio.gather(bot_task, api_task, return_exceptions=True)
 
 if __name__ == "__main__":
     asyncio.run(main())

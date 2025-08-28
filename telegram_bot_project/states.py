@@ -1,5 +1,6 @@
 # states.py
 from aiogram.fsm.state import StatesGroup, State
+from typing import Dict, List
 
 class DialogStates(StatesGroup):
     waiting_for_idea = State()
@@ -30,3 +31,4 @@ routine_start_time = {}
 focus_times = {}
 morning_routine_timer = {}
 FOCUS_ZONE_START_TIME: int = None
+AI_CHAT_CONTEXT: Dict[int, List[Dict[str, str]]] = {}

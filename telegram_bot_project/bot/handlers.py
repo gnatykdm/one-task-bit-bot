@@ -11,9 +11,9 @@ from messages import *
 from service.idea import IdeaService
 from service.task import TaskService
 from service.user import UserService
-from states import DialogStates
+from states import DialogStates, AI_CHAT_CONTEXT
 from service.routine import RoutineService
-from bot.utills import check_valid_time, validate_text, validate_time
+from bot.utills import check_valid_time, validate_text
 from service.myday import MyDayService
 from bot.scheduler import update_user_schedule
 from service.focus import FocusService
@@ -596,8 +596,19 @@ async def process_ai_talk(message: Message):
     
     text: str = message.text.strip()
 
+    if user_id not in AI_CHAT_CONTEXT:
+        AI_CHAT_CONTEXT[user_id] = []
+
+    AI_CHAT_CONTEXT[user_id].append({"role": "user", "content": text})
+
     try:
-        response: str = await ask_gpt(text, language=language)
+        response: str = await ask_gpt(
+            AI_CHAT_CONTEXT[user_id],  
+            language=language
+        )
+
+        AI_CHAT_CONTEXT[user_id].append({"role": "assistant", "content": response})
+
         await message.answer(response, parse_mode="Markdown")
     except Exception as e:
         print(f"[ERROR] AI talk process: {e}")
