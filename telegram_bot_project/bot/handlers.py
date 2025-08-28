@@ -621,7 +621,7 @@ async def process_ai_talk(message: Message):
             for msg in AI_CHAT_CONTEXT[user_id]
         ]
 
-        response: str = await ask_gpt(messages_for_gpt, language=language)
+        response: str = await ask_gpt(messages=messages_for_gpt, user_id=user_id)
 
         tz = ZoneInfo(user_timezone_str) if user_timezone_str else None
         now_user = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S") if tz else now_utc
@@ -635,4 +635,4 @@ async def process_ai_talk(message: Message):
         await message.answer(response, parse_mode="Markdown")
     except Exception as e:
         print(f"[ERROR] AI talk process: {e}")
-        await message.answer("⚠️ Sorry, something went wrong while processing your request.")
+        await message.answer(MESSAGES[language]['AI_CHAT_PROBLEM'])

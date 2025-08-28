@@ -141,7 +141,8 @@ MESSAGES: Any = {
         "CURRENT_TIMEZONE": "Ваш поточний часовий пояс:\n🕒 {}",
         "TIMEZONE_SWITCHED_OK": "✅ Часовий пояс успішно змінено",
         "TIMEZONE_BTN_MSG": "ℹ️ Будь ласка, натисніть кнопку, щоб змінити часовий пояс",
-        "AI_CHAT_TYPE_MSG_INVALID": "❗ Вибачте я поки що не розумію таких данних"
+        "AI_CHAT_TYPE_MSG_INVALID": "❗ Вибачте я поки що не розумію таких данних",
+        "AI_CHAT_PROBLEM": "⚠️ Вибачте, щось пішло не так під час обробки вашого запиту.",
     },
     "ENGLISH": {
         "START_MSG": (
@@ -279,7 +280,8 @@ MESSAGES: Any = {
         "CURRENT_TIMEZONE": "You current timezone is:\n🕒 {}",
         "TIMEZONE_SWITCHED_OK": "✅ Timezone switched successfully",
         "TIMEZONE_BTN_MSG": "ℹ️ Please press the button to switch timezone",
-        "AI_CHAT_TYPE_MSG_INVALID": "❗ Sorry, I don't understand this type of data yet"
+        "AI_CHAT_TYPE_MSG_INVALID": "❗ Sorry, I don't understand this type of data yet",
+        "AI_CHAT_PROBLEM": "⚠️ Sorry, something went wrong while processing your request."
     }
 }
 
