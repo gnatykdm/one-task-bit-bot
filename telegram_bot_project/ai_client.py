@@ -62,6 +62,8 @@ async def get_user_context(user_id: int) -> Dict[str, Any]:
             }
 
         user_name = user.get("user_name", "User")
+        first_name = user.get("first_name", "Unknown First Name")
+        second_name = user.get("second_name", "Unknown Second Name")
         language = user.get("language", "ENGLISH")
         timezone = user.get("timezone", "UTC")
         wake_time = user.get("wake_time", "Not set")
@@ -74,6 +76,8 @@ async def get_user_context(user_id: int) -> Dict[str, Any]:
 
         context_lines = [
             f"User: {user_name} (Telegram username, not real name)",
+            f"First Name: {first_name}",
+            f"Second_Name: {second_name}",
             f"Preferred Language: {language}",
             f"Timezone: {timezone}",
             f"Wake Time: {wake_time}",

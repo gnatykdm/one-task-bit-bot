@@ -6,15 +6,15 @@ from datetime import datetime
 
 class UserService:
     @staticmethod
-    async def create_user(user_id: int, user_name: str, language: str = "ENGLISH", timezone: str | None = None) -> int:
+    async def create_user(user_id: int, user_name: str, first_name: str, second_name: str,  language: str = "ENGLISH", timezone: str | None = None) -> int:
         async with get_session() as session:
             result = await session.execute(
                 text("""
                     INSERT INTO users (id, user_name, language, timezone)
-                    VALUES (:id, :user_name, :language, :timezone)
+                    VALUES (:id, :user_name, :language, :timezone, :first_name, :second_name)
                     RETURNING id
                 """),
-                {"id": user_id, "user_name": user_name, "language": language, "timezone": timezone}
+                {"id": user_id, "user_name": user_name, "language": language, "timezone": timezone, "first_name": first_name, "second_name": second_name}
             )
             await session.commit()
             return result.scalar_one()

@@ -22,6 +22,8 @@ from messages import MESSAGES
 async def start_command(message: types.Message):
     user_id: int = message.from_user.id
     user_name: str = message.from_user.username or "unknown"
+    first_name: str = message.from_user.first_name
+    second_name: str = message.from_user.last_name
 
     photo = FSInputFile(path="logo.jpg")
     print(f"[INFO] - User {user_id} ({user_name}) - started the bot")
@@ -33,7 +35,11 @@ async def start_command(message: types.Message):
         await message.answer(MESSAGES[language]["START_MSG_AGAIN"])
         await message.answer(MESSAGES[language]["MENU_MSG"], reply_markup=menu_reply_keyboard())
     else:
-        await UserService.create_user(user_id, user_name)
+        await UserService.create_user(
+            user_id=user_id, 
+            user_name=user_name,
+            first_name=first_name,
+            second_name=second_name)
 
         await message.answer_photo(
             photo=photo,
@@ -570,8 +576,7 @@ async def talk_with_rocky_command(message: types.Message, state: FSMContext) -> 
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
         return
     
-    user_name: str = message.from_user.username
-
+    user_name: str = user_find.get("user_name", "unknown")
     print(f"[INFO] - User with id: {user_id} opened ai chat")
 
     await state.set_state(DialogStates.ai_talk)
