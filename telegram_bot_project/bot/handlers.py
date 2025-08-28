@@ -3,6 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from datetime import datetime, timedelta
 import pytz
+from zoneinfo import ZoneInfo
 
 from ai_client import ask_gpt
 from service.smtp import SmtpService
@@ -589,14 +590,14 @@ async def process_ai_talk(message: Message):
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
     language = await UserService.get_user_language(user_id) or "ENGLISH"
-    user_timezone = await UserService.get_user_timezone(user_id)
+    user_timezone_str = await UserService.get_user_timezone(user_id)
 
     if not user_find:
         await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
         return
     
     text: str = message.text.strip()
-    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    now_utc = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     if user_id not in AI_CHAT_CONTEXT:
         AI_CHAT_CONTEXT[user_id] = []
@@ -604,7 +605,7 @@ async def process_ai_talk(message: Message):
     AI_CHAT_CONTEXT[user_id].append({
         "role": "user",
         "content": text,
-        "date": now
+        "date": now_utc
     })
 
     try:
@@ -615,10 +616,13 @@ async def process_ai_talk(message: Message):
 
         response: str = await ask_gpt(messages_for_gpt, language=language)
 
+        tz = ZoneInfo(user_timezone_str) if user_timezone_str else None
+        now_user = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S") if tz else now_utc
+
         AI_CHAT_CONTEXT[user_id].append({
             "role": "assistant",
             "content": response,
-            "date": datetime.now(user_timezone).strftime("%Y-%m-%d %H:%M:%S")
+            "date": now_user
         })
 
         await message.answer(response, parse_mode="Markdown")
