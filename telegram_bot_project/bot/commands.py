@@ -9,12 +9,12 @@ from bot.utills import format_date, calculate_awake_hours
 from service.idea import IdeaService
 from service.task import TaskService
 from bot.buttons import *
-from states import DialogStates
+from states import DialogStates, AI_CHAT_CONTEXT
 from messages import MESSAGES
 from service.myday import MyDayService
 
 from aiogram import types
-from aiogram.types import FSInputFile, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import FSInputFile
 from service.user import UserService
 from messages import MESSAGES
 
@@ -598,6 +598,10 @@ async def stop_talk_command(message: types.Message, state: FSMContext) -> None:
         MESSAGES[language]['AI_ROCKY_TALK_END_MSG'].format(user_name),
         reply_markup=menu_reply_keyboard()
     )
+
+    if user_id in AI_CHAT_CONTEXT:
+        AI_CHAT_CONTEXT.pop(user_id)
+        print(f"[INFO] - Cleared AI chat context for user {user_id}")
 
     await state.clear()
 

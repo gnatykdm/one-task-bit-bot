@@ -596,6 +596,13 @@ async def process_ai_talk(message: Message):
         await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
         return
     
+    message_type = message.content_type
+    if message_type != "text":
+        await message.answer(
+            MESSAGES[language]['AI_CHAT_TYPE_MSG_INVALID']
+        )
+        return
+
     text: str = message.text.strip()
     now_utc = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
