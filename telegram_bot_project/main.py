@@ -1,5 +1,6 @@
 # main.py
 import asyncio
+import sys
 from aiogram import types
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
@@ -480,20 +481,28 @@ async def run_api():
     await server.serve()
 
 async def main():
-    loop = asyncio.get_running_loop()
     stop_event = asyncio.Event()
 
     def shutdown():
         print("\n[SHUTDOWN] Stopping gracefully...")
         stop_event.set()
 
-    loop.add_signal_handler(signal.SIGINT, shutdown)
-    loop.add_signal_handler(signal.SIGTERM, shutdown)
+    loop = asyncio.get_running_loop()
+
+    if sys.platform != "win32":
+        loop.add_signal_handler(signal.SIGINT, shutdown)
+        loop.add_signal_handler(signal.SIGTERM, shutdown)
+    else:
+        pass
 
     bot_task = asyncio.create_task(run_bot())
     api_task = asyncio.create_task(run_api())
 
-    await stop_event.wait()
+    try:
+        await stop_event.wait()
+    except KeyboardInterrupt:
+        print("\n[SHUTDOWN] KeyboardInterrupt caught on Windows")
+        shutdown()
 
     bot_task.cancel()
     api_task.cancel()

@@ -10,7 +10,7 @@ from service.user import UserService
 from collections import defaultdict
 from typing import Set
 from messages import *
-from service.myday import MyDayService
+from ai_client import send_evening_message_ai
 import pytz
 import os
 import logging
@@ -629,47 +629,6 @@ async def send_morning_message(bot: Bot, user_id: int):
         logger.error(f"Failed to send morning message to user {user_id}: {e}")
 
 async def send_evening_message(bot: Bot, user_id: int):
-    try:
-        language = await UserService.get_user_language(user_id) or "ENGLISH"
-        stats = await MyDayService.get_today_stats(user_id)
-        user = await UserService.get_user_by_id(user_id)
-
-        if not stats:
-            created_ideas, completed_tasks, created_tasks, wake_up_time = 0, 0, 0, None
-        else:
-            created_ideas = stats["created_ideas"]
-            completed_tasks = stats["completed_tasks"]
-            created_tasks = stats["created_tasks"]
-            wake_up_time = stats["wake_up_time"]
-
-        if wake_up_time:
-            wake_up_time = wake_up_time.strftime("%H:%M")
-
-        if language.upper() == "UKRANIAN":
-            evening_message = (
-                f"🌙 Доброго вечора, {user['user_name']}!\n\n"
-                "Сподіваюся, твій день був продуктивним 🙌\n"
-                "Ось твоя статистика за сьогодні:\n\n"
-                f"⏰ Час пробудження: {wake_up_time or '—'}\n"
-                f"🚩 Додано завдань: {created_tasks}\n"
-                f"✏️ Створено нотаток: {created_ideas}\n"
-                f"✅ Виконано завдань: {completed_tasks}\n\n"
-                "Бережи сили, завтра новий день 💫"
-            )
-        else:
-            evening_message = (
-                f"🌙 Good evening, {user['user_name']}!\n\n"
-                "I hope your day was productive 🙌\n"
-                "Here's your daily recap:\n\n"
-                f"⏰ Wake up time: {wake_up_time or '—'}\n"
-                f"🚩 Tasks added: {created_tasks}\n"
-                f"✏️ Notes created: {created_ideas}\n"
-                f"✅ Tasks completed: {completed_tasks}\n\n"
-                "Recharge well — tomorrow is a new day 💫"
-            )
-
-        await bot.send_message(user_id, evening_message)
-        logger.info(f"Sent evening message to user {user_id}")
-        
-    except Exception as e:
-        logger.error(f"Failed to send evening message to user {user_id}: {e}")
+    message = await send_evening_message_ai(user_id)
+    await bot.send_message(user_id, message)
+    logger.info(f"Sent evening message to user {user_id}")
