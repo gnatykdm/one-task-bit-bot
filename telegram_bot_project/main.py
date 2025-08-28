@@ -5,10 +5,12 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import CallbackQuery
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from timezonefinder import TimezoneFinder
-import pytz
+from fastapi import Request
+from typing import Dict, Any
+from fastapi import FastAPI
+import uvicorn
 
+from models import UserGeoDataDTO
 from config import TOKEN
 from bot.scheduler import *
 from bot.commands import *
@@ -19,6 +21,7 @@ from states import *
 from bot.scheduler import check_upcoming_tasks_v2
 from bot.scheduler import cleanup_old_notifications
 
+app = FastAPI()
 bot = Bot(token=TOKEN)
 storage: MemoryStorage = MemoryStorage()
 dp = Dispatcher(storage=storage)
@@ -28,24 +31,38 @@ dp = Dispatcher(storage=storage)
 async def start(message: Message):
     await start_command(message)
 
-async def handle_user_location(message: Message):
-    user_id = message.from_user.id
-    lat = message.location.latitude
-    lon = message.location.longitude
+@app.post("/api/check-geo-data")
+async def check_geo_data(request: Request) -> Dict[str, str]:
+    if not request:
+        return {400: "Invalid geo request."}
+    
+    data: Any = await request.json()
+    user_geo_data: UserGeoDataDTO = UserGeoDataDTO(
+        user_id=data.get("user_id"),
+        chat_id=data.get("chat_id"),
+        timezone=data.get("timezone")
+    )
 
-    tf = TimezoneFinder()
-    tz = tf.timezone_at(lat=lat, lng=lon)
+    print(f"[DEBUG] - User with id: {user_geo_data.user_id} sent geo-data.")
 
-    if tz:
-        await UserService.update_user_timezone(user_id, tz)
-        await message.answer(f"🌐 Your timezone has been set to: {tz}")
-    else:
-        await message.answer("❌ Could not detect your timezone. Please select manually.")
+    await UserService.update_user_timezone(
+        user_id=user_geo_data.user_id,
+        timezone=user_geo_data.timezone
+    )
+
+    await bot.send_message(
+        chat_id=user_geo_data.chat_id,
+        text=f"✅ Successfully set timezone to {user_geo_data.timezone}"
+    )
 
     keyboard = get_language_keyboard()
-    await message.answer(MESSAGES['ENGLISH']['LANGUAGE_ASK'], reply_markup=keyboard)
-
-dp.message.register(handle_user_location, F.content_type == "location")
+    await bot.send_message(   
+        chat_id=user_geo_data.chat_id,
+        text=MESSAGES['ENGLISH']['LANGUAGE_ASK'], 
+        reply_markup=keyboard
+    )
+    
+    return {200: "OK"}
 
 @dp.message(Command("help"))
 async def help(message: Message):
@@ -416,48 +433,37 @@ async def callback_task_status(callback_query: CallbackQuery) -> None:
 async def process_fallback(message: Message, state: FSMContext):
     await fallback(message, state)
 
-
-async def main():
-    bot = Bot(token=TOKEN)
-    
+async def run_bot():
     scheduler = await initialize_scheduler(bot)
     await MyDayService.schedule_daily_stats(bot, scheduler)
 
     print(f"[SYSTEM] Scheduler timezone: {scheduler.timezone}")
-    scheduler.add_job(
-        cleanup_old_notifications,
-        trigger='cron',
-        hour=1,
-        minute=0,
-        id='cleanup_notifications'
-    )
-    
+    scheduler.add_job(cleanup_old_notifications, trigger='cron', hour=1, minute=0, id='cleanup_notifications')
+
     notifier = PreciseTaskNotifier(bot, scheduler)
     get_notifier_instance(bot) 
     
     print("[STARTUP] Planning precise notifications for all tasks...")
     await notifier.schedule_all_task_notifications()
-    
-    scheduler.add_job(
-        notifier.schedule_all_task_notifications,
-        trigger='interval',
-        minutes=10,
-        id='reschedule_notifications'
-    )
-    
-    scheduler.add_job(
-        check_upcoming_tasks_v2,
-        trigger='interval',
-        minutes=2,
-        args=[bot],
-        id='backup_task_check'
-    )
-    
+
+    scheduler.add_job(notifier.schedule_all_task_notifications, trigger='interval', minutes=10, id='reschedule_notifications')
+    scheduler.add_job(check_upcoming_tasks_v2, trigger='interval', minutes=2, args=[bot], id='backup_task_check')
+
     await schedule_all_users_jobs(bot)
-    
     print("[STARTUP] All jobs scheduled successfully")
+
     await dp.start_polling(bot)
 
+async def run_api():
+    config = uvicorn.Config(app=app, host="0.0.0.0", port=8000, loop="asyncio")
+    server = uvicorn.Server(config)
+    await server.serve()
+
+async def main():
+    await asyncio.gather(
+        run_bot(),
+        run_api()
+    )
+
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(main())

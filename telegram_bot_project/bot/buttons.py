@@ -1,5 +1,5 @@
 # bot/buttons.py
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
 from aiogram import types
 from messages import *
 from typing import Optional, List
@@ -268,16 +268,26 @@ def get_stop_chat_btn() -> ReplyKeyboardMarkup:
         resize_keyboard=True
     )
 
-async def ask_user_timezone_location(message):
-    location_button = KeyboardButton(text="🌐 Send my location", request_location=True)
+async def ask_user_timezone_location(message: types.Message):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
 
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[[location_button]], 
-        resize_keyboard=True,
-        one_time_keyboard=True
+    location_button = InlineKeyboardButton(
+        text="🌐 Send my location",
+        web_app=WebAppInfo(
+            url=f'https://ellipsai.com/?user_id={user_id}&chat_id={chat_id}'
+        )
+    )
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[[location_button]]
+    )
+
+    message_text = (
+        "👉🌍 Please share your location to automatically detect your 🕒 timezone."
     )
 
     await message.answer(
-        "Please send your location to automatically detect your timezone.",
+        message_text,
         reply_markup=keyboard
     )
