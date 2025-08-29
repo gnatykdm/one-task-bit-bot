@@ -630,3 +630,31 @@ async def change_timezone_command(message: types.Message) -> None:
         text=MESSAGES[language]['TIMEZONE_BTN_MSG'],
         reply_markup=timezone_btn(message)
     )
+
+# Remind Menu Command Handler 
+async def reminders_menu_command(message: types.Message) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+    
+    await message.answer(
+        MESSAGES[language]['REMINDERS_MENU'],
+        reply_markup=get_reminder_menu_btn()
+    )
+
+# Create Reminder Command
+async def create_reminder_command(message: types.Message, state: FSMContext) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or 'ENGLISH'
+
+    if not user_find:
+        await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
+        return
+    
+    await message.answer(MESSAGES[language]['REMINDER_CREATE_MSG'])
+    await state.set_state(DialogStates.provide_remind_name)

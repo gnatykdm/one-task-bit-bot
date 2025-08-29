@@ -19,6 +19,7 @@ from service.myday import MyDayService
 from bot.scheduler import update_user_schedule
 from service.focus import FocusService
 from bot.scheduler import schedule_new_task_notifications
+from service.reminder import ReminderService
 
 async def process_idea_save(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
@@ -636,3 +637,70 @@ async def process_ai_talk(message: Message):
     except Exception as e:
         print(f"[ERROR] AI talk process: {e}")
         await message.answer(MESSAGES[language]['AI_CHAT_PROBLEM'])
+
+async def process_reminder_name_set(message: Message, state: FSMContext) -> None:
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    reminder_name = message.text.strip()
+    if not reminder_name:
+        await message.answer(MESSAGES[language]['INVALID_MESSAGE'])
+        return
+
+    await state.set_data({"reminder_name": reminder_name})
+    await message.answer(MESSAGES[language]['REMINDER_TIME_MSG'])
+    await state.set_state(DialogStates.provide_remind_time)
+
+
+async def process_save_reminder(message: Message, state: FSMContext) -> None:
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    user_timezone = await UserService.get_user_timezone(user_id) or "UTC"
+    reminder_time_str = message.text.strip()
+
+    if not check_valid_time(reminder_time_str):
+        await message.answer(MESSAGES[language]['TIMER_INVALID'])
+        return
+
+    now = datetime.now(pytz.timezone(user_timezone))
+    hour, minute = map(int, reminder_time_str.split(":"))
+    remind_datetime = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+
+    if remind_datetime < now:
+        remind_datetime += timedelta(days=1)
+
+    data = await state.get_data()
+    reminder_name = data.get('reminder_name')
+
+    print(f"[INFO] - User with id: {user_id} create reminder.")
+    try:
+        await ReminderService.create_reminder(
+            user_id=user_id,
+            title=reminder_name,
+            remind_time=remind_datetime,
+            remind_status=False
+        )
+
+        await message.answer(
+            MESSAGES[language]['REMINDER_SAVED_MSG'].format(reminder_name, reminder_time_str),
+            reply_markup=get_reminder_menu_btn()
+        )
+
+        await state.clear()
+    except Exception as e:
+        print(f"[ERROR] - {e}")
+        await message.answer(
+            MESSAGES[language]['SOME_PROBLEM'],
+            reply_markup=get_reminder_menu_btn()
+        )

@@ -15,7 +15,7 @@ def get_language_keyboard() -> InlineKeyboardMarkup:
     return inline_markup
 
 def menu_reply_keyboard() -> ReplyKeyboardMarkup:
-    menu_reply_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=2)
+    menu_reply_keyboard = ReplyKeyboardMarkup(keyboard=[], resize_keyboard=True, row_width=3)
 
     button_settings = KeyboardButton(text=BUTTON_SETTINGS)
     button_idea = KeyboardButton(text=BUTTON_IDEA)
@@ -23,8 +23,9 @@ def menu_reply_keyboard() -> ReplyKeyboardMarkup:
     button_task = KeyboardButton(text=BUTTON_ADD_TASK)
     focus_btn = KeyboardButton(text=FOCUS_CALL_BTN)
     ai_rocky_btn = KeyboardButton(text=AI_ROCKY_BTN)
+    reminders_btn = KeyboardButton(text=REMINDERS_BTN)
 
-    menu_reply_keyboard.keyboard.append([button_settings, button_idea])
+    menu_reply_keyboard.keyboard.append([button_settings, button_idea, reminders_btn])
     menu_reply_keyboard.keyboard.append([button_day, button_task])
     menu_reply_keyboard.keyboard.append([ai_rocky_btn, focus_btn])
 
@@ -322,3 +323,18 @@ def timezone_btn(message: types.Message) -> InlineKeyboardButton:
     inline_markup.inline_keyboard.append([location_button])
     return inline_markup
 
+def get_reminder_menu_btn() -> ReplyKeyboardMarkup:
+    create_btn = KeyboardButton(text=CREATE_REMINDER_BTN)
+    show_btn = KeyboardButton(text=SHOW_REMINDER_BTN)
+    home_btn = KeyboardButton(text=MENU_BUTTON)
+    delete_btn = KeyboardButton(text=DELETE_REMINDER_BTN)
+
+    keyboard = [
+        [create_btn, delete_btn],
+        [home_btn, show_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True
+    )

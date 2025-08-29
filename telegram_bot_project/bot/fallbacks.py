@@ -55,3 +55,7 @@ async def fallback(message: types.Message, state: FSMContext):
         await process_delete_focus_session(message, state)
     elif current_state == DialogStates.ai_talk:
         await process_ai_talk(message)
+    elif current_state == DialogStates.provide_remind_name:
+        await process_reminder_name_set(message, state)
+    elif current_state == DialogStates.provide_remind_time:
+        await process_save_reminder(message, state)

@@ -25,6 +25,8 @@ class DialogStates(StatesGroup):
     delete_focus = State()
     start_work = State()
     ai_talk = State()
+    provide_remind_name = State()
+    provide_remind_time = State()
 
 user_task_start_time = {}
 routine_start_time = {}

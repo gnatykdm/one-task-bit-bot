@@ -420,6 +420,16 @@ async def nope_morning_routine_timer(message: Message):
         reply_markup=task_menu_keyboard()
     )
 
+@dp.message(Command("reminder"))
+@dp.message(lambda m: m.text == CREATE_REMINDER_BTN)
+async def create_reminder(message: Message, state: FSMContext) -> None:
+    await create_reminder_command(message, state)
+
+@dp.message(Command("reminders"))
+@dp.message(lambda m: m.text == REMINDERS_BTN)
+async def reminders_menu(message: Message) -> None:
+    await reminders_menu_command(message)
+
 @dp.message(Command("talk"))
 @dp.message(lambda m: m.text == AI_ROCKY_BTN)
 async def talk_with_rocky(message: Message, state: FSMContext):

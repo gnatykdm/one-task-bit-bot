@@ -1,8 +1,5 @@
 # messages.py
 from typing import Any
-from aiogram import Bot
-from service.user import UserService
-from service.routine import RoutineService
 
 MESSAGES: Any = {
     "UKRANIAN": {
@@ -143,6 +140,11 @@ MESSAGES: Any = {
         "TIMEZONE_BTN_MSG": "ℹ️ Будь ласка, натисніть кнопку, щоб змінити часовий пояс",
         "AI_CHAT_TYPE_MSG_INVALID": "❗ Вибачте я поки що не розумію таких данних",
         "AI_CHAT_PROBLEM": "⚠️ Вибачте, щось пішло не так під час обробки вашого запиту.",
+        "REMINDERS_MENU": "📝 Ласкаво просимо до меню нагадувань!",
+        "REMINDER_CREATE_MSG": "Будь ласка, введіть назву нагадування 📝",
+        "REMINDER_TIME_MSG": "⏰ Встановіть час для вашого нагадування",
+        "REMINDER_SAVED_MSG": "✅ Нагадування збережено!\n📝 {} - ⏰ {}]",
+        "SOME_PROBLEM": "❌ Упс! Тут сталася помилка."
     },
     "ENGLISH": {
         "START_MSG": (
@@ -281,7 +283,12 @@ MESSAGES: Any = {
         "TIMEZONE_SWITCHED_OK": "✅ Timezone switched successfully",
         "TIMEZONE_BTN_MSG": "ℹ️ Please press the button to switch timezone",
         "AI_CHAT_TYPE_MSG_INVALID": "❗ Sorry, I don't understand this type of data yet",
-        "AI_CHAT_PROBLEM": "⚠️ Sorry, something went wrong while processing your request."
+        "AI_CHAT_PROBLEM": "⚠️ Sorry, something went wrong while processing your request.",
+        "REMINDERS_MENU": "📝 Welcome to your Reminders Menu!",
+        "REMINDER_CREATE_MSG": "📝 Please enter a name for your reminder",
+        "REMINDER_TIME_MSG": "⏰ Set the time for your reminder",
+        "REMINDER_SAVED_MSG": "✅ Reminder saved!\n[📝 {} - ⏰ {}]", 
+        "SOME_PROBLEM": "❌ Oops! Something went wrong here."    
     }
 }
 
@@ -350,6 +357,11 @@ STOP_ROUTINE_TIMER_BTN = "🔴 Stop routine timer"
 
 AI_ROCKY_BTN = "🤖 AI Rocky"
 STOP_CHAT = "❌ Stop"
+
+REMINDERS_BTN = "⏰ Reminders"
+CREATE_REMINDER_BTN = "➕ Add Reminder"
+DELETE_REMINDER_BTN = "🗑️ Delete Reminder"
+SHOW_REMINDER_BTN = "📋 View Reminders"
 
 USER_FEEDBACK_MAIL_TEXT = """
 📬 New feedback received!
