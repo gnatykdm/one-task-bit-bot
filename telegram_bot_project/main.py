@@ -469,7 +469,7 @@ async def callback_task_status(callback_query: CallbackQuery) -> None:
     await callback_task_menu(callback_query)
 
 @dp.callback_query(F.data.in_({"check_sub"}))
-async def callback_check_subscr(callback_query: CallbackQuery) -> None:
+async def callback_check_channel_subscr(callback_query: CallbackQuery) -> None:
     await callback_check_subscr(callback_query)
 
 @dp.message()
