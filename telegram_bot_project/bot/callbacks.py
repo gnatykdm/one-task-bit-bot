@@ -14,6 +14,7 @@ from service.user import UserService
 from states import DialogStates
 from service.focus import FocusService
 from states import user_task_start_time
+from channel_subsc import ChannelSubscChecker
 
 async def start_callback_language(callback_query: types.CallbackQuery) -> None:
     await callback_query.answer()
@@ -225,3 +226,17 @@ async def callback_task_menu(callback_query: types.CallbackQuery) -> None:
             user_task_start_time[user_id] = (task_id, datetime.now())  
             await callback_query.message.answer(MESSAGES[language]['REMIND_WORK_CANCEL'],
                                                 reply_markup=menu_reply_keyboard())
+            
+async def callback_check_subscr(callback_query: types.CallbackQuery) -> None:
+    await callback_query.answer()
+
+    user_id: int = callback_query.from_user.id
+    data: str = callback_query.data
+
+    if data == "check_sub":
+        status: bool = await ChannelSubscChecker.check_subscr_status(user_id)
+
+        if status:
+            await callback_query.message.answer("✅ You are subscribed to the channel!")
+        else:
+            await callback_query.message.answer("❌ You are not subscribed. Please subscribe to the channel.")

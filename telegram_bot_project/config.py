@@ -42,6 +42,11 @@ class SmtpData:
     smtp_receiver: str = os.getenv("SMTP_MESSAGE_RECEIVER")
     smtp_subject: str = os.getenv("SMTP_MESSAGE_SUBJECT")
 
+
+@dataclass
+class AnotherConfig:
+    CHANNEL_NAME: str = os.getenv("CHANNEL_NAME")
+
 def get_smtp_data() -> SmtpData:
     return SmtpData()
 

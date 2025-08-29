@@ -99,7 +99,6 @@ async def get_user_context(user_id: int) -> Dict[str, Any]:
                 context_lines.append(
                     f"   - {i.get('idea_name')} "
                     f"(Created: {i.get('creation_date')}, "
-                    f"Category: {i.get('category', 'Uncategorized')})"
                 )
         else:
             context_lines.append("• Ideas: None")
