@@ -15,7 +15,7 @@ class ChannelSubscChecker:
         params: Dict[str, str] = {
             "token": BOT_TOKEN,
             "user_id": str(user_id),
-            "chat_id": CHAT_NAME
+            "chat_id": "@" + CHAT_NAME
         }
 
         try:
