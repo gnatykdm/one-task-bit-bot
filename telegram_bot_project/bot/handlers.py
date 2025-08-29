@@ -704,3 +704,45 @@ async def process_save_reminder(message: Message, state: FSMContext) -> None:
             MESSAGES[language]['SOME_PROBLEM'],
             reply_markup=get_reminder_menu_btn()
         )
+
+async def reminder_delete_process(message: Message, state: FSMContext) -> None:
+    user_id = message.from_user.id
+    user_find = await UserService.get_user_by_id(user_id)
+    if not user_find or not user_find.get("id"):
+        await message.answer(MESSAGES["ENGLISH"]['AUTHORIZATION_PROBLEM'])
+        return
+
+    language = await UserService.get_user_language(user_id) or "ENGLISH"
+    reminders = await ReminderService.get_user_reminders(user_id)
+
+    print(f"[DEBUG] - User {user_id} reminders: {reminders}")
+
+    try:
+        user_number = int(message.text.strip())
+    except ValueError:
+        await message.answer(
+            MESSAGES[language]['NOT_VALID_REMINDER_NUM'], 
+            reply_markup=get_reminder_menu_btn()
+        )
+        return
+
+    index = user_number - 1
+    if not (0 <= index < len(reminders)):
+        await message.answer(
+            MESSAGES[language]['INVALID_REMINDER_NUM'], 
+            reply_markup=get_reminder_menu_btn()
+        )
+        return
+
+    reminder_to_delete = reminders[index]
+    real_id = reminder_to_delete["id"]
+
+    print(f"[DEBUG] - Deleting reminder with id {real_id} for user {user_id}")
+
+    await ReminderService.delete_reminder(real_id)
+
+    await message.answer(
+        MESSAGES[language]['REMINDER_DELETED'].format(user_number, reminder_to_delete['title']),
+        reply_markup=get_reminder_menu_btn()
+    )
+    await state.clear()

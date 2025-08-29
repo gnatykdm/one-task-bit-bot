@@ -8,11 +8,10 @@ from service.focus import FocusService
 from service.idea import IdeaService
 from service.routine import RoutineService
 from service.task import TaskService
+from service.reminder import ReminderService
 
 logger = logging.getLogger(__name__)
-
 client = AsyncOpenAI(api_key=get_openai_key())
-
 SYSTEM_PROMPT_TEMPLATE = """You are Rocky, a helpful AI assistant focused on productivity and personal organization.
 
 Your role:
@@ -73,6 +72,7 @@ async def get_user_context(user_id: int) -> Dict[str, Any]:
         ideas = await IdeaService.get_all_ideas_by_user_id(user_id)
         routines = await RoutineService.get_user_routines(user_id)
         tasks = await TaskService.get_user_tasks(user_id)
+        reminders = await ReminderService.get_user_reminders(user_id)  
 
         context_lines = [
             f"User: {user_name} (Telegram username, not real name)",
@@ -98,7 +98,7 @@ async def get_user_context(user_id: int) -> Dict[str, Any]:
             for i in ideas:
                 context_lines.append(
                     f"   - {i.get('idea_name')} "
-                    f"(Created: {i.get('creation_date')}, "
+                    f"(Created: {i.get('creation_date')})"
                 )
         else:
             context_lines.append("• Ideas: None")
@@ -126,6 +126,17 @@ async def get_user_context(user_id: int) -> Dict[str, Any]:
         else:
             context_lines.append("• Tasks: None")
 
+        if reminders:
+            context_lines.append(f"• Reminders ({len(reminders)} total):")
+            for r in reminders:
+                context_lines.append(
+                    f"   - {r.get('title')} | "
+                    f"Time: {r.get('remind_time')} | "
+                    f"Status: {r.get('remind_status')}"
+                )
+        else:
+            context_lines.append("• Reminders: None")
+
         return {
             "context_text": "\n".join(context_lines),
             "language": language,
@@ -135,7 +146,8 @@ async def get_user_context(user_id: int) -> Dict[str, Any]:
                 "focuses": focuses,
                 "ideas": ideas,
                 "routines": routines,
-                "tasks": tasks
+                "tasks": tasks,
+                "reminders": reminders  
             }
         }
 

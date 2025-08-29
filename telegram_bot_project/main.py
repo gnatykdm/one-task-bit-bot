@@ -430,6 +430,14 @@ async def create_reminder(message: Message, state: FSMContext) -> None:
 async def reminders_menu(message: Message) -> None:
     await reminders_menu_command(message)
 
+@dp.message(lambda m: m.text == DELETE_REMINDER_BTN)
+async def reminder_delete(message: Message, state: FSMContext) -> None:
+    await delete_reminder_handler(message, state)
+
+@dp.message(lambda m: m.text == SHOW_REMINDER_BTN)
+async def reminder_show(message: Message) -> None:
+    await show_reminders_command(message)
+
 @dp.message(Command("talk"))
 @dp.message(lambda m: m.text == AI_ROCKY_BTN)
 async def talk_with_rocky(message: Message, state: FSMContext):

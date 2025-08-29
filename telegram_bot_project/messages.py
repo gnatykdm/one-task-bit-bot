@@ -144,7 +144,13 @@ MESSAGES: Any = {
         "REMINDER_CREATE_MSG": "Будь ласка, введіть назву нагадування 📝",
         "REMINDER_TIME_MSG": "⏰ Встановіть час для вашого нагадування",
         "REMINDER_SAVED_MSG": "✅ Нагадування збережено!\n📝 {} - ⏰ {}]",
-        "SOME_PROBLEM": "❌ Упс! Тут сталася помилка."
+        "SOME_PROBLEM": "❌ Упс! Тут сталася помилка.",
+        "NO_REMINDS_FOUND": "❗ Нагадувань не знайдено.\nБудь ласка, створіть нове\nВикористовуючи: /reminder",
+        "REMINDER_LIST_MSG": "📝 Ваші нагадування",
+        "DELETE_REMINDER": "ℹ️ Вкажіть номер нагадування для видалення.",
+        "REMINDER_DELETED": "✅ Нагадування #{0} «{1}» було видалено.",
+        "INVALID_REMINDER_NUM": "❗ Неправильний номер нагадування.",
+        "NOT_VALID_REMINDER_NUM": "❗ Номер нагадування недійсний."
     },
     "ENGLISH": {
         "START_MSG": (
@@ -288,7 +294,13 @@ MESSAGES: Any = {
         "REMINDER_CREATE_MSG": "📝 Please enter a name for your reminder",
         "REMINDER_TIME_MSG": "⏰ Set the time for your reminder",
         "REMINDER_SAVED_MSG": "✅ Reminder saved!\n[📝 {} - ⏰ {}]", 
-        "SOME_PROBLEM": "❌ Oops! Something went wrong here."    
+        "SOME_PROBLEM": "❌ Oops! Something went wrong here.",
+        "NO_REMINDS_FOUND": "❗ No Reminds found.\nPlease create the new one\nUsing: /reminder",
+        "REMINDER_LIST_MSG": "📝 Your reminders",
+        "DELETE_REMINDER": "ℹ️ Specify the reminder number to delete.",
+        "REMINDER_DELETED": "✅ Reminder #{0} \"{1}\" has been deleted.",
+        "INVALID_REMINDER_NUM": "❗ Invalid reminder number.",
+        "NOT_VALID_REMINDER_NUM": "❗ The reminder number is not valid."
     }
 }
 

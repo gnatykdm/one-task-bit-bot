@@ -59,3 +59,5 @@ async def fallback(message: types.Message, state: FSMContext):
         await process_reminder_name_set(message, state)
     elif current_state == DialogStates.provide_remind_time:
         await process_save_reminder(message, state)
+    elif current_state == DialogStates.provide_reminder_index:
+        await reminder_delete_process(message, state)

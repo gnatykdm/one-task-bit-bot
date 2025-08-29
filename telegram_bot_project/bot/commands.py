@@ -12,6 +12,7 @@ from bot.buttons import *
 from states import DialogStates, AI_CHAT_CONTEXT
 from messages import MESSAGES
 from service.myday import MyDayService
+from service.reminder import ReminderService
 
 from aiogram import types
 from aiogram.types import FSInputFile
@@ -658,3 +659,53 @@ async def create_reminder_command(message: types.Message, state: FSMContext) -> 
     
     await message.answer(MESSAGES[language]['REMINDER_CREATE_MSG'])
     await state.set_state(DialogStates.provide_remind_name)
+
+# Show All Reminders Handler
+async def show_reminders_command(message: types.Message) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES[language]['AUTHORIZATION_PROBLEM'])
+        return
+
+    print(f"[INFO] - User with id: {user_id} - opened /show_reminders.")
+    reminders = await ReminderService.get_user_reminders(user_id)
+
+    if not reminders:
+        await message.answer(MESSAGES[language]['NO_REMINDS_FOUND'])
+        return
+
+    dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['REMINDER_LIST_MSG']) * 1.65))
+    formatted_reminders = "\n".join(
+        f"⏰ {idx}. {rem['title']} – "
+        f"{rem['remind_time'].strftime('%Y-%m-%d %H:%M')} "
+        f"({'✅' if rem['remind_status'] else '❌'})"
+        for idx, rem in enumerate(reminders, start=1)
+    )
+
+    formatted_response = (
+        MESSAGES[language]['REMINDER_LIST_MSG'] +
+        dividers +
+        "\n" +
+        formatted_reminders
+    )
+
+    await message.answer(formatted_response, reply_markup=get_reminder_menu_btn())
+
+# Drop Reminder Handler
+async def delete_reminder_handler(message: types.Message, state: FSMContext) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES[language]['AUTHORIZATION_PROBLEM'])
+        return
+
+    await message.answer(
+        MESSAGES[language]['DELETE_REMINDER']
+    )
+
+    await state.set_state(DialogStates.provide_reminder_index)
