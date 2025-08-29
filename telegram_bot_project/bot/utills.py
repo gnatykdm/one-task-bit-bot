@@ -1,5 +1,7 @@
 # bot/utills.py
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from datetime import datetime, timedelta, time
+from channel_subsc import ChannelSubscChecker
 import pytz
 
 def format_date(dt: datetime) -> str:
@@ -42,3 +44,19 @@ def validate_time(target_time: time, timezone_str: str) -> bool:
     now = datetime.now(tz)
     today_target = datetime.combine(now.date(), target_time, tzinfo=tz)
     return today_target > now 
+
+async def check_subscription_procedure(user_id: int, message: Message, channel_name: str) -> bool:
+    channel_status: bool = await ChannelSubscChecker.check_subscr_status(user_id)
+    if not channel_status:
+        kb = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="🔗 Subscribe", url=f"https://t.me/{channel_name}")],
+                [InlineKeyboardButton(text="✅ Check subscription", callback_data="check_sub")]
+            ]
+        )
+        await message.answer(
+            "⚠️ To use this bot, you must subscribe to the channel.",
+            reply_markup=kb
+        )
+        return False
+    return True

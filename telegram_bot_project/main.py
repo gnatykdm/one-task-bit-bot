@@ -22,7 +22,7 @@ from messages import *
 from states import *
 from bot.scheduler import check_upcoming_tasks_v2
 from bot.scheduler import cleanup_old_notifications
-from channel_subsc import ChannelSubscChecker
+from bot.utills import check_subscription_procedure
 
 app = FastAPI()
 bot = Bot(token=TOKEN)
@@ -35,20 +35,10 @@ CHANNEL_NAME: str = AnotherConfig.CHANNEL_NAME
 @dp.message(Command("start"))
 async def start(message: Message):
     user_id: int = message.from_user.id
-    channel_status: bool = await ChannelSubscChecker.check_subscr_status(user_id)
+    subscribed = await check_subscription_procedure(user_id, message, CHANNEL_NAME)
+    if not subscribed:
+        return  
 
-    if not channel_status:
-        kb = InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="🔗 Subscribe", url=f"https://t.me/{CHANNEL_NAME}")],
-                [InlineKeyboardButton(text="✅ Check subscription", callback_data="check_sub")]
-            ]
-        )
-        await message.answer(
-            "⚠️ To use this bot, you must subscribe to the channel.",
-            reply_markup=kb
-        )
-        return
     await start_command(message)
 
 @app.post("/api/check-geo-data")
