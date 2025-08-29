@@ -1,5 +1,5 @@
 import requests
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from config import AnotherConfig, get_token
 
 BOT_TOKEN: str = get_token()
@@ -21,14 +21,11 @@ class ChannelSubscChecker:
         try:
             response: requests.Response = requests.get(
                 url=CHECKER_URL,
-                params=params,
-                timeout=5  
+                params=params            
             )
-            response.raise_for_status()  
-
             data: Any = response.json()
-            user_info: Optional[Dict[str, Any]] = data.get("data", {})
-            subscr_status: bool = bool(user_info.get("status", False))
+            user_info: Any = data.get("data")
+            subscr_status: bool = user_info.get("is_member")
 
             return subscr_status
         
