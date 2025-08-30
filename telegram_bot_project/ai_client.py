@@ -229,33 +229,38 @@ async def ask_gpt(messages: List[Dict[str, str]], user_id: int, **kwargs) -> str
         logger.error(f"Error in ask_gpt for user {user_id}: {str(e)}")
         raise Exception(f"Failed to get AI response: {str(e)}")
 
-async def send_evening_message_ai(user_id: int) -> str:
+async def send_reminder_message(user_id: int, reminder_title: str) -> str:
     try:
         context_data = await get_user_context(user_id)
-        daily_stats = await get_daily_stats(user_id)
-        
-        stats_summary = f"""Today's Statistics:
-        • Tasks completed: {daily_stats['tasks_completed']}
-        • Routines maintained: {daily_stats['routines_completed']}
-        • New ideas captured: {daily_stats['ideas_added']}
-        • Pending tasks remaining: {daily_stats['total_pending_tasks']}
+
+        reminder_prompt = f"""
+            Generate a friendly reminder message for the user.
+
+            Details:
+            - Reminder Title: {reminder_title}
+            - User Context: {context_data['context_text']}
+
+            Guidelines:
+            - Respond in {context_data['language']}
+            - Keep the message warm, supportive, and motivating
+            - Include 1-2 emojis to make it feel friendly
+            - Keep it short (1-2 sentences)
         """
-        
-        evening_prompt = f"{EVENING_MESSAGE_PROMPT}\n\n{stats_summary}\n\n{context_data}and add emoji's some for user friendly experience"
+
         messages = [
-            {"role": "user", "content": evening_prompt}
+            {"role": "user", "content": reminder_prompt}
         ]
-        
-        evening_message = await ask_gpt(
+
+        reminder_message = await ask_gpt(
             messages=messages,
             user_id=user_id,
-            temperature=0.7,  
-            max_tokens=300    
+            temperature=0.7,
+            max_tokens=100
         )
-        
-        logger.info(f"Generated evening message for user {user_id}")
-        return evening_message
-        
+
+        logger.info(f"Generated reminder message for user {user_id}: {reminder_title}")
+        return reminder_message
+
     except Exception as e:
-        logger.error(f"Error generating evening message for user {user_id}: {str(e)}")
-        return "Good evening! 🌙 Take a moment to reflect on today's progress. Rest well and get ready for tomorrow's opportunities!"
+        logger.error(f"Error generating reminder message for user {user_id}: {str(e)}")
+        return f"⏰ Reminder: {reminder_title}. Stay on track!"

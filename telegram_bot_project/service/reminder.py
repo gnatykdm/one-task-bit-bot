@@ -79,22 +79,17 @@ class ReminderService:
                 }
                 for r in reminders
             ]
-
     @staticmethod
-    async def get_upcoming_reminders(minutes_before: int = 10) -> List[dict]:
+    async def get_upcoming_reminders() -> List[dict]:
         async with get_session() as session:
-            now = datetime.now()
-            future = now + timedelta(minutes=minutes_before)
             result = await session.execute(
                 text(
                     """
                     SELECT id, user_id, title, remind_status, remind_time, creation_date
                     FROM reminders
                     WHERE remind_status = FALSE
-                      AND remind_time BETWEEN :now AND :future
                     """
-                ),
-                {"now": now, "future": future}
+                )
             )
             reminders = result.fetchall()
             return [
@@ -108,6 +103,15 @@ class ReminderService:
                 }
                 for r in reminders
             ]
+            
+    @staticmethod
+    async def mark_as_sent(reminder_id: int):
+        async with get_session() as session:
+            await session.execute(
+                text("UPDATE reminders SET remind_status = TRUE WHERE id = :id"),
+                {"id": reminder_id}
+            )
+            await session.commit()
 
     @staticmethod
     async def update_reminder(reminder_id: int, title: Optional[str] = None,

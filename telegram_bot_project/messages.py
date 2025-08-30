@@ -150,7 +150,8 @@ MESSAGES: Any = {
         "DELETE_REMINDER": "ℹ️ Вкажіть номер нагадування для видалення.",
         "REMINDER_DELETED": "✅ Нагадування #{0} «{1}» було видалено.",
         "INVALID_REMINDER_NUM": "❗ Неправильний номер нагадування.",
-        "NOT_VALID_REMINDER_NUM": "❗ Номер нагадування недійсний."
+        "NOT_VALID_REMINDER_NUM": "❗ Номер нагадування недійсний.",
+        "REMINDER_SENT_MSG": "🔔 Нагадування: *{}* заплановане зовсім скоро!"
     },
     "ENGLISH": {
         "START_MSG": (
@@ -300,7 +301,8 @@ MESSAGES: Any = {
         "DELETE_REMINDER": "ℹ️ Specify the reminder number to delete.",
         "REMINDER_DELETED": "✅ Reminder #{0} \"{1}\" has been deleted.",
         "INVALID_REMINDER_NUM": "❗ Invalid reminder number.",
-        "NOT_VALID_REMINDER_NUM": "❗ The reminder number is not valid."
+        "NOT_VALID_REMINDER_NUM": "❗ The reminder number is not valid.",
+        "REMINDER_SENT_MSG": "🔔 Reminder: *{}* is scheduled soon!"
     }
 }
 

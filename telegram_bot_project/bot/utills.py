@@ -3,6 +3,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from datetime import datetime, timedelta, time
 from channel_subsc import ChannelSubscChecker
 import pytz
+import asyncio
 
 def format_date(dt: datetime) -> str:
     return dt.strftime("%d.%m.%Y %H:%M")
@@ -60,3 +61,33 @@ async def check_subscription_procedure(user_id: int, message: Message, channel_n
         )
         return False
     return True
+
+async def keep_typing_while(chat_id, func, bot):
+    cancel = {'cancel': False}
+
+    async def keep_typing():
+        while not cancel['cancel']:
+            try:
+                await bot.send_chat_action(chat_id, 'typing')
+            except Exception as e:
+                print(f"Failed to send chat action: {e}")
+                break
+            await asyncio.sleep(5)
+
+    async def executor():
+        await func()
+        cancel['cancel'] = True
+
+    await asyncio.gather(
+        keep_typing(),
+        executor(),
+    )
+
+async def typing_animation(seconds, bot, chat_id) -> None:
+    interval = 1 
+    for _ in range(seconds // interval):
+        try:
+            await bot.send_chat_action(chat_id, 'typing')
+        except Exception:
+            break
+        await asyncio.sleep(interval)

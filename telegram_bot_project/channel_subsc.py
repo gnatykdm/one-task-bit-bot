@@ -21,13 +21,17 @@ class ChannelSubscChecker:
         try:
             response: requests.Response = requests.get(
                 url=CHECKER_URL,
-                params=params            
+                params=params,
+                timeout=10  
             )
             data: Any = response.json()
+            
             user_info: Any = data.get("data")
-            subscr_status: bool = user_info.get("is_member")
+            if not user_info or not isinstance(user_info, dict):
+                print(f"[ERROR] Invalid API response: {data}")
+                return False
 
-            return subscr_status
+            return bool(user_info.get("is_member", False))
         
         except requests.RequestException as e:
             print(f"[ERROR] Checker connection failed: {e}")

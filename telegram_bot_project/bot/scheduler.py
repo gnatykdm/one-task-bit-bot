@@ -7,10 +7,11 @@ from apscheduler.triggers.date import DateTrigger
 from bot.buttons import work_buttons_keyboard, get_start_day_btn
 from service.task import TaskService
 from service.user import UserService
+from service.reminder import ReminderService
 from collections import defaultdict
 from typing import Set
 from messages import *
-from ai_client import send_evening_message_ai
+from ai_client import *
 import pytz
 import os
 import logging
@@ -23,6 +24,7 @@ logger.info(f"System timezone: {SYSTEM_TIMEZONE}")
 scheduler: AsyncIOScheduler = AsyncIOScheduler(timezone=pytz.timezone(SYSTEM_TIMEZONE))
 notified_task_ids = set()
 sent_notifications: defaultdict[int, Set[str]] = defaultdict(set)
+notified_reminder_ids: Set[int] = set()
 
 async def initialize_scheduler(bot: Bot):
     try:
@@ -42,6 +44,15 @@ async def initialize_scheduler(bot: Bot):
             minutes=30,
             id="cleanup_expired_jobs",
             replace_existing=True
+        )
+
+        scheduler.add_job(
+            check_upcoming_reminders,
+            trigger="interval",
+            minutes=1,
+            id="check_upcoming_reminders",
+            replace_existing=True,
+            kwargs={"bot": bot}  
         )
         
         logger.info("[STARTUP] Scheduler initialized with cleanup")
@@ -579,8 +590,6 @@ async def send_task_notification(language: str, bot: Bot, user_id: int, task_nam
     except Exception as e:
         logger.error(f"Failed to send message to user {user_id}: {e}")
 
-
-
 async def cleanup_old_notifications():
     global sent_notifications
     old_size = sum(len(notifications) for notifications in sent_notifications.values())
@@ -588,6 +597,50 @@ async def cleanup_old_notifications():
     logger.info(f"Cleaned up {old_size} old notification entries")
 
 _notifier_instance = None
+
+async def check_upcoming_reminders(bot: Bot):
+    try:
+        reminders = await ReminderService.get_upcoming_reminders()
+        logger.info(f"Found {len(reminders)} upcoming reminders")
+
+        now_utc = datetime.now(pytz.UTC)
+
+        for r in reminders:
+            reminder_id = r["id"]
+            user_id = r["user_id"]
+            title = r["title"]
+            scheduled_time = r["remind_time"]
+
+            if reminder_id in notified_reminder_ids:
+                continue
+
+            timezone_str = await UserService.get_user_timezone(user_id) or "UTC"
+            tz = pytz.timezone(timezone_str)
+
+            if scheduled_time.tzinfo is None:
+                scheduled_time = tz.localize(scheduled_time)
+            else:
+                scheduled_time = scheduled_time.astimezone(tz)
+
+            scheduled_time_utc = scheduled_time.astimezone(pytz.UTC)
+            now_utc = datetime.now(pytz.UTC)
+
+            if abs((scheduled_time_utc - now_utc).total_seconds()) < 45:
+                message = await send_reminder_message(user_id, title)
+                try:
+                    await bot.send_message(
+                        user_id,
+                        message,
+                        parse_mode="Markdown"
+                    )
+                    logger.info(f"Sent reminder {reminder_id} to user {user_id}")
+                    notified_reminder_ids.add(reminder_id)
+                    await ReminderService.mark_as_sent(reminder_id)
+                except Exception as e:
+                    logger.error(f"Failed to send reminder {reminder_id} to user {user_id}: {e}")
+
+    except Exception as e:
+        logger.error(f"Error checking reminders: {e}")
 
 def get_notifier_instance(bot: Bot = None) -> PreciseTaskNotifier:
     global _notifier_instance

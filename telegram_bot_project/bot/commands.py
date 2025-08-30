@@ -19,6 +19,7 @@ from aiogram.types import FSInputFile
 from service.user import UserService
 from service.routine import RoutineService
 from messages import MESSAGES
+from bot.utills import typing_animation
 
 # Start Command Handler
 async def start_command(message: types.Message):
@@ -34,6 +35,7 @@ async def start_command(message: types.Message):
     language: str = await UserService.get_user_language(user_id)
 
     if user_find:
+        await typing_animation(3, message.bot, message.chat.linked_chat_id)
         await message.answer(MESSAGES[language]["START_MSG_AGAIN"])
         await message.answer(MESSAGES[language]["MENU_MSG"], reply_markup=menu_reply_keyboard())
     else:
@@ -57,6 +59,7 @@ async def help_command(message: types.Message):
 
     language: str = await UserService.get_user_language(user_id)
     print(f"[INFO] - User {user_id} ({user_name}) - asked for help")
+    await typing_animation(3, message.bot, message.chat.linked_chat_id)
     await message.answer(MESSAGES[language]["HELP_MSG"])
 
 # Language Command Handler
@@ -68,6 +71,7 @@ async def language_command(message: types.Message):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         keyboard = get_language_keyboard()
+        await typing_animation(2, message.bot, message.chat.linked_chat_id)
         await message.answer(MESSAGES[language]['LANGUAGE_ASK'], reply_markup=keyboard)
 
 # Menu Command Handler
@@ -78,6 +82,7 @@ async def menu_command(message: types.Message):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
+        await typing_animation(2, message.bot, message.chat.linked_chat_id)
         await message.answer(MESSAGES[language]['MENU_MSG'], reply_markup=menu_reply_keyboard())
 
 # Idea Command Handler
@@ -90,6 +95,7 @@ async def idea_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
+        await typing_animation(2, message.bot, message.chat.linked_chat_id)
         await message.answer(MESSAGES[language]['IDEA_RESPONSE'])
         await state.set_state(DialogStates.waiting_for_idea)
 
@@ -116,6 +122,7 @@ async def ideas_command(message: types.Message):
                 for num, idea in enumerate(ideas, start=1)
             )
 
+            await typing_animation(5, message.bot, message.chat.linked_chat_id)
             await message.answer(formatted_ideas, reply_markup=idea_reply_keyboard())
 
 # Delete Idea Handler
@@ -127,6 +134,7 @@ async def delete_idea_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
+        await typing_animation(2, message.bot, message.chat.linked_chat_id)
         await message.answer(MESSAGES[language]['DELETE_IDEA'])
         await state.set_state(DialogStates.delete_idea)
 
