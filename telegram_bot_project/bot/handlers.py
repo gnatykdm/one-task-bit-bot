@@ -656,7 +656,6 @@ async def process_reminder_name_set(message: Message, state: FSMContext) -> None
     await message.answer(MESSAGES[language]['REMINDER_TIME_MSG'])
     await state.set_state(DialogStates.provide_remind_time)
 
-
 async def process_save_reminder(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
     user_find = await UserService.get_user_by_id(user_id)
@@ -673,27 +672,33 @@ async def process_save_reminder(message: Message, state: FSMContext) -> None:
         await message.answer(MESSAGES[language]['TIMER_INVALID'])
         return
 
-    now = datetime.now(pytz.timezone(user_timezone))
+    tz = pytz.timezone(user_timezone)
+    now = datetime.now(tz)
+
     hour, minute = map(int, reminder_time_str.split(":"))
     remind_datetime = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
 
     if remind_datetime < now:
         remind_datetime += timedelta(days=1)
 
-    data = await state.get_data()
-    reminder_name = data.get('reminder_name')
+    if remind_datetime.tzinfo is None:
+        remind_datetime = tz.localize(remind_datetime)
 
-    print(f"[INFO] - User with id: {user_id} create reminder.")
+    data = await state.get_data()
+    reminder_name = data.get("reminder_name")
+    remind_datetime_utc = remind_datetime.astimezone(pytz.UTC)
+
+    print(f"[INFO] - User with id: {user_id} created reminder at {remind_datetime.isoformat()}")
     try:
         await ReminderService.create_reminder(
             user_id=user_id,
             title=reminder_name,
-            remind_time=remind_datetime,
+            remind_time=remind_datetime_utc,  
             remind_status=False
         )
 
         await message.answer(
-            MESSAGES[language]['REMINDER_SAVED_MSG'].format(reminder_name, reminder_time_str),
+            MESSAGES[language]["REMINDER_SAVED_MSG"].format(reminder_name, reminder_time_str),
             reply_markup=get_reminder_menu_btn()
         )
 
@@ -701,7 +706,7 @@ async def process_save_reminder(message: Message, state: FSMContext) -> None:
     except Exception as e:
         print(f"[ERROR] - {e}")
         await message.answer(
-            MESSAGES[language]['SOME_PROBLEM'],
+            MESSAGES[language]["SOME_PROBLEM"],
             reply_markup=get_reminder_menu_btn()
         )
 
