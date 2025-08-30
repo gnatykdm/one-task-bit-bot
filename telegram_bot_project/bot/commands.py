@@ -17,6 +17,7 @@ from service.reminder import ReminderService
 from aiogram import types
 from aiogram.types import FSInputFile
 from service.user import UserService
+from service.routine import RoutineService
 from messages import MESSAGES
 
 # Start Command Handler
@@ -111,7 +112,7 @@ async def ideas_command(message: types.Message):
             dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['IDEAS_SHOW']) * 1.65))
 
             formatted_ideas = MESSAGES[language]['IDEAS_SHOW'] + dividers + "\n" + "\n".join(
-                f"# {num}. {idea['idea_name']}\n\n  - 📅 - [{format_date(idea['creation_date'])}]\n"
+                f"{num}) {idea['idea_name']}\n\n  - 📅 - [{format_date(idea['creation_date'])}]\n"
                 for num, idea in enumerate(ideas, start=1)
             )
 
@@ -186,7 +187,7 @@ async def tasks_show_command(message: types.Message):
         status_icon = "✅" if task['status'] else "❌"
         start_time = task['start_time'].strftime("%Y-%m-%d %H:%M") if task['start_time'] else "—"
         response_text += (
-            f"*{i}. {task['task_name']}* {status_icon}\n"
+            f"{i}) {task['task_name']} - {status_icon}\n"
             f"🕒 *Start:* {start_time}\n"
             f"📅 *Created:* {task['creation_date'].strftime('%Y-%m-%d')}\n\n"
         )
@@ -356,7 +357,7 @@ async def show_morning_routines(message: types.Message):
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['MORNING_ROUTINE_SHOW']) * 1.65))
 
     formatted_routine_items = "\n".join(
-        f"✦ {idx}. {routine['routine_name']}"
+        f"{idx}) {routine['routine_name']}"
         for idx, routine in enumerate(morning_routine, start=1)
     )
 
@@ -424,7 +425,7 @@ async def show_evening_routines(message: types.Message):
 
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['EVENING_ROUTINE_SHOW']) * 1.65))
     formatted_routine_items = "\n".join(
-        f"✦ {idx}. {routine['routine_name']}"
+        f"{idx}) {routine['routine_name']}"
         for idx, routine in enumerate(evening_routine, start=1)
     )
 
@@ -508,7 +509,7 @@ async def show_all_focuses(message: types.Message) -> None:
 
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['FOCUS_LIST_TITLE']) * 1.65))
     formatted_focuses = "\n".join(
-        f"✦ {idx}. {focus['title']} ({focus['duration']}) – {focus['created_at'].strftime('%Y-%m-%d %H:%M')}"
+        f"{idx}) {focus['title']} ({focus['duration']}) – {focus['created_at'].strftime('%Y-%m-%d %H:%M')}"
         for idx, focus in enumerate(focuses, start=1)
     )
 
@@ -679,7 +680,7 @@ async def show_reminders_command(message: types.Message) -> None:
 
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['REMINDER_LIST_MSG']) * 1.65))
     formatted_reminders = "\n".join(
-        f"⏰ {idx}. {rem['title']} – "
+        f"• {rem['title']} – "
         f"{rem['remind_time'].strftime('%Y-%m-%d %H:%M')} "
         f"({'✅' if rem['remind_status'] else '❌'})"
         for idx, rem in enumerate(reminders, start=1)

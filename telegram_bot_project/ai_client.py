@@ -160,7 +160,6 @@ async def get_user_context(user_id: int) -> Dict[str, Any]:
             "user_data": None
         }
 
-
 async def get_daily_stats(user_id: int) -> Dict[str, Any]:
     try:
         tasks = await TaskService.get_user_tasks(user_id)

@@ -8,6 +8,8 @@ CREATE TYPE routine_type AS ENUM ('morning', 'evening');
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     user_name VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(255),
+    second_name VARCHAR(255),
     language lan NOT NULL DEFAULT 'ENGLISH',
     register_date TIMESTAMP NOT NULL DEFAULT NOW(),
     wake_time TIME DEFAULT NULL,
@@ -61,6 +63,15 @@ CREATE TABLE IF NOT EXISTS daily_stats (
     wake_up_time TEXT,
     completed_tasks INT DEFAULT 0,
     stats_day TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS reminders (
+    id SERIAL PRIMARY KEY, 
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE, 
+    title VARCHAR(255) NOT NULL, 
+    remind_status BOOLEAN NOT NULL DEFAULT FALSE,  
+    remind_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    creation_date TIMESTAMP NOT NULL DEFAULT NOW() 
 );
 
 ALTER TABLE daily_stats

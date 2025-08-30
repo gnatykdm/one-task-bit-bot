@@ -26,6 +26,24 @@ class RoutineService:
             return routine_id
 
     @staticmethod
+    async def get_routine_id_by_name(routine_name: str) -> Optional[dict]:
+        async with get_session() as session:
+            result: Any = await session.execute(
+                text(
+                    """
+                    SELECT id
+                    FROM routines
+                    WHERE routine_name = :routine_name
+                    """
+                ),
+                {"routine_name": routine_name}
+            )
+            routine = result.fetchone()
+            if routine:
+                return {"id": routine.id}
+            return None
+
+    @staticmethod
     async def get_routine_by_id(routine_id: int) -> Optional[dict]:
         async with get_session() as session:
             result: Any = await session.execute(
