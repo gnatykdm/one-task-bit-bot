@@ -83,11 +83,13 @@ async def keep_typing_while(chat_id, func, bot):
         executor(),
     )
 
-async def typing_animation(seconds, bot, chat_id) -> None:
-    interval = 1 
-    for _ in range(seconds // interval):
-        try:
-            await bot.send_chat_action(chat_id, 'typing')
-        except Exception:
-            break
-        await asyncio.sleep(interval)
+async def typing_animation(message: Message, seconds: int) -> None:
+    bot = message.bot
+    await bot.send_chat_action(message.chat.id, "typing")
+    await asyncio.sleep(seconds) 
+
+
+async def show_typing(bot, chat_id: int, stop_event: asyncio.Event):
+    while not stop_event.is_set():
+        await bot.send_chat_action(chat_id, "typing")
+        await asyncio.sleep(4) 

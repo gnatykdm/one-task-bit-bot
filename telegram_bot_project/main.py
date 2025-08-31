@@ -12,6 +12,7 @@ from fastapi import FastAPI
 import uvicorn
 import signal
 
+from bot.utills import show_typing
 from models import UserGeoDataDTO
 from config import TOKEN, AnotherConfig
 from bot.scheduler import *
@@ -442,6 +443,49 @@ async def reminder_show(message: Message) -> None:
 @dp.message(lambda m: m.text == AI_ROCKY_BTN)
 async def talk_with_rocky(message: Message, state: FSMContext):
     await talk_with_rocky_command(message, state)
+
+@dp.message(DialogStates.ai_talk)
+async def handle_ai_chat(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    
+    if message.text in [STOP_CHAT, "/stop_talk"]:
+        await stop_talk_command(message, state)
+        return
+   
+    stop_event = asyncio.Event()
+    typing_task = asyncio.create_task(show_typing(bot, message.chat.id, stop_event))
+    TYPING_TASKS[user_id] = (typing_task, stop_event)
+    
+    try:
+        if user_id not in AI_CHAT_CONTEXT:
+            AI_CHAT_CONTEXT[user_id] = []
+        
+        AI_CHAT_CONTEXT[user_id].append({"role": "user", "content": message.text})
+        
+        response_text = await ask_gpt(
+            AI_CHAT_CONTEXT[user_id],
+            user_id=user_id
+        )
+        
+        AI_CHAT_CONTEXT[user_id].append({"role": "assistant", "content": response_text})
+        
+        current_state = await state.get_state()
+        if current_state == DialogStates.ai_talk:
+            await message.answer(response_text)
+            
+    except Exception as e:
+        print(f"[ERROR] - Error in AI chat for user {user_id}: {e}")
+        language: str = await UserService.get_user_language(user_id) or 'ENGLISH'
+        await message.answer(MESSAGES[language].get('AI_ERROR', 'Sorry, there was an error processing your request.'))
+        
+    finally:
+        if user_id in TYPING_TASKS:
+            TYPING_TASKS[user_id][1].set()
+            try:
+                await TYPING_TASKS[user_id][0]
+            except asyncio.CancelledError:
+                pass
+            TYPING_TASKS.pop(user_id, None)
 
 @dp.message(Command("stop_talk"))
 @dp.message(lambda m: m.text == STOP_CHAT)

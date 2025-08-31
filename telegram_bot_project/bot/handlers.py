@@ -47,7 +47,6 @@ async def process_idea_save(message: Message, state: FSMContext) -> None:
         divider = "\n" + ("-" * int(len(MESSAGES[language]['IDEA_ACTION']) * 1.65))
 
         keyboard = get_idea_conf_keyboard()
-
         await message.answer(
             f"{MESSAGES[language]['IDEA_ACTION']}{divider}\n💡 *Idea:* {idea}",
             reply_markup=keyboard

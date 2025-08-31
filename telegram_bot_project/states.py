@@ -1,6 +1,7 @@
 # states.py
 from aiogram.fsm.state import StatesGroup, State
 from typing import Dict, List
+import asyncio
 
 class DialogStates(StatesGroup):
     waiting_for_idea = State()
@@ -35,3 +36,4 @@ focus_times = {}
 morning_routine_timer = {}
 FOCUS_ZONE_START_TIME: int = None
 AI_CHAT_CONTEXT: Dict[int, List[Dict[str, str]]] = {}
+TYPING_TASKS: dict[int, tuple[asyncio.Task, asyncio.Event]] = {}
