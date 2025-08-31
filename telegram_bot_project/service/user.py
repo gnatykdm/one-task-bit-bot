@@ -1,8 +1,10 @@
 # service/user.py
 from sqlalchemy import text
 from config import get_session
-from typing import Optional
+from typing import Optional, List, Any
 from datetime import datetime
+from zoneinfo import ZoneInfo
+from service.reminder import ReminderService
 
 class UserService:
     @staticmethod
@@ -135,3 +137,59 @@ class UserService:
             )
             await session.commit()
             return result.rowcount == 1
+
+    @staticmethod
+    async def get_user_reserved_times(user_id: int) -> List[str]:
+        tz_str = await UserService.get_user_timezone(user_id)
+        user_tz = ZoneInfo(tz_str or "UTC")
+
+        reserved_times: List[str] = []
+
+        async with get_session() as session:
+            result: Any = await session.execute(
+                text(
+                    """
+                    SELECT wake_time, sleep_time
+                    FROM users
+                    WHERE id = :user_id
+                    """
+                ),
+                {"user_id": user_id}
+            )
+            row = result.fetchone()
+
+            if row:
+                if row[0]:  
+                    reserved_times.append(str(row[0]))
+                if row[1]:  
+                    reserved_times.append(str(row[1]))
+
+        reminders = await ReminderService.get_user_reminders(user_id)
+        for r in reminders:
+            dt = r.get("remind_time")
+            if dt and isinstance(dt, datetime):
+                local_time = dt.astimezone(user_tz).strftime("%Y-%m-%d %H:%M")
+                reserved_times.append(local_time)
+
+        async with get_session() as session:
+            result = await session.execute(
+                text(
+                    """
+                    SELECT start_time
+                    FROM tasks
+                    WHERE user_id = :user_id
+                    AND start_time IS NOT NULL
+                    ORDER BY start_time ASC
+                    """
+                ),
+                {"user_id": user_id}
+            )
+            rows = result.fetchall()
+
+        for row in rows:
+            dt = row[0]
+            if dt and isinstance(dt, datetime):
+                local_time = dt.astimezone(user_tz).strftime("%Y-%m-%d %H:%M")
+                reserved_times.append(local_time)
+
+        return reserved_times

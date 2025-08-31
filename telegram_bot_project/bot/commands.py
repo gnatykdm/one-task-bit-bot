@@ -3,6 +3,7 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 from datetime import datetime
 from aiogram.types import FSInputFile
+from zoneinfo import ZoneInfo
 
 from service.focus import FocusService
 from bot.utills import format_date, calculate_awake_hours
@@ -96,8 +97,11 @@ async def idea_command(message: types.Message, state: FSMContext):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         await typing_animation(2, message.bot, message.chat.linked_chat_id)
-        await message.answer(MESSAGES[language]['IDEA_RESPONSE'])
         await state.set_state(DialogStates.waiting_for_idea)
+        await message.answer(
+            MESSAGES[language]['IDEA_RESPONSE'],
+            reply_markup=break_button()                
+        )
 
 # Show Ideas Handler
 async def ideas_command(message: types.Message):
@@ -135,8 +139,11 @@ async def delete_idea_command(message: types.Message, state: FSMContext):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         await typing_animation(2, message.bot, message.chat.linked_chat_id)
-        await message.answer(MESSAGES[language]['DELETE_IDEA'])
         await state.set_state(DialogStates.delete_idea)
+        await message.answer(
+            MESSAGES[language]['DELETE_IDEA'],
+            reply_markup=break_button()
+        )
 
 # Update Idea Handler
 async def update_idea_command(message: types.Message, state: FSMContext):
@@ -147,8 +154,11 @@ async def update_idea_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
-        await message.answer(MESSAGES[language]['UPDATE_IDEA'])
         await state.set_state(DialogStates.update_idea)
+        await message.answer(
+            MESSAGES[language]['UPDATE_IDEA'],
+            reply_markup=break_button()
+        )
 
 # Create Task Handler
 async def task_command(message: types.Message, state: FSMContext):
@@ -161,8 +171,11 @@ async def task_command(message: types.Message, state: FSMContext):
     else:
         print(f"[INFO] - User with id: {user_id} - opened /task.")
 
-        await message.answer(MESSAGES[language]['TASK_ADD'])
         await state.set_state(DialogStates.confirm_task)
+        await message.answer(
+            MESSAGES[language]['TASK_ADD'],
+            reply_markup=break_button()
+        )
 
 # Open task menu handler
 async def task_menu_command(message: types.Message):
@@ -190,10 +203,11 @@ async def tasks_show_command(message: types.Message):
         await message.answer(MESSAGES[language]['NO_TASKS'], reply_markup=task_menu_keyboard())
         return
 
+    USER_TZ = ZoneInfo(await UserService.get_user_timezone(user_id))
     response_text = f"📋 *{MESSAGES[language]['YOUR_TASKS']}*:\n\n"
     for i, task in enumerate(tasks, 1):
         status_icon = "✅" if task['status'] else "❌"
-        start_time = task['start_time'].strftime("%Y-%m-%d %H:%M") if task['start_time'] else "—"
+        start_time = task['start_time'].astimezone(USER_TZ).strftime("%Y-%m-%d %H:%M") if task['start_time'] else "—"
         response_text += (
             f"{i}) {task['task_name']} - {status_icon}\n"
             f"🕒 *Start:* {start_time}\n"
@@ -215,10 +229,12 @@ async def delete_task_command(message: types.Message, state: FSMContext):
         if not tasks:
             await message.answer(MESSAGES[language]['NO_TASKS'], reply_markup=task_menu_keyboard())
             return
-
-        await message.answer(MESSAGES[language]['TASK_DELETE_MSG'])
         await state.set_state(DialogStates.delete_task)
         await state.update_data(tasks=tasks)
+        await message.answer(
+            MESSAGES[language]['TASK_DELETE_MSG'],
+            reply_markup=break_button()
+        )
 
 #Complete Task Command
 async def complete_task_command(message: types.Message, state: FSMContext):
@@ -234,9 +250,12 @@ async def complete_task_command(message: types.Message, state: FSMContext):
             await message.answer(MESSAGES[language]['NO_TASKS'], reply_markup=task_menu_keyboard())
             return
 
-        await message.answer(MESSAGES[language]['COMPLETE_TASK_MSG'])
         await state.set_state(DialogStates.complete_task)
         await state.update_data(tasks=tasks)
+        await message.answer(
+            MESSAGES[language]['COMPLETE_TASK_MSG'],
+            reply_markup=break_button()
+        )
 
 #Update Task Command
 async def update_task_command(message: types.Message, state: FSMContext):
@@ -252,9 +271,12 @@ async def update_task_command(message: types.Message, state: FSMContext):
             await message.answer(MESSAGES[language]['NO_TASKS'], reply_markup=task_menu_keyboard())
             return
 
-        await message.answer(MESSAGES[language]['UPDATE_TASK_MSG'])
         await state.set_state(DialogStates.update_task_id)
         await state.update_data(tasks=tasks)
+        await message.answer(
+            MESSAGES[language]['UPDATE_TASK_MSG'],
+            reply_markup=break_button()
+        )
 
 #Setting Menu Open Command
 async def setting_menu_command(message: types.Message):
@@ -307,9 +329,11 @@ async def set_wake_time_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
-        await message.answer(MESSAGES[language]['SET_TIME_MSG'])
         await state.set_state(DialogStates.set_wake_time)
-
+        await message.answer(
+            MESSAGES[language]['SET_TIME_MSG'],
+            reply_markup=break_button()
+        )
 
 # Set Sleep Time Command Handler
 async def set_sleep_time_command(message: types.Message, state: FSMContext):
@@ -320,9 +344,11 @@ async def set_sleep_time_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
-        await message.answer(MESSAGES[language]['SET_TIME_MSG'])
         await state.set_state(DialogStates.set_sleep_time)
-
+        await message.answer(
+            MESSAGES[language]['SET_TIME_MSG'],
+            reply_markup=break_button()
+        )
 
 # Routine Menu Command Handler
 async def routine_menu_command(message: types.Message):
@@ -344,8 +370,11 @@ async def set_morning_routine(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
-        await message.answer(MESSAGES[language]['ADD_MORNING_ROUTINE'])
         await state.set_state(DialogStates.add_morning_routine)
+        await message.answer(
+            MESSAGES[language]['ADD_MORNING_ROUTINE'],
+            reply_markup=break_button()
+        )
 
 async def show_morning_routines(message: types.Message):
     user_id: int = message.from_user.id
@@ -358,6 +387,7 @@ async def show_morning_routines(message: types.Message):
 
     print(f"[INFO] - User with id: {user_id} - opened /morning_routines.")
     morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
+    morning_routine = list(reversed(morning_routine))
     if not morning_routine:
         await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
         return
@@ -389,13 +419,16 @@ async def delete_morning_routine(message: types.Message, state: FSMContext, type
     else:
 
         morning_routine = await RoutineService.get_user_routines(user_id, routine_type=type)
+        morning_routine = list(reversed(morning_routine))
         if not morning_routine:
             await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
             return
-
-        await message.answer(MESSAGES[language]['PROVIDE_ROUTINE_ID'])
         await state.update_data(morning_routine=morning_routine)
         await state.set_state(DialogStates.delete_morning_routine)
+        await message.answer(
+            MESSAGES[language]['PROVIDE_ROUTINE_ID'],
+            reply_markup=break_button()
+        )
 
 # Update Morning Routine Command Handler
 async def update_morning_routine(message: types.Message, state: FSMContext, type: str):
@@ -407,13 +440,17 @@ async def update_morning_routine(message: types.Message, state: FSMContext, type
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
         morning_routine = await RoutineService.get_user_routines(user_id, routine_type=type)
+        morning_routine = list(reversed(morning_routine))
         if not morning_routine:
             await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
             return
         else:
-            await message.answer(MESSAGES[language]['PROVIDE_ROUTINE_ID'])
             await state.update_data(morning_routine=morning_routine)
             await state.set_state(DialogStates.update_morning_routine_id)
+            await message.answer(
+                MESSAGES[language]['PROVIDE_ROUTINE_ID'],
+                reply_markup=break_button()
+            )
 
 # Show Evening Routine Command Handler
 async def show_evening_routines(message: types.Message):
@@ -425,25 +462,29 @@ async def show_evening_routines(message: types.Message):
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
         return
 
-    print(f"[INFO] - User with id: {user_id} - opened /evening_routines.")
-    evening_routine = await RoutineService.get_user_routines(user_id, routine_type="evening")
-    if not evening_routine:
-        await message.answer(MESSAGES[language]['NO_EVENING_ROUTINE'])
+    print(f"[INFO] - User with id: {user_id} - opened /morning_routines.")
+    morning_routine = await RoutineService.get_user_routines(user_id, routine_type="evening")
+    morning_routine = list(reversed(morning_routine))
+    if not morning_routine:
+        await message.answer(MESSAGES[language]['NO_MORNING_ROUTINE'])
         return
 
-    dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['EVENING_ROUTINE_SHOW']) * 1.65))
+    morning_routine = list(reversed(morning_routine))
+    dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['MORNING_ROUTINE_SHOW']) * 1.65))
+
     formatted_routine_items = "\n".join(
         f"{idx}) {routine['routine_name']}"
-        for idx, routine in enumerate(evening_routine, start=1)
+        for idx, routine in enumerate(morning_routine, start=1)
     )
 
     formatted_morning_routine = (
-            MESSAGES[language]['EVENING_ROUTINE_SHOW'] +
-            dividers +
-            "\n" +
-            formatted_routine_items
+        MESSAGES[language]['MORNING_ROUTINE_SHOW'] +
+        dividers +
+        "\n" +
+        formatted_routine_items
     )
 
+    await message.answer(formatted_morning_routine)
     await message.answer(formatted_morning_routine, reply_markup=evening_routine_keyboard())
 
 # Send feedback message command
@@ -455,8 +496,11 @@ async def send_feedback_command(message: types.Message, state: FSMContext):
     if not user_find:
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
     else:
-        await message.answer(MESSAGES[language]['SMTP_MESSAGE_TEXT'])
         await state.set_state(DialogStates.feedback_message)
+        await message.answer(
+            MESSAGES[language]['SMTP_MESSAGE_TEXT'],
+            reply_markup=break_button()
+        )
 
 # Show daily stats command
 async def show_daily_stats_command(message: types.Message):
@@ -546,7 +590,10 @@ async def delete_focus_session(message: types.Message, state: FSMContext) -> Non
 
         await state.update_data(focuses=focuses)
         await state.set_state(DialogStates.delete_focus)
-        await message.answer(MESSAGES[language]['DELETE_FOCUS_SESSION_MSG'])
+        await message.answer(
+            MESSAGES[language]['DELETE_FOCUS_SESSION_MSG'],
+            reply_markup=break_button()
+        )
 
 async def start_day_command(message: types.Message) -> None:
     user_id: int = message.from_user.id
@@ -558,6 +605,7 @@ async def start_day_command(message: types.Message) -> None:
         return
 
     morning_routine = await RoutineService.get_user_routines(user_id, routine_type="morning")
+    morning_routine = list(reversed(morning_routine))
     print(f"[INFO] - Sending morning routine to user with id {user_id}")
 
     time_str = datetime.now().strftime("%H:%M")  
@@ -666,7 +714,10 @@ async def create_reminder_command(message: types.Message, state: FSMContext) -> 
         await message.answer(MESSAGES['ENGLISH']['AUTHORIZATION_PROBLEM'])
         return
     
-    await message.answer(MESSAGES[language]['REMINDER_CREATE_MSG'])
+    await message.answer(
+        MESSAGES[language]['REMINDER_CREATE_MSG'],
+        reply_markup=break_button()
+    )
     await state.set_state(DialogStates.provide_remind_name)
 
 # Show All Reminders Handler
@@ -686,10 +737,12 @@ async def show_reminders_command(message: types.Message) -> None:
         await message.answer(MESSAGES[language]['NO_REMINDS_FOUND'])
         return
 
+    USER_TZ = ZoneInfo(await UserService.get_user_timezone(user_id))
+
     dividers: str = "\n" + ("-" * int(len(MESSAGES[language]['REMINDER_LIST_MSG']) * 1.65))
     formatted_reminders = "\n".join(
         f"• {rem['title']} – "
-        f"{rem['remind_time'].strftime('%Y-%m-%d %H:%M')} "
+        f"{rem['remind_time'].astimezone(USER_TZ).strftime('%Y-%m-%d %H:%M')} "
         f"({'✅' if rem['remind_status'] else '❌'})"
         for idx, rem in enumerate(reminders, start=1)
     )
@@ -714,7 +767,24 @@ async def delete_reminder_handler(message: types.Message, state: FSMContext) -> 
         return
 
     await message.answer(
-        MESSAGES[language]['DELETE_REMINDER']
+        MESSAGES[language]['DELETE_REMINDER'],
+        reply_markup=break_button()
     )
 
     await state.set_state(DialogStates.provide_reminder_index)
+
+# Break Operation Command Handler
+async def break_operation_command(message: types.Message, state: FSMContext) -> None:
+    user_id: int = message.from_user.id
+    user_find: Any = await UserService.get_user_by_id(user_id)
+    language: str = await UserService.get_user_language(user_id) or "ENGLISH"
+
+    if not user_find:
+        await message.answer(MESSAGES[language]['AUTHORIZATION_PROBLEM'])
+        return
+    
+    await message.answer(
+        MESSAGES[language]['BREAK_OPERATION_MSG'],
+        reply_markup=menu_reply_keyboard()
+    )
+    await state.clear()

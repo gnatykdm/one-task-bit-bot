@@ -3,7 +3,6 @@ from config import get_session
 from typing import Any, List, Optional
 from datetime import datetime, timedelta
 
-
 class TaskService:
     @staticmethod
     async def create_task(user_id: int, task_name: str, task_status: bool = False, start_time: Optional[datetime] = None) -> int:

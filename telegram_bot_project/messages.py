@@ -151,7 +151,9 @@ MESSAGES: Any = {
         "REMINDER_DELETED": "✅ Нагадування #{0} «{1}» було видалено.",
         "INVALID_REMINDER_NUM": "❗ Неправильний номер нагадування.",
         "NOT_VALID_REMINDER_NUM": "❗ Номер нагадування недійсний.",
-        "REMINDER_SENT_MSG": "🔔 Нагадування: *{}* заплановане зовсім скоро!"
+        "REMINDER_SENT_MSG": "🔔 Нагадування: *{}* заплановане зовсім скоро!",
+        "TIME_RESERVED_MSG": "❗ Вибачте, цей час уже заброньований.\nДля іншого завдання :)",
+        "BREAK_OPERATION_MSG": "❌ Операцію було відхилено."
     },
     "ENGLISH": {
         "START_MSG": (
@@ -302,7 +304,9 @@ MESSAGES: Any = {
         "REMINDER_DELETED": "✅ Reminder #{0} \"{1}\" has been deleted.",
         "INVALID_REMINDER_NUM": "❗ Invalid reminder number.",
         "NOT_VALID_REMINDER_NUM": "❗ The reminder number is not valid.",
-        "REMINDER_SENT_MSG": "🔔 Reminder: *{}* is scheduled soon!"
+        "REMINDER_SENT_MSG": "🔔 Reminder: *{}* is scheduled soon!",
+        "TIME_RESERVED_MSG": "❗ Sorry this time is already reserved.\nFor another task :)",
+        "BREAK_OPERATION_MSG": "❌ Operation was declined." 
     }
 }
 
@@ -371,6 +375,8 @@ STOP_ROUTINE_TIMER_BTN = "🔴 Stop routine timer"
 
 AI_ROCKY_BTN = "🤖 AI Rocky"
 STOP_CHAT = "❌ Stop"
+
+BREAK_BTN = "❌ Break"
 
 REMINDERS_BTN = "⏰ Reminders"
 CREATE_REMINDER_BTN = "➕ Add Reminder"

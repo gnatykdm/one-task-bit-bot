@@ -2,7 +2,7 @@
 from sqlalchemy import text
 from config import get_session
 from typing import Any, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class ReminderService:
     @staticmethod

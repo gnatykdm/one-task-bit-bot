@@ -338,3 +338,15 @@ def get_reminder_menu_btn() -> ReplyKeyboardMarkup:
         keyboard=keyboard,
         resize_keyboard=True
     )
+
+def break_button() -> ReplyKeyboardMarkup:
+    break_btn = KeyboardButton(text=BREAK_BTN)
+
+    keyboard = [
+        [break_btn]
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True
+    )

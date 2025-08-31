@@ -448,6 +448,10 @@ async def talk_with_rocky(message: Message, state: FSMContext):
 async def stop_talk_with_rocky(message: Message, state: FSMContext):
     await stop_talk_command(message, state)
 
+@dp.message(lambda m: m.text == BREAK_BTN)
+async def break_operation(message: Message, state: FSMContext) -> None:
+    await break_operation_command(message, state)
+
 @dp.callback_query(F.data.in_({"morning_view", "evening_view"}))
 async def callback_routine(callback_query: CallbackQuery):
     await callback_routines(callback_query)

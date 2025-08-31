@@ -190,9 +190,20 @@ async def process_task_deadline(message: Message, state: FSMContext):
 
     deadline_str = message.text.strip()
 
+    if not check_valid_time(deadline_str):
+        await message.answer(MESSAGES[language]['TASK_DEADLINE_INVALID'])
+        await state.clear()
+        return
+
+    reserved_times = await UserService.get_user_reserved_times(user_id)
+    reserved_times_hm = [t.split(" ")[-1][:5] if " " in t else t[:5] for t in reserved_times]
+
+    if deadline_str in reserved_times_hm:
+        await message.answer(MESSAGES[language]['TIME_RESERVED_MSG'])
+        return
+
     try:
         time_obj = datetime.strptime(deadline_str, "%H:%M").time()
-
         timezone: str = await UserService.get_user_timezone(user_id) or 'UTC'
         tz = pytz.timezone(timezone)
         now = datetime.now(tz)
@@ -349,7 +360,7 @@ async def process_set_wake_time(message: Message, state: FSMContext):
     new_wake_time = message.text.strip()
     if not new_wake_time or not check_valid_time(new_wake_time):
         await message.answer(
-            MESSAGES["ENGLISH"]['TIMER_INVALID'],
+            MESSAGES[language]['TIMER_INVALID'],
             reply_markup=routine_time_keyboard()
         )
         return
@@ -358,7 +369,22 @@ async def process_set_wake_time(message: Message, state: FSMContext):
         time_obj = datetime.strptime(new_wake_time, "%H:%M").time()
     except ValueError:
         await message.answer(
-            MESSAGES["ENGLISH"]['TIMER_INVALID'],
+            MESSAGES[language]['TIMER_INVALID'],
+            reply_markup=routine_time_keyboard()
+        )
+        return
+
+    reserved_times = await UserService.get_user_reserved_times(user_id)
+    reserved_times_hm = []
+    for t in reserved_times:
+        if len(t.split(":")) >= 2:
+            reserved_times_hm.append(t.split(" ")[-1][:5])
+        else:
+            reserved_times_hm.append(t[:5])
+
+    if new_wake_time in reserved_times_hm:
+        await message.answer(
+            MESSAGES[language]['TIME_RESERVED_MSG'],
             reply_markup=routine_time_keyboard()
         )
         return
@@ -385,7 +411,7 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
     new_sleep_time = message.text.strip()
     if not new_sleep_time or not check_valid_time(new_sleep_time):
         await message.answer(
-            MESSAGES["ENGLISH"]['TIMER_INVALID'],
+            MESSAGES[language]['TIMER_INVALID'],
             reply_markup=routine_time_keyboard()
         )
         return
@@ -394,7 +420,22 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
         time_obj = datetime.strptime(new_sleep_time, "%H:%M").time()
     except ValueError:
         await message.answer(
-            MESSAGES["ENGLISH"]['TIMER_INVALID'],
+            MESSAGES[language]['TIMER_INVALID'],
+            reply_markup=routine_time_keyboard()
+        )
+        return
+
+    reserved_times = await UserService.get_user_reserved_times(user_id)
+    reserved_times_hm = []
+    for t in reserved_times:
+        if len(t.split(":")) >= 2:
+            reserved_times_hm.append(t.split(" ")[-1][:5])
+        else:
+            reserved_times_hm.append(t[:5])
+
+    if new_sleep_time in reserved_times_hm:
+        await message.answer(
+            MESSAGES[language]['TIME_RESERVED_MSG'],
             reply_markup=routine_time_keyboard()
         )
         return
@@ -407,6 +448,7 @@ async def process_set_sleep_time(message: Message, state: FSMContext):
         reply_markup=routine_time_keyboard()
     )
     await state.clear()
+
 
 async def process_set_routine(message: Message, state: FSMContext, type: str):
     user_id = message.from_user.id
@@ -670,6 +712,20 @@ async def process_save_reminder(message: Message, state: FSMContext) -> None:
 
     if not check_valid_time(reminder_time_str):
         await message.answer(MESSAGES[language]['TIMER_INVALID'])
+        return
+
+    reserved_times = await UserService.get_user_reserved_times(user_id)
+    reserved_times_hm = []
+    for t in reserved_times:
+        if len(t.split(":")) >= 2:
+            reserved_times_hm.append(t.split(" ")[-1][:5])
+        else:
+            reserved_times_hm.append(t[:5])
+            
+    if reminder_time_str in reserved_times_hm:
+        await message.answer(
+            MESSAGES[language]['TIME_RESERVED_MSG']
+        )
         return
 
     tz = pytz.timezone(user_timezone)
